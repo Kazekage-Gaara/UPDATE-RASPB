@@ -1,0 +1,1168 @@
+Rotas IPs VPNs Solinftec
+
+//Grãos
+//Clientes sem user definido precisa criar rota com IP
+
+	220.2.0.0/24  	Rampeloti
+			 1.5	Faz. Maringa 		 				user : solinfnet.rampelotti.fz_maringa 	(com acesso)
+
+	220.3.0.0/24  	Terra Viva
+			1.5		Faz Chapado das Emas 				user : solinfnet.terraviva.fz_chapadaodasemas 	(com acesso)
+			2.5		Chapadao das Perdizes
+			3.5		Cocais 										
+			
+	220.4.0.0/24  	Agro NH
+			1.5		Faz. Bonanza 							user : solinfnet.agronh_fz.bonanza 			(com acesso)
+			2.5		Faz. Novo Horizonte	 					user : solinfnet.agronh_fz.novohorizonte 	(com acesso)
+			3.5		Faz. Ouro Verde 						user : solinfnet.agronh_fz.ouroverde 		(com acesso)
+			4.5		Faz. Sertaneja (bonanza -frota 4000)	user : solinfnet.agronh_fz.sertaneja
+
+	220.5.0.0/24  	Agro Fritzen
+			1.5		Faz. Alvorada 							user : solinfnet.agrofritzen_fz.alvorada  	
+			2.5		Faz. América 							user : solinfnet.agrofritzen_fz.america		
+			3.5		Faz. Santa Clara						user : solinfnet.agrofritzen_fz_sta_clara	 
+
+	220.6.0.0/24  	Agro Luz
+			1.5		Faz. Vo Arnaldo 	 					user : solinfnet.agroluz_fz.voarnaldo	(com acesso)
+
+	220.7.0.0/24  	Alvaro Ribeiro
+			1.5		Faz. Ponte Quiha 	 					user : solinfnet.alvaroribeiro_fz.pontequiha
+			2.5		Faz. Cristina Porã 						user : solinfnet.alvaroribeiro_fz.cristina_pora
+			3.5		Faz. Santa Ana 		 					user : solinfnet.alvaroribeiro.fz_santa_ana	
+			4.5		Faz. Boa Vista							user : solinfnet.alvaroribeiro.fz_boa_vista
+
+	220.8.0.0/24  	Mata Azul
+			1.5		Faz. Sao Francisco						user : solinfnet.mataazul_fz.saofrancisco	(com acesso)
+
+	220.9.0.0/24  	GCAP	
+			1.5		Faz. Relu 			 					user : solinfnet.gcap_fz.relu
+			2.5		Faz. São Caetano	 					user : solinfnet.gcap_fz.saocaetano
+			3.5		Faz. Los Angeles 						user : solinfnet.gcap.fz_los_angeles
+			4.5		Faz. Fé 								user : solinfnet.gcap.fz_fe 		(com acesso)
+			5.5		Faz. Cabeceira							user : solinfnet.gcap.fz_cabeceira
+
+	220.10.0.0/24 	Nuno Eusebio
+			1.5		Faz. Tamandua 	 					user : solinfnet.nunoeusebio_fz.tamandua
+			2.5		Faz. Urutau 						user : solinfnet.nunoeusebio.fz_urutau
+			3.5		Faz. São José						user : solinfnet.nunoeusebio.fz_saojose
+
+	220.11.0.0/24 	GMS Agricola
+			1.5		Faz. Samambaia 						user : solinfnet.gms_fz.samambaia 	(com acesso)
+            2.5		Faz. Samambaia F1003 e F1004		user : solinfnet.gms_fz.samambaia_F1003 	
+
+	220.12.0.0/24 	AGREX
+		   	1.5		Faz. Campos Lindos  				user : solinfnet.agrex.fz_camposlindos
+			2.5		Faz. Chapada Alta					
+			 .105		POSTE 02						user : solinfnet.agrex.fz_chapada_alta.f_3001 
+			3.5		Faz. Batavo							user : solinfnet.agrex.fz_batavo 
+			4.5		Faz. Curitiba						user : solinfnet.agrex.fz_curitiba
+			5.5		Faz. Portugal						user : solinfnet.agrex.fz_portugal
+			6.5		Faz. Santo Isidoro					user : solinfnet.agrex.fz_santo_isidoro
+			7.5 	Faz. Riachão (Santa Barbara)		user : solinfnet.agrex.fz_riachao
+
+	220.13.0.0/24 	Grupo Missal
+			1.5		Faz. Alto Guaporé 					user : solinfnet.grupomissal_fz.guapore2
+			2.5		Faz. Acaray							user : solinfnet.grupomissal_fz.acaray
+			3.5		Faz. Girassol						user : solinfnet.grupomissal_fz.girassol
+			4.5 	Faz. Perola 						user : solinfnet.grupomissal_fz.perola
+			5.5 	Faz. Chave de Ouro
+			 .105 	 Chave de Ouro Móvel 				user : solinfnet.grupomissal.fz_chavedeouro.f_3000
+			 .115 	 Chave de Ouro Móvel 				user : solinfnet.grupomissal.fz_chavedeouro.f_3001
+
+	220.14.0.0/24  	Grupo Itaquere
+			1.5		Faz. Rio Suia 						user : solinfnet.grupoitaquere.fz_riosuia
+			2.5		Faz. Jucarama						user : solinfnet.grupoitaquere.fz_jucarama
+            3.5		Faz. Itaquere (3000)				user : solinfnet.grupoitaquere.fz_itaquere
+            4.5     Faz. Itaquere (3001)				user : solinfnet.grupoitaquere.fz_itaquere_duas_nascentes
+			5.5		Faz. Triangulo						user : solinfnet.grupoitaquere.fz_triangulo
+
+	220.15.0.0/24 	Catellan
+			1.5		Faz. Terra Norte  					user : solinfnet.catellan.fz_terranorte
+			2.5		Faz. Cambara 						user : solinfnet.catellan.fz_cambara
+			3.5		Faz. Santa Maria					user : solinfnet.catellan.fz_santa_maria
+
+	220.16.0.0/24 	Sierentz (Agrinvest)
+			1.5		Faz. Nova Holanda (Penitente)		user : solinfnet.sierentz_fz.novaholanda
+			2.5		Faz. Fartura (Araguaia)				user : solinfnet.agrinvest.fz_fartura
+			3.5		Faz. Metropolitana					user : solinfnet.sierentz_fz.metropolitana (Transferido para a Insolo) )
+			6.5		Faz. Serra do Ovo (Parnaiba)		user : solinfnet.sierentz.fz_serradoovo (Transferido para a Insolo)
+
+	220.17.0.0/24 	Centro da Mata
+			1.5		Faz. Centro da Mata					user : solinfnet.centrodamata
+			2.5     Faz. Centro da Mata 2           	user : solinfnet.centrodamata2 (Satelital do Anax, Solinftec que paga)
+			
+	220.18.0.0/24 	Estrela  Boscoli
+			1.5		Faz. Estrela Boscoli 				user : solinfnet.estrela_boscoli
+
+	220.19.0.0/24	Ceolin
+			1.5		Ceolin Argentina 
+			 1.105	 TORRE Sede							user : solinfnet.ceolin.argentina.f_10000
+			 1.115   Torre 1                            user : solinfnet.ceolin.argentina.f_10001
+			 1.125   Torre 2                            user : solinfnet.ceolin.argentina.f_10002
+			 1.130   CTL Torre Pepa
+			 1.135	 190.113.49.19:8085  Torre PEPA		user : solinfnet.ceolin.argentina.f_10003
+			 1.145   Torre4								user : solinfnet.ceolin.argentina.f_10004
+			2.5		Ceolin Brasil  						
+			 .105     Silo Sede 						user : solinfnet.ceolin.brasil.f_9000	
+			 .110 	Controladora de carga		
+			 .115     Poste São João					user : solinfnet.ceolin.brasil.f_9001
+			 .125     Caixa D'água Santo Angelo			user : solinfnet.ceolin.brasil.f_9002
+			 .135     Torre São Pedro					user : solinfnet.ceolin.brasil.f_9003
+			 RADIOS 220.19.2.99, 101, 102, 131
+		    3.5		  CX Água Santo  Ângelo
+			3.105	  CX Água Santo  Ângelo	   	       user : solinfnet.ceolin.brasil
+
+	220.20.0.0/24	ASA
+			1.5		Faz. Agua Santa						user : solinfnet.asa.fz_aguasanta
+			2.5 	Faz. Kassab 						user : solinfnet.asa.fz_kassab
+			2.245	Móvel								user : solinfnet.asa.aguasanta.f_7000
+
+	220.21.0.0/24	Galiota
+			1.5		Faz. Galiota						user : solinfnet.galiota.fz_galiota (Restrição)
+
+	220.22.0.0/24	Nazare
+			1.5		 Faz. Nazare						user : solinfnet.nazare.fz_nazare
+			2.5 	 Faz. Monte Verde 					user : solinfnet.nazare.fz_monte_verde
+			3.5 	 Faz. Verona	 					user : solinfnet.nazare.fz_verona
+
+	220.23.0.0/24 	Grupo Samara
+			1.5		Faz. Cacimbas 						user : solinfnet.gruposamara.fz_cacimbas
+
+	220.24.0.0/24	Grupo Rotta
+			1.5		Faz. Sapezal (Canário)				user : solinfnet.grupo_rotta.fz_sapezal
+			2.5 	Faz. Nossa Senhora 					user : solinfnet.grupo_rotta.fz_nossa_senhora
+			3.5 	Faz. Santa Rosa 					user : solinfnet.grupo_rotta.fz_santa_rosa
+
+	220.25.0.0/24 	Serios
+			1.5		Faz. Alaska							user : solinfnet.serios.fz_alaska
+			2.5		Faz. Aurora	/ Itália /Braussie		user : solinfnet.serios.fz_aurora (A RB é do cliente, era pra ser temporária mais não quiseram levar outra lá por hora S-070725-026)
+			3.5		Faz. Romanholi						user : solinfnet.serios.fz_romanholi
+
+	220.26.0.0/24	Jotabasso
+			1.5		Faz. Serrinha						user : solinfnet.jotabasso.fz_serrinha
+			(volt da 1003 é o IP 220.138.1.120 - Poste compartilhado com o Grupo 4 Irmãos Cedro)
+			2.5		Faz. Jotabasso 						user : solinfnet.jotabasso.fz_jotabasso
+			3.5		Faz. Verde 							user : solinfnet.jotabasso.fz_verde
+			4.5 	Faz. Guiratinga 					user : solinfnet.jotabasso.fz_guiratinga
+			5.5		Faz. Calabria 						user : solinfnet.jotabasso.fz_calabria
+
+	220.27.0.0/24 	Bortoluzzi
+			1.5		Faz. Lajeada						user : solinfnet.bortoluzzi.fz_lajeada
+
+	220.28.0.0/24	Amaggi
+			1.5		Faz. Tanguro						user : solinfnet.amaggi.fz_tanguru
+			 .245    Gateway Anta 						user : solinfnet.amaggi.fz_tanguro.f_2007
+			2.5		Faz. Sta Maria 						user : solinfnet.amaggi.fz_sm1
+			3.5		Faz. Pirapó							user : solinfnet.amaggi.fz_pirapo		
+			4.5		Faz. O Telhar
+			5.5  	Faz. Leonardo						user : solinfnet.amaggi.fz_leonardo
+			6.5 	Faz. Rio Verde 						user : solinfnet.amaggi.fz_rio_verde			
+			7.5 	Faz. Sete Lagoas					user : solinfnet.amaggi.fz_sete_lagoas
+			8.5 	Faz. Nova 							user : solinfnet.amaggi.fz_nova
+			9.5 	Faz. Primavera						user : solinfnet.amaggi.fz_primavera
+			10.5 	Faz. Primavera - Flor  	 			user : solinfnet.amaggi.fz_primavera_flor_do_campo
+			11.5	Faz. Carolina						user : solinfnet.amaggi.fz_carolina
+			12.5 	Faz. Independencia 					user : solinfnet.amaggi.fz_independencia
+			13.5 	Faz. Independencia2					user : solinfnet.amaggi.fz_independencia2
+			14.5	Faz Carolina 2						user : solinfnet.amaggi.fz_carolina2
+			15.5	Faz Carolina 3						user : solinfnet.amaggi.fz_carolina3
+			16.5 	Faz Carolina 4 						user : solinfnet.amaggi.fz_carolina4
+
+	220.29.0.0/24	Paraguaçu
+			1.5		Faz. Paraguaçu						user : solinfnet.paraguacu.fz_paraguacu
+
+	220.30.0.0/24	SLC
+			1.5		Faz. Palmares 1	(SEDE)					user : solinfnet.slc.fz_palmares1 (DESABILITADO, FAZENDA RODANDO POR 4G, somente a RB com acesso)
+			2.5		Faz. Pamplona 1 (RENASCENCA)			user : solinfnet.slc.fz_pamplona 
+			3.5		Faz. Paysandu  (TABULEIRO)				user : solinfnet.slc.fz_paysandu (PW: $0l1nft3c)
+			4.5 	Faz. Paysandu 2 (Tabuleiro V)			user : solinfnet.slc.fz_paysandu2 	
+			5.5		Faz. Paiaguas 							user : solinfnet.slc.fz_paiaguas
+			6.5		Faz. Paladino							user : solinfnet.slc.fz_paladino		
+			7.5		Faz. Palmares (Bonanza)					user : solinfnet.slc.fz_bonanza
+			8.5		Faz. Palmares (Sete Belo)				user : solinfnet.slc.fz_setebelo (DESABILITADO, FAZENDA RODANDO POR 4G, equipamentos com acesso)
+			9.5		Faz. Pampeira 							user : solinfnet.slc.pampeira1
+			10.5	Faz. Pamplona 2 (BOCAINA)				user : solinfnet.slc.fz_pamplona2
+			11.5	Faz. Pantanal 1							user : solinfnet.slc.fz_pantanal1
+			12.5	Faz. Pantanal 2							user : solinfnet.slc.fz_pantanal2
+			13.5	Faz. Parceiro							user : solinfnet.slc.fz_parceiro
+			14.5	Faz. Parnagua							user : solinfnet.slc.fz_parnagua
+			15.5	Faz. Palmeira 1							user : solinfnet.slc.fz_palmeira1 
+			16.5	Faz. Perdizes   						user : solinfnet.slc.fz_perdizes
+			17.5	Faz. Palmeira 2 						user : solinfnet.slc.fz_palmeira2
+			18.5 	Faz. Parnaiba 							user : solinfnet.slc.fz_parnaiba
+			19.5	Faz. Pirapora							user : solinfnet.slc.fz_pirapora
+			20.5	Faz. Planeste 1							user : solinfnet.slc.fz_planeste1
+			21.5	Faz. Planeste 2							user : solinfnet.slc.fz_planeste2
+			22.5	Faz. Palmeira 3							user : solinfnet.slc.fz_palmeira3
+			23.5	Faz. Piratini 							user : solinfnet.slc.fz_piratini
+			24.5	Faz. Planalto							user : solinfnet.slc.fz_planalto
+			25.5	Faz. Pioneira							user : solinfnet.slc.fz_pioneira
+			26.5	Faz. Piracema							user : solinfnet.slc.fz_piracema					
+			27.5	Faz. Piracema II 						user : solinfnet.slc.fz_piracemaII
+			27.25 	Faz  Piracema II GPRS					user : solinfnet.slc.fz_piracemaII.f85002
+			28.5	Faz. Planorte							user : solinfnet.slc.fz_planorte (ZIGBEE DESATIVADO PRA RODAR O 4G EXCETO O POSTE .125)
+			29.5											user : 
+			30.5   	Faz. Prospera							user : solinfnet.slc.fz_prospera
+			31.5 	Faz. Pejuçara 							user : solinfnet.slc.fz_pejucara
+			32.5 	Faz. Pamplona 3 						user : solinfnet.slc.fz_pamplona3
+			33.5	Faz. Perdizes 2							user : solinfnet.slc.fz_perdizes2
+			34.5	Faz. Paineira							user : solinfnet.slc.fz_paineira
+			35.5	Faz. Paineira 2							user : solinfnet.slc.fz_paineira2
+			36.5	Faz. Preciosa 							user : solinfnet.slc.fz_preciosa
+			37.5 	Faz. Piratini
+			  .105	Faz. Piratini 4G						user : solinfnet.slc.fz_piratini.f_93001
+			38.5	Faz. Perpetua (ITAPUA)					user : solinfnet.slc.fz_perpetua
+			39.5    Faz. Perpetua 2 (313004)				user : solinfnet.slc.fz_perpetua2
+			40.5    Faz. Potencia (NOVA HOLANDA)            user : solinfnet.slc.fz_potencia
+			41.5    Faz. Porteira (FARTURA)		            user : solinfnet.slc.fz_porteira
+			42.5	Faz. Parceiro2							user : solinfnet.slc.fz_parceiro2
+            43.5    Faz. Porteira Torre 4 112003            user : solinfnet.slc.fz_porteira.torre4
+
+	220.31.0.0/24	Agua Santa
+			1.5		Faz. Boa Esperança						user : solinfnet.agua_santa.fz_boa_esperan
+			2.5		Faz. Correntina							user : solinfnet.agua_santa.fz_correntina
+			3.5		Agua Santa 2 (Sacramento) F.2000		user : solinfnet.agua_santa.sacramento
+			4.5		Agua Santa (Perdizes)					user : solinfnet.agua_santa.perdizes
+			5.5		Agua Santa 1 - F.5001					user : solinfnet.agua_santa.aguasanta4
+            6.5     Faz.Douradinho                          user : solinfnet.agua_santa.faz.douradinho.f_7000
+
+	220.32.0.0/24	Grupo Gatto
+			1.5		Faz. Carmen							user : solinfnet.grupogatto.fz_sta_carmem
+			2.5		Faz. Argemira						user : solinfnet.gatto.fz_argemira
+			3.105	Faz. Argemira GPRS					user : solinfnet.gatto.fz_argemira.f_12000
+			101.5	Faz. Argemira EnodB					user : solinfnet.gatto.fz_argemira.enodeb
+
+	220.33.0.0/24	Seis Irmaos			
+			1.5		Faz. Seis Irmaos					user : solinfnet.seisirmaos_fz_seisirmaos
+
+	220.34.0.0/24	Kappes
+			1.5		Faz. Terra Unida					user : solinfnet.kappes.fz_terraunida
+			2.5		Faz. Querencia						user : solinfnet.kappes.fz_querencia
+			3.5		Faz. Ipe							user : solinfnet.kappes.fz_ipe
+			4.5		Faz. Sto Inacio						user : solinfnet.kappes.fz_santo_inacio
+			5.5		Faz. Bacuri							user : solinfnet.kappes.fz_bacuri		
+
+	220.35.0.0/24 (VAGO TS AGRO - PASSAR OUTRO CLIENTE)
+
+
+	220.36.0.0/24	Paulo Assunção
+			1.5		Faz. Paulo Assunção
+
+	220.37.0.0/24	Agrojem
+			1.5		Faz. Bacaba (SEDE) 
+             .155   Gateway Movel F1008 - Starlink      user : solinfnet.agrojem.fz_bacaba.f_1008
+ 			2.5		Faz. Armazem/Silo (Bacaba)
+			3.5		Faz. Céu Azul
+			4.5		Faz. São Geraldo
+           
+	220.38.0.0/24	Boa Esperança
+			1.5		Faz. Boa Esperança 					user : solinfnet.boaesperanca.fz_boaesperanca
+			2.5		Faz. Nossa Senhora/Agrovera         acesso por TeamViewer
+			3.5		Faz. Pirapó 						user : solinfnet.boaesperanca.fz_pirapo
+			4.5		Faz. Quatrilho						user : solinfnet.boaesperanca.fz_quatrilho
+			5.5		Faz. Cedro 							user : solinfnet.boaesperanca.fz_cedro
+			6.5     Faz. Yabumoto (Boa Esperança)		user : solinfnet.boaesperanca.fz_boaesperanca_yabumoto
+			7.5 	Faz. Pirapó/Graxa 					user : solinfnet.boaesperanca.fz_pirapo_graxa
+			8.5 	Faz. Cedro Talhão 08	 			user : solinfnet.boaesperanca.fz_cedro_tl08
+			9.105 	Faz. Torre Vera Cruz				user : solinfnet.boaesperanca.fz_quat.f_23001
+			10.5	Faz. Águia Branca f24000			user : solinfnet.boaesperanca.fz_aguiabranca
+			12.5	Faz. Ailan f23002					user : solinfnet.boaesperanca.fz_ailan
+
+	220.39.0.0/24	Grupo ECR
+			1.5		 Faz. Veredas						user : solinfnet.ecr.fz_veredas
+			2.5		 Faz. Rio da prata 					user : solinfnet.ecr.fz_riodaprata
+			3.5		 Faz. São Francisco 				user : solinfnet.ecr.fz_saofrancisco
+			4.5		 Faz. Progresso						user : solinfnet.ecr.fz_progresso
+			5.5 	 Faz. Santa Filomena 				user : solinfnet.ecr.fz_santa_filomena
+			6.5      Faz. Lagoa Formosa					user : solinfnet.ecr.fz_lagoa_formosa
+			 .105    Torre Aragao                       user : solinfnet.ecr.fz_lagoa_formosa.f_15389
+			 .115    Torre Campo Alegre                 user : solinfnet.ecr.fz_lagoa_formosa.f_15390
+			 .125	 Torre Faz. Liberdade				user : solinfnet.ecr.fz_lagoa_formosa.f_16001
+			7.5      Faz. Liberdade                     user : solinfnet.ecr.fz_liberdade
+			8.5      Faz. Retiro  						user : solinfnet.ecr.fz_retiro
+			9.5 	 Faz. Cascata								
+			 .105 	 Torre Cascata						user : solinfnet.ecr.fz_cascata.f_16003
+            10.5     Faz. Nossa Semnhora Aparecida  	user : solinfnet.ecr.fz_nossa_senhora_aparecida
+
+	220.40.0.0/24	Agroservice
+			1.5		Faz. Agroservice					user : solinfnet.agroservice.fz_agroservice
+			2.5 	Faz. Agroinvest						user : solinfnet.agroservice.fz_agroinvest
+			3.5 	Faz. Iowa							user : solinfnet.agroservice.fz_iowa
+			 .105 	Faz. Iowa							user : solinfnet.agroservice.fz_iowa.f_203
+
+	220.41.0.0/24	AgroCrestani
+			1.5		Faz. Crestani
+			1.105	 Sede Crestani						user : solinfnet.agrocrestani.f_13000
+			1.115	 Sede São Carlos					user : solinfnet.agrocrestani.f_12000
+			1.125	 T. Sta Isabel						user : solinfnet.agrocrestani.f_13001
+			1.135	 T. Promissão						user : solinfnet.agrocrestani.f_10000
+			1.145 	 T. Sugestão (São Geraldo)			user : solinfnet.agrocrestani.f_12001
+			1.155	T. Colorado							user : solinfnet.agrocrestani.f_10001	
+			2.5 	Faz. Brasnorte (Curupai)			user : solinfnet.agrocrestani.curupai
+			3.5 	Faz. Querencia (Rio Verde)			user : solinfnet.agrocrestani.fz_querencia
+			4.5 	Faz. Papagaio						user : solinfnet.agrocrestani.fz_papagaio
+
+	220.42.0.0/24	Bom Jesus			
+			1.5		Faz. Sta Terezinha					user : solinfnet.bomjesus.fz_sta_terezinha
+			2.5		Faz. Piuva							user : solinfnet.bomjesus.fz_piuva
+			3.5		Faz. Tupan 							user : solinfnet.bomjesus.fz_tupan
+
+	220.43.0.0/24	Cereal Ouro
+			1.5		Faz. Cereal Ouro 					user : solinfnet.cereal_ouro.cereal_ouro
+
+	220.44.0.0/24	LM Pressi
+			1.5		Faz. Blumenau						user : solinfnet.lm_pressi.fz_blumenau
+
+	220.45.0.0/24	Montani
+			1.5		Faz. Montani						user : solinfnet.montani.fz_montani
+
+	220.46.0.0/24	Nova Piratininga
+			1.5		Faz. Piratininga 					user : solinfnet.nova_piratininga.fz_nova_piratininga
+            2.105	Faz. Piratininga.F10000 GPRS CLARO	user : solinfnet.nova_piratininga.fz_nova_piratininga.f10000
+
+	220.47.0.0/24	Openag Farm (Sinagro)
+			1.5		Faz. Caroline						user : solinfnet.openagfarm.fz_carolina
+			2.5		Faz. Garça Branca					user : solinfnet.openagfarm.fz_garcabranca
+			3.5		Faz. Lagoa Encantada				user : solinfnet.openagfarm.fz_lagoa_encantada
+			4.5		Faz. Progresso						user : solinfnet.openagfarm.fz_progresso
+			5.5		Faz. Fidalga						user : 
+			 .105	Faz. Fidalga 1003					user : solinfnet.opengfarm.fidalga.f_1003
+			6.5		Faz. Sta Maria 						user : solinfnet.openagfarm.fz_stamaria
+			7.5		Faz. Nossa Senhora Aparecida		user : solinfnet.openagfarm.fz_aparecida
+
+	220.48.0.0/24	Progresso
+			1.5		Faz. Progresso
+
+	220.49.0.0/24	Reunidas	
+			1.5		Faz. fz_reunidas					user : solinfnet.reunidas.baugart
+			101.5	Faz. Reunidas EnodeB				user : solinfnet.reunidas.baugart (admin/Baicells@123)
+
+	220.50.0.0/24	Roquetto
+			1.5		Faz. Extra							user : solinfnet.roqueto.fz_extra
+
+	220.51.0.0/24	São Francisco
+			1.5		Faz. São Francisco 					user: solinfnet.sao_francisco.sao_francisco
+
+	220.52.0.0/24	Agro Salgueiro
+			1.5		Faz. Agro Salgueiro					user : solinfnet.agro_salgueiro.fz_salgueiro
+			2.5		Faz. São Pedro						user : solinfnet.agro_salgueiro.fz_sao_pedro
+
+	220.53.0.0/24	Bartira	
+			1.5     Faz. San Jorge 						user: solinfnet.bartira.fz_sanjorge
+			2.5		Faz. San José I 					user: solinfnet.bartira.fz_sanjose1
+			3.5		Faz. San José II					user: solinfnet.bartira.fz_sanjose2
+			4.5		Faz. San Antonio					user: solinfnet.bartira.fz_san_antonio
+            5.5		Faz. San Antonio F20001		 		user: solinfnet.bartira.fz_san_antonio.f20001
+			
+	220.54.0.0/24	Bom Futuro	
+			1.5		Faz. Sta Terezinha
+			2.5 	Faz. São José
+
+	220.55.0.0/24	Fermap
+			1.5		Faz. Horizontina 					user : solinfnet.fermap.fz_horizontina
+			2.5		Faz. Menina Lynda					user : solinfnet.fermap.fz_menina_lynda
+
+	220.56.0.0/24	Insolo
+			1.5		Faz. Cerro Azul 					user : solinfnet.insolo.fz_cerroazul
+			2.5		Faz. Ipe 							user : solinfnet.insolo.fz_ipe
+			3.5		Faz. Fortaleza	 					user : solinfnet.insolo.fz_fortaleza
+            4.5		Faz. Metropolitana 					user : solinfnet.insolo.fz_metropolitana
+            5.5		Faz. Regional Serra Ovo				user : solinfnet.insolo.fz_serradoovo
+
+	220.57.0.0/24	Livio Andreghetti
+			1.5		Faz. Mato Grosso
+			2.5		Faz. Panamá
+			3.5		Faz. Promissão
+
+	220.58.0.0/24	Morada de Deus
+			1.5		Faz. Morada de Deus 				user: solinfnet.morada_de_deus
+
+	220.59.0.0/24	
+			1.5		
+
+	220.60.0.0/24	Roncador
+			1.5		
+			2.105 	Roncador F 10000 					user : solinfnet.roncador.f_10000
+			2.115 	Roncador F 10001 					user : solinfnet.roncador.f_10001
+			2.125 	Roncador F 10002 					user : solinfnet.roncador.f_10002		
+			2.135 	Roncador F 10003 					user : solinfnet.roncador.f_10003
+			2.145 	Roncador F 10004 					user : solinfnet.roncador.f_10004
+			2.155 	Roncador F 10005 					user : solinfnet.roncador.f_10005		
+			2.165 	Roncador F 10006 					user : solinfnet.roncador.f_10006
+			2.175 	Roncador F 10008 					user : solinfnet.roncador.f_10008
+			2.185 	Roncador F 10009 					user : solinfnet.roncador.f_10009
+			2.245	Roncador F 10012					user : solinfnet.roncador.f10012
+
+	220.61.0.0/24	Santa Colomba
+			1.5		Cafés								user : solinfnet.stacolomba_fzcafes
+			2.5		Tabaco								user : solinfnet.stacolomba_fztabaco
+
+	220.62.0.0/24	Sta Efigenia
+			1.5		Faz. Sta Efigenia		
+
+	220.63.0.0/24	Scheffer
+			1.5		Faz. Scheffer						user : solinfnet.scheffer.fz_rafaela
+
+	220.64.0.0/24	Schmidt
+			1.5		Faz. Coaceral						user : solinfnet.schmidt.fz_coacereal
+			2.5		Faz. Orquideas						user : solinfnet.schmidt.fz_orquideas
+			3.5		Faz. Ouro Verde  					user : solinfnet.schmidt.fz_ouro_verde
+			102.5	eNodeB Orquideas					user : solinfnet.schmidt.fz_orquideas_enodeb (admin/220.$0l1nft3c.6) / 220.64.2.4/24 na eth2
+
+	220.65.0.0/24	Sementes Adriana		
+			1.5		Faz. Adriana
+			1.115		Frota 120						user: solinfnet.sementes_adriana.fz_atto_sementes.f_120
+			1.125		Frota 121						user: solinfnet.sementes_adriana.fz_atto_sementes.f_121
+			1.175		Frota 117						user: solinfnet.sementes_adriana.fz_atto_sementes.f_117
+
+	220.66.0.0/24	Sempre Sementes
+			1.5		Faz. Sempre Sementes
+
+	220.67.0.0/24	Agua Tirada	
+			1.5		Faz. Agua Tirada					User: solinfnet.agua_tirada.fz_agua_tirada
+
+	220.68.0.0/24	
+			
+
+	220.69.0.0/24	Terra Savana						
+			1.5		Faz. Sao Jose e Faz Cascata 		user : solinfnet.terrasavana.fz_terra_savana (user: parceiro | pw: 123@Mudar)
+			2.5 	Faz. Jacaranda						user : solinfnet.terrasavana.fz_jacaranda
+			3.5 	Faz. Sussuarana 					user : solinfnet.terrasavana.fz_sussuarana
+
+	220.70.0.0/24	Grupo ER
+			1.5		 Faz. Panambi						user : solinfnet.grupoer.fz_panambi
+			2.5 	 Starlink Enodb 					user : solinfnet.grupoer.starlink_enodb
+
+	220.71.0.0/24	Merola
+			1.5		Faz. Merola (Faz. Santa Fé)			user : solinfnet.grupomerola.fz_sta_fe
+
+	220.72.0.0/24	Masutti
+			1.5		Faz. Masutti						user : solinfnet.masutti.fz_jk
+
+	220.73.0.0/24	Mitre Agro
+			1.5		Faz. Agua Limpa						user : solinftec.mitre_agro.fz_agua_limpa 
+			2.5		Faz. Sta Elisa	(SANTA JOANA)		user : solinftec.mitre_agro.fz_sta_elisa
+			3.5		Faz. Nossa Senhora 					user : solinftec.mitre_agro.fz_nossa_senhora
+
+	220.74.0.0/24	OLAM
+			1.5		Faz. OLAM							user : solinfnet.olam.fz_olam
+
+	220.75.0.0/24	Prevedello
+			1.5		Faz. Vitoria
+
+	220.76.0.0/24	Scaramal
+			1.5		Faz. Scaramal 						user: solinfnet.scaramal.fz_scaramal
+
+	220.77.0.0/24	Sementes Petrovina
+			1.5		Faz. Farroupilha					user : solinfnet.sementes_petrovina.farroupilha
+			2.5		Faz. Leopoldina						user : solinfnet.sementes_petrovina.fz_leopoldina
+			3.5		Faz. Piratini						user : solinfnet.sementes_petrovina.fz_piratini
+			4.5		Faz. Rancho Fundo 					user : solinfnet.sementes_petrovina.fz_rancho_fundo
+			5.5		Faz. Rancho Fundo 2 				user : solinfnet.sementes_petrovina.fz_rancho_fundo2
+
+	220.78.0.0/24	Sinopoli
+			1.5		Faz. São João						user : solinfnet.sinopoli.fz_sao_joao
+			2.5		Faz. Sta Terezinha					user : solinfnet.sinopoli.fz_sta_terezinha
+
+	220.79.0.0/24	Grupo Prante >> antiga Vale do verde
+			1.5		Faz. Conta Sul 															user : solinfnet.valedoverde.conta_sul
+			2.5		Faz. Nova Fronteira														user : solinfnet.valedoverde.fz_nova_fronteira
+			3.5		Faz. Vale 220 >> rede compartilhada com a vale do verde atual 			user : solinfnet.valedoverde.fz_vale_220
+			4.105   Torre 60 mt Nova Fronteira          									user : solinfnet.vale_do_verde.f_11003
+			4.115 	Gateway Móvel Provisório 11050 											user : solinfnet.vale_do_verde.f_11050
+			5.5 	Nova Fronteira Arrendado										
+			5.105	Torre Nova Fronteira - 10000 											user : solinfnet.valedoverde.fz_nova_fronteira.f_10000
+			6.5 	Faz. Modelo 															
+			 .105 	Torre Sede - 11000														user : solinfnet.valedoverde.fz_modelo.f_11000
+			 .115	Torre Viúva - 11001 													user : solinfnet.valedoverde.fz_modelo.f_11001
+			 .125	Torre Modelo - 11002 													user : solinfnet.valedoverde.fz_modelo.f_11002
+
+	220.80.0.0/24	Rodrigo Zuanazzi
+			1.5		Faz. Brasão							user : solinfnet.zuanazzi.fz_brasao
+
+	220.81.0.0/24	Grupo Secco
+			1.5		Faz. Três Irmãs						user :	solinfnet.gruposecco.fz_tres_irmas
+
+	220.82.0.0/24	Grupo MEC
+			1.5 	Faz. Alvorada						user :  solinfnet.grupomec.fz_alvorada
+
+	220.83.0.0/24	SJDR - Chaparral Ashidani		
+			1.5		Faz. Chaparral						user : solinfnet.chaparral.fz_chaparral
+
+	220.84.0.0/24	Gianchini
+			1.5		Faz. Matão							user : solinfnet.giachini.fz_matao			(com acesso)								
+			 .245	Faz. Matão - Poste X03				user : solinfnet.giachini.fz_matao.f_1004
+
+	220.85.0.0/24	Piloto Base Graos
+			1.5 	Faz. Ima 							user : solinfnet.ima 			(piloto_basegraos)
+			2.5		Faz Agropalma						user : solinfnet.pilotobasegraos.fz_agropalma
+
+	220.86.0.0/24	Hendges
+			1.5		Faz. Guarani						user: solinfnet.hendges.fz_guarani
+
+	220.87.0.0/24	Agro SB
+			1.5		Faz. Agro SB						user: solinfnet.agrosb.fz_agrosb
+
+	220.88.0.0/24	Grupo Guimarães
+			1.5		Faz. Chapadao 						user : solinfnet.grupo_guimaraes.fz_chapadao
+			2.5		Faz. Florisbela	F12000				user : solinfnet.grupo_guimaraes.fz_florisbela
+			3.5		Faz. Brasil 	F13000				user : solinfnet.grupo_guimaraes.fz_brasil
+			4.5		Faz. Serra Dourada F14000			user : solinfnet.grupo_guimaraes.fz_serra_dourada
+			5.5		Faz. Felicidade						user : solinfnet.grupo_guimaraes.fz_felicidade
+			6.5		Torre Grameleira					user : solinfnet.grupo_guimaraes.fz_grameleira
+			7.5     Torre Sombra da Mata                user : solinfnet.grupo_guimaraes.fz_sombra_mata
+			8.5		Faz. Jarina 	 					user : solinfnet.grupo_guimaraes.fz_jarina
+			8.105   Torre Sede Santa Margarida			user : solinfnet.grupo_guimaraes.f_17000
+
+
+	220.89.0.0/24	Grupo Siembra
+			1.5 	Faz. Perola							user : solinfnet.gruposiembra.fz_perola
+
+	220.90.0.0/24	Agro Pissollo
+			1.5 	Faz. Pissollo						user : solinfnet.agropissollo.fz_pissollo
+
+	220.91.0.0/24	Zanotto
+			1.5 	Faz. Remanso e Trancoso				user : solinfnet.zanotto.fz_remanso
+			2.5 	Faz. Zanotto						user : solinfnet.zanotto.fz_zanotto
+
+	220.92.0.0/24	Santa Inês
+			1.5 	Faz. Campos de Júlio				user : solinfnet.santa_ines.fz_campos_de_julio
+
+	220.93.0.0/24 	Grupo JMC
+			1.5 	Faz. Brasil							user : solinfnet.grupo_jmc.fz_brasil
+			2.5 	Faz. Campestre (Guaíra)				user : solinfnet.grupo_jmc.fz_campestre 
+
+	220.94.0.0/24	La Fazenda
+			1.5 	 La Fazenda
+			105 	 Faz. 400953 						user : solinfnet.la_fazenda.fz_400953.f_10000
+			115		 Faz. 400967						user : solinfnet.la_fazenda.fz_400967.f_10002
+			125      Faz. 10000							user : solinfnet.la_fazenda.f_10001
+
+	220.95.0.0/24	Crimeia
+			1.5 	Faz. Crimeia						user : solinfnet.crimeia.fz_crimeia
+
+	220.96.0.0/24 	Agro Zanella
+			1.5     Faz. Zanella 1						user : solinfnet.zanella.fz_zanella1
+			2.5
+			3.5 	Faz. Zanella 3 						user : solinfnet.agro_zanella.fz_zanella3
+            4.5 	Faz. Zanella 3 (Caixa Dagua) 		user : solinfnet.agro_zanella.fz_zanella3.caixadagua
+
+	220.97.0.0/24	Grupo Facholi
+			1.5 	 Faz. Sementes Facholi				user : solinfnet.grupo_facholi.fz_sementes_facholi
+			2.5 	 Faz. Campo Novo					user : solinfnet.grupo_facholi.fz_campo_novo
+			3.5 	 Faz. São José						user : solinfnet.grupo_facholi.fz_sao_jose
+	
+	220.98.0.0/24	Gilmar Scheffer
+			1.5 	Faz. Toledo							user : solinfnet.gilmar_scheffer.faz_toledo
+
+	220.99.0.0/24	Grupo APM
+			1.5 	Faz. 2P								user : solinfnet.grupo_apm.fz_2p
+			2.5 	Faz. Ponte de Pedra 	 			user : solinfnet.grupo_apm.fz_ponte_de_pedra
+
+	220.100.0.0/24	Vidotti
+			1.5 	Faz. Boa Esperança					user : solinfnet.vidotti.fz_boa_esperanca
+			2.5 	Faz. Futuro da prata 	 			user : solinfnet.vidotti.fz_futuro_da_prata
+
+	220.101.0.0/24	Ideal Agro
+			1.5 	Faz. Mutum							user : solinfnet.ideal_agro.faz_mutum
+
+	220.102.0.0/24 	Fazenda Amanhecer
+			1.5 	Faz. Amanhecer I 					user : solinfnet.fz_amanhecer.fz_amanhecer1 (não instalado ainda)
+			2.5 	Faz. Amanhecer II 					user : solinfnet.fz_amanhecer.fz_amanhecer2 (não instalado ainda)
+			3.5		Faz. Amanhecer III					user : solinfnet.fz_amanhecer.fz_amanhecer3
+
+	220.103.0.0/24	Decio Gibbert
+			1.5 	Faz. Santa Luzia					user : solinfnet.decio_gibbert.fz_santa_luzia
+			2.5 	Faz. São Francisco					user : solinfnet.decio_gibbert.fz_sao_francisco (Desativada)
+			3.5 	Sítio Coqueiral						user : solinfnet.decio_gibbert.sitio_coqueiral
+
+	220.104.0.0/24	Maggioni *** ATENÇAO 
+			1.5 	 Faz. Boa Sorte 					user : solinfnet.maggioni.fz_boa_sorte
+						usuario rb: solinfnet
+						senha:      $0l1nft3c
+			2.5 	 Faz. Antares 						user : solinfnet.maggioni.fz_antares
+						usuario rb: solinfnet
+						senha:      $0l1nft3c
+
+	220.105.0.0/24 	Menegol
+			1.5 	Faz. Parecis 		 				user : solinfnet.menegol.fz_parecis
+			2.5  	Faz. Colorado						user : solinfnet.menegol.fz_colorado
+			3.5 	Faz. Retiro 						user : solinfnet.menegol.fz_retiro
+			4.5 	Faz. Santa Maria 					user : solinfnet.menegol.fz_santa_maria
+			5.5     Faz. Capa Zero 						user : solinfnet.menegol.fz_capazero
+			6.5 	Faz. JB 							user : solinfnet.menegol.fz_jb
+			7.5 	Faz. Carla f21000					user : solinfnet.menegol.fz_carla
+			8.5 	Faz. São Joaquim 					user : solinfnet.menegol.fz_sao_joaquim
+
+	220.106.0.0/24	Maurício Bocolli
+			1.5 	 Faz. Pioneira 						user : solinfnet.bocolli.fz_pioneira
+			2.5 	 Faz. Pioneira 02					user : solinfnet.bocolli.fz_pioneira2
+			3.5 	 Faz. Pioneira 03 (POSTEX7)			user : solinfnet.bocolli.fz_pioneira3
+
+	220.107.0.0/24	Schlatter
+			1.5 	 Faz. Serrinha	 					user : solinfnet.schlatter.fz_serrinha
+			2.5 	 Faz. Cristalina 					user : solinfnet.schlatter.fz_cristalina
+
+	220.108.0.0/24	Grupo Tecoha (Melcher)
+			1.5 	 Faz. São Vicente 					user : solinfnet.tecoha.fz_saovicente
+			2.5 	 Faz. Tecoha 						user : solinfnet.tecoha.fz_tecoha
+			3.5 	 Faz. Rota do Sol 					user : solinfnet.tecoha.fz_rotadosol
+			4.5 	 Faz. Tecoha 2 						user : solinfnet.tecoha.fz_tecoha2
+			5.5		 Faz. Mata Fresca 					user : solinfnet.tecoha.fz_matafresca
+			6.5		 Faz. Mata Linda 					user : solinfnet.tecoha.fz_matalinda
+			
+	220.109.0.0/24	Jumasa
+			1.5 	 Faz. Jumasa	 					user : solinfnet.jumasa.fz_jumasa
+
+	220.110.0.0/24	Bigolin
+			1.5		Faz. Bigolin						user : solinfnet.bigolin.fz_bigolin
+			2.5		Faz. S.J. Tadeu (Campos de Julio)	user : solinfnet.bigolin.fz_campos_de_julio
+
+	220.111.0.0/24	Granja 4 Irmãos
+			1.5 	 Granja 4 Irmãos 					user : solinfnet.granja4irmaos.fz_vila
+			2.105	Móvel 11000							user : solinfnet.granja4irmaos.fz_vila.f_11000
+			2.115	Móvel 11001							user : solinfnet.granja4irmaos.fz_vila.f_11001
+			2.125	Caixa D'Água - 10005				user : solinfnet.granja4irmaos.fz_vila.f_10005
+
+	220.112.0.0/24	Grupo Kompier
+			1.5		Faz. Brasilandia					user : solinfnet.grupo_kompier.fz_brasilandia
+			2.5 	Faz. Chapadao 						user : solinfnet.grupo_kompier.fz_chapadao 
+			3.5 	Faz. São Sebastião				 	user : solinfnet.grupo_kompier.fz_sao_sebastiao
+			4.5		Faz. São Domingos					user : solinfnet.grupo_kompier.fz_sao_domingos
+			5.5		Faz. Retiro Velho f13000			user : solinfnet.grupo_kompier.fz_retiro_velho
+
+	220.113.0.0/24	Sinopema
+			1.5		Faz. Rio do Peixe					user : solinfnet.sinopema.fz_riodopeixe
+
+	220.114.0.0/24	Green Agronegócio (Cachoeirinha)
+			1.5		Faz. cachoeirinha					user : solinfnet.green_agronegocio.fz_cachoeirinha
+
+	220.115.0.0/24	Fazenda Aliança
+			1.5		Faz. Aliança						user : solinfnet.alianca.fz_alianca
+			2.5		Faz. Aliança 3						user : solinfnet.alianca.fz_alianca3
+			3.5     Faz. Aliança 2						user : solinfnet.alianca.fz_alianca2
+            4.5 	Faz. China Branca 					user : solinfnet.grupo_alianca.fz_china_branca
+			
+	220.116.0.0/24	Laura Porto
+			1.5		Faz. Onça do Barão					user : solinfnet.laura_porto.fz_onca_do_barao
+			
+	220.117.0.0/24	São Felix
+			1.5		Faz. Corso							user : solinfnet.saofelix.fz_corso
+
+	220.118.0.0/24  Ouro Branco
+			1.5  	 Faz. Arni Alberto 					user : solinfnet.ourobranco.fz_ourobranco
+			
+	220.119.0.0/24	GCS Agro (Celeiro)
+			1.5		Faz. Celeiro BA 					user : solinfnet.celeiro.fz_celeiro
+			2.5		Faz. Celeiro PI 					user : solinfnet.celeiro.fz_celeiro_pi
+			3.5		Faz. Celeiro BA2 f12000				user : solinfnet.celeiro.fz_celeiro2
+			4.5		Faz. Celeiro BA3					user : solinfnet.celeiro.fz_celeiro3
+	
+	220.120.0.0/24	GianCarlo
+			1.5		Faz. Laginha						user : solinfnet.giancarlo.fz_laginha
+
+	220.121.0.0/24 	Grupo FNE
+			1.5 	 Faz. Nova Esperança 				user : solinfnet.grupo_fne.fz_nova_esperanca
+
+	220.122.0.0/24 	Sapeagro
+			1.5 	 Faz. Sape 1 						user : solinfnet.sapeagro.fz_sape1
+			2.5 	 Faz. Invernadinha					user : solinfnet.sapeagro.fz_invernadinha
+			3.5 	 Faz. Santa Ines					user : solinfnet.sapeagro.fz_santa_ines
+
+	220.123.0.0/24 	Stracci
+			1.5 	 Faz. Ana Terra 					user : solinfnet.stracci.fz_ana_terra
+
+	220.124.0.0/24 	Rio Sabão
+			1.5      Faz. Rio Sabão f1001 e 1002		user : solinfnet.rio_sabao.fz_rio_sabao
+			2.5      Faz. Rio Sabão 2  f1000 e 1003		user : solinfnet.rio_sabao.fz_rio_sabao2
+
+	220.125.0.0/24 	Strike Brasil
+			1.5 	 Strike Brasil	
+			 .235	 Concentrador 						user : solinfnet.strike_brasil.caarapo.f_10001					
+			 .245	 Concentrador 						user : solinfnet.strike_brasil.caarapo.f_10000
+
+	220.126.0.0/24 	Manica
+			1.5 	 Faz. Vale Verde f4000 				user : solinfnet.manica.fz_vale_verde
+			2.5 	 Faz. Vivendas (Santo Antonio)  	user : solinfnet.manica.fz_sto_antonio (Ajustar depois, passaram o nome da unidade errado)
+			3.5		 Faz. Paraiso						user : solinfnet.manica.fz_paraiso
+			4.5		 Faz. Lote 31						user : solinfnet.manica.fz_lote31
+			4.135    Faz. Poste x3						user : solinfnet.manica.faz_lote31.f_7003
+			5.5 	 Faz. Lote 2 f6000					user : solinfnet.manica.fz_lote2
+			
+
+	220.127.0.0/24 	Grupo Independência
+			1.5 	 Faz. Independência 				user : solinfnet.grupo_independencia.fz_independencia
+			2.5		 Faz. Matão							user : solinfnet.grupo_independencia.fz_matao
+	
+	220.128.0.0/24	Lavoro
+			1.5		 Faz. Canel							user : solinfnet.lavoro.fz_canel
+
+	220.129.0.0/24	Talismã
+			1.5		Faz. talismã (tamarana)				user : solinfnet.talisma.fz_talisma
+			2.5 	Faz. Rio Formoso	 				user : solinfnet.talisma.fz_rioformoso
+
+	220.130.0.0/24 	Fazenda Arauna
+  			1.5 	Faz. Arauna 						user : solinfnet.arauna.fz_arauna
+
+  	220.131.0.0/24 	Mizote
+  			1.5 	Faz. Mizote							user:  solinfnet.mizote.fz_mizote
+  			2.5 	Faz. Mizote Roda Velha 2			user:  solinfnet.mizote.sede1 (FROTAS 31000, 31002 e 31003)
+  			3.5 	Faz. Mizote3						user:  solinfnet.mizote.fz_mizote3 (FROTA 30002)
+			4.5		Faz. Sta Paula						user:  solinfnet.mizote.sta_paula
+			5.5     Santa Rosa (31001 SEDE1)			user:  solinfnet.mizote.sta_rosa (FROTA 32000)
+  			6.5 	Faz. Mizote Roda Velha 1 			user:  solinfnet.mizote.fz_mizote1
+
+  	220.132.0.0/24  Santa Cristina
+  			1.5 	Faz. Santa Cristina 				user : solinfnet.sta_cristina.fz_sta_cristina
+
+  	220.133.0.0/24  Sol Nascente
+  			1.5 	Faz. Sol Nascente 					user: solinfnet.solnascente.fz_solnascente
+  			2.5 	Torre X2							user: solinfnet.solnascente.fz_torrex2
+			3.5		Faz. Sol Nascente 2					user: solinfnet.solnascente.fz_solnascente2
+			4.5		Faz. Vizinho - Faz. Santa Clara	(12000 PX9)					user: solinfnet.solnascente.fz_vizinho
+			5.5 	Faz. Sol Nascente 3 				user: solinfnet.solnascente.fz_solnascente3
+			6.105 	Concentrador 15000 					user: solinfnet.solnascente.fz_solnascente.f_15000
+			6.115   POSTE 4G 02  15001					user: solinfnet.solnascente.fz_solnascente.f_15001
+			 .110 	Controladora de carga do Gateway 15001	
+
+  	220.134.0.0/24 	Grupo Adriano Kerber
+  			1.5 	Faz. Kerber (JL)					user: solinfnet.grupo_kerber.fz_kerber
+  			2.5 	Faz. Chiodi 						user: solinfnet.grupo_kerber.fz_chiodi
+
+    220.135.0.0/24  Piracicaba
+	        1.5     Faz. Piracicaba          			user: solinfnet.piracicaba.fz_piracicaba
+	        2.5     Faz. Ceres		          			user: solinfnet.piracicaba.fz_ceres
+
+	220.136.0.0/24  Grupo Natter
+	        1.5      Faz. Vaca Branca		        	user : solinfnet.natter.fz_vacabranca
+	        2.5 	 Faz. Sta Terezinha					user : solinfnet.natter.fz_santa_terezinha
+	        3.5 	 Faz. Vó Maria 						user : solinfnet.natter.fz_vo_maria
+	        4.5 	 Faz. Boa Vista 					user : solinfnet.natter.fz_boa_vista
+			5.5 	 Faz. Colibri	 					user : solinfnet.natter.fz_colibri
+			6.5 	 Faz. Vô Zeca	 					user : solinfnet.natter.fz_vo_zeca
+			7.105    Concentrador móvel Vaca Branca		user : solinfnet.natter.fz_vacabranca.f_16000
+
+	220.137.0.0/24  Faz. São José
+			1.5 	 Faz. São José 						user: solinfnet.faz_saojose.fz_saojose
+
+	220.138.0.0/24 	Grupo 4 Irmãos 						
+			1.5 	Faz. Cedro 							user: solinfnet.grupo4irmaos.fz_cedro
+			(1002 - POSTEX2_10M compartilha o poste com a 1003 da Jotabasso Serrinha)
+			
+	220.139.0.0/24	Bom Jesus (Adriana Folador)
+			1.5		 Faz Bom Jesus						user : solinfnet.folador.fz_bomjesus
+
+	220.140.0.0/24 	Maracai Agricola
+			1.5 	 Faz Denise 						user: solinfnet.maracai_agricola.fz_denise
+
+	220.141.0.0/24 	Serra Negra
+			1.5 	 Faz. Reunidas						user: solinfnet.serra_negra.fz_reunidas
+
+	220.142.0.0/24  Fausto Scholl - Faz. São Miguel 
+			1.5 	Faz. Sao Miguel 					user: solinfnet.fausto_scholl.fz_sao_miguel
+			2.5 	Faz. Seis Irmaos 					user: solinfnet.fausto_school.fz_seis_irmaos
+			3.5		Balança								user: solinfnet.fausto_school.balanca
+			4.5		Faz. Modelo							user: solinfnet.fausto_scholl.fz_modelo
+			5.5		Balança Cidade (T. VIZINHO)			user: solinfnet.fausto_school.balanca_cidade
+			
+
+	220.143.0.0/24 	Bragança Boscoli
+			1.5		Faz. Bragança Boscoli 				user: solinfnet.braganca.fz_braganca_boscoli
+			2.5     Faz. Zenitti						user: solinfnet.braganca.fz_zenitti	
+			#3.100	Faz. Estrela (Controladora do GW 12000)
+			#3.105	Faz. Estrela						user: solinfnet.estrela.boscoli.f_12000 (TORRE BRIDA ESTRELA BOSCOLI)
+			4.5     Faz. Lagoa Azul						user: solinfnet.braganca.fz_lagoa_azul
+
+	220.144.0.0/24 Igarashi
+			1.5 	 Faz. Ibicoara						user : solinfnet.igarashi.fz_ibicoara
+			2.5 	 Faz. Correntina 					user : solinfnet.igarashi.fz_correntina
+			3.5 	 Faz. Cristalina 					user : solinfnet.igarashi.fz_cristalina
+			4.5      Faz. São Bento						user : solinfnet.igarashi.fz_sao_bento
+			5.5		 Faz. Ibicoara eNodeB				user : solinfnet.igarashi.fz_ibicoara_enodeb
+			6.5		 Faz. Papanduva						user : solinfnet.igarashi.fz_papanduva
+			7.5 	 Faz. Papanduva (Móveis)
+			7.105	 Concentrador Móvel 3020			user:  solinfnet.igarashi.papanduva.f_3020 
+			7.115    Concentrador Móvel 3021			user:  solinfnet.igarashi.papanduva.f_3021
+			7.125    Concentrador Móvel 3022			user:  solinfnet.igarashi.papanduva.f_3022
+			8.105    Faz. Cristalina 12002 				user:  solinfnet.igarashi.cristalina.f_12002 
+			9.5		 Faz. São Gabriel					user:  solinfnet.igarashi.saogabriel
+
+	220.145.0.0/24 Tendencia Agro
+			1.5 	 Faz. Serra Azul					user : solinfnet.tendencia_agro.fz_serra_azul
+			2.5 	 Faz. Barigajau	 					user : solinfnet.tendencia_agro.fz_barigajau
+			3.5  	 Faz. Salto Belo 					user : solinfnet.tendencia_agro.fz_salto_belo
+			4.5  	 Faz. Shangrilá (Valzumiro Ceolim)	user : solinfnet.tendencia_agro.fz_shangrila
+
+	220.146.0.0/24 	Santa Matilde
+			1.5 	 Faz. Santa Matilde 				user : solinfnet.santa_matilde.fz_santa_matilde
+
+	220.147.0.0/24 	Grupo CGS
+			1.5 	 Faz. Água Limpa 	 				user : solinfnet.grupo_cgs.fz_agua_limpa
+			2.5		 Faz. Carolina						user : solinfnet.grupo_cgs.fz_carolina
+			3.5 	 Faz. Santo Antonio 				user : solinfnet.grupo_cgs.fz_santo_antonio
+
+	220.148.0.0/24 	Grupo Riedi
+			1.5 	 Faz. Entre Rios 					user : solinfnet.grupo_riedi.fz_entre_rios
+			2.5 	 Faz. São José 						user : solinfnet.grupo_riedi.fz_sao_jose
+			3.5 	 Faz. Nossa Senhora (Buriti)		user : solinfnet.grupo_riedi.fz_ns_senhora
+			4.5 	 Faz. São José 2					user : solinfnet.grupo_riedi.fz_sao_jose2
+
+	220.149.0.0/24 	Futurazy
+			1.5 	 Faz. Agro Prudente 				user : solinfnet.futurazy.fz_agro_prudente
+			2.5 	 Faz. ABA 							user : solinfnet.futurazy.fz_aba
+
+	220.150.0.0/24 	Tirolesa Agro (USIMAT)
+			1.5 	 Faz. Sipal 						user : solinfnet.tirolesa_agro.fz_sipal
+
+	220.151.0.0/24 	AM Agropecuária
+			1.5 	 Faz. Taboca						user : solinfnet.am_agropecuaria.fz_taboca		
+			2.5		 Faz. Nossa Senhora de Fátima    	user : solinfnet.am_agropecuaria.fz_nsfatima
+			3.5		 GATEWAY MOVEL	
+			3.105 	 GATEWAY MOVEL GPRS F5000			user : solinfnet.am_agropecuaria.f5000
+
+    220.152.0.0/24 	Galera Agro 
+	        1.5      Faz. Galera Agro             		user : solinfnet.galera_agro.fz_galera_agro
+			2.5		 Barra do Prata						user : solinfnet.galera_agro.fz_barradoprata
+
+	220.153.0.0/24 	Grupo IARE
+  			1.5    	 Faz. Santa Rosa        			user : solinfnet.iare.fz_santa_rosa
+  			2.5 	 Faz. Cachoeira 					user : solinfnet.iare.fz_cachoeira
+			3.5 	 Faz. Nova Chapada/Buriti			user : solinfnet.iare.fz_nv_chapada
+			
+  	220.154.0.0/24 	Agro Gaulanda
+	        1.5     	Faz. Gaulanda         	 		user : solinfnet.agro_gaulanda.fz_gaulanda
+			2.5			Faz. Hidrolândia				user : solinfnet.agro_gaulanda.fz_hidrolandia
+
+	220.155.0.0/24 Prime Foods
+			1.5 	Faz. Prime Foods (Faz.Aliança)	 	user: solinfnet.prime_foods.fz_prime_foods
+
+	220.156.0.0/24 Agrocangaia
+			1.5 	Faz Agrocangaia Santana f12000	 	user: solinfnet.agrocangaia.fz_santana3
+			2.5 	Faz Agrocangaia	Cangaia f2000	 	user: solinfnet.agrocangaia.fz_cangaia1
+			3.5 	Faz Agrocangaia	Paraiso	f11000		user: solinfnet.agrocangaia.fz_paraiso2
+
+	#220.157.0.0/24 NetZero Farm
+	#		1.5 	Faz Solinftec					 	user : solinfnet.solinftec.fz_netzerofarm
+			1.105 	Faz Solinftec					 	user : solinfnet.solinftec.fz_netzerofarm.f_1000
+	172.12.11.42 - net0farm
+			10.0.2.1 RouterBoard						user : solinftec | SolinfNet (solinfnet.net0farm)
+			10.0.2.2 eNodeB								user : admin | pw: admin
+			10.0.2.3 Gateway Farm
+
+	220.158.0.0/24  L2 Agronegócios
+            1.5      Fazenda Boi Gordo        			user : solinfnet.l2_agro.fz_boi_gordo 	
+    		2.5 	 Faz. Boi Gordo						user : solinfnet.l2_agronegocio.fz_boi_gordo2
+			3.105    Poste X01							user : solinfnet.l2_agronegocio.f_10000
+
+    220.159.0.0/24 	Ione Taques - Faz. Carolina (FRT)
+    		1.5 	 Faz. Carolina 						user : solinfnet.ione_taques.fz_carolina
+    		2.5 	 Faz. Renascer 						user : solinfnet.ione_taques.fz_renascer
+
+    220.160.0.0/24  Fazenda Conforto
+    		1.5 	 Faz. Conforto 						user : solinfnet.faz_conforto.fz_conforto
+
+    220.161.0.0/24  Grupo Ogliari
+    		1.5 	 Faz. Ogliari 						user : solinfnet.grupo_ogliari.fz_ogliari
+    		2.5 	 Faz. Minuano 						user : solinfnet.grupo_ogliari.fz_minuano
+    		3.5 	 Faz. Sossego (Minuano 2)			user : solinfnet.grupo_ogliari.fz_sossego
+			4.5		 Faz. Armazem (Santa Rita)			user : solinfnet.grupo_ogliari.fz_armazem
+			5.5		 Faz. Frei Galvão					user : solinfnet.grupo_ogliari.fz_frei_galvao
+			 .245	 Faz. Frei Galvão					user : solinfnet.grupo_ogliari.fz_frei_galvao.f_14001
+			6.5		 Faz. São Pedro 					user : solinfnet.grupo_ogliari.fz_sao_pedro
+			7.5 	 Faz. Panorama 						user : solinfnet.grupo_ogliari.fz_panorama
+			8.5 	 Faz. São Vicente					user : solinfnet.grupo_ogliari.fz_sao_vicente
+			9.5		 Faz. São Pedro 2					user : solinfnet.grupo_ogliari.fz_sao_pedro2
+			10.5	 Faz. Oásis							user : solinfnet.grupo_ogliari.fz_oasis
+
+    220.162.0.0/24  Grupo Dal Maso
+    		1.5 	 Faz. Dal Maso 						user : solinfnet.grupo_del_maso.fz_del_maso
+			2.5 	 Faz  Tres Capoes					user : solinfnet.grupo_dal_maso.fz_trescapoes
+			3.5		 Faz. Cristina						user : solinfnet.grupo_dal_maso.fz_cristina
+			4.5 	 Faz. China Branca 					user : solinfnet.grupo_dal_maso.fz_china_branca (Desativado)
+
+	220.163.0.0/24  Agrothathi
+	        1.5		Entre Rios							user : solinfnet.agrothathi.fz_entre_rios
+
+	220.164.0.0/24 	Diamante Agricola
+			1.5		Diamante Agricola					user : solinfnet.diamante_agricola.fz_diamante_agricola
+
+    220.165.0.0/24  Labrustar
+    		1.105 	 Torre Secador 10000 				user : solinfnet.labrustar.fz_los_marcos.f_10000
+			
+
+    220.166.0.0/24  Grupo Ema
+			1.5		Faz. Angico							user : solinfnet.grupo_ema.fz_angico
+
+    220.167.0.0/24  Coperaguas
+			1.5		Faz. 4 Parecis f10000				user : solinfnet.coper_aguas.fz_4_parecis
+			2.5 	Faz. Kigrão 						user : solinfnet.coper_aguas.fz_kigrao (parceiro/Mudar123) DHCP VEM DA FAIXA 192.168.90.0/24
+			3.5 	Faz. Graos de Ouro					user : solinfnet.coper_aguas.fz_grao_de_ouro
+			4.5		Faz. Manoki							user : solinfnet.coper_aguas.fz_manoki
+			5.5 	Faz. Matsene F31000					user : solinfnet.coper_aguas.fz_matsene
+			6.105	Faz. Formoso 						user : solinfnet.coper_aguas.fz_formoso.f_32000
+			7.5 	Faz. Paraíso F32000					user : solinfnet.coper_aguas.fz_paraiso
+			8.5     Faz. Dois Irmãos f4100				user : solinfnet.coper_aguas.fz_dois_irmaos
+			9.5		Faz. Unidade 08	F5000				user : solinfnet.coper_aguas.fz_unidade08
+			10.5	Faz. Ademil (Unidade 5)	f13000		RB REMOVIDA, PONTO AGORA É 4G
+			11.5	Faz. Pedro (Unidade 3)	
+			  .100 	Controladora de carga do gateway 42000			
+			11.105	TORRE SEDE PEDRO - 28M 				user : solinfnet.coper_aguas.fz_saopedro.f_42000
+			12.105	Elevador Silo Sede 4G - 25M 		user : solinfnet.coper_aguas.fz_coperaguas.f_52000
+			13.105	POSTE X5 4G 						user : solinfnet.coper_aguas.fz_coperaguas.f_13000
+
+	220.168.0.0/24  Fazenda Dallas
+			1.5	    Fazena Dallas						user : solinfnet.fazenda_dallas.fz_dallas
+
+	220.169.0.0/24  Adecoagro Granos
+			1.5	    Faz. Ita Caabo						user : solinfnet.adecoagro.fz_ita_caabo
+			2.105   Gateway móvel 10000                 user : solinfnet.adecoagro_granos.f_10000
+			2.115   Gateway TORRE PALMITA 10002         user : solinfnet.adecoagro_granos.f_10002
+			2.125   Gateway TORRE YEGUA 10003           user : solinfnet.adecoagro_granos.f_10003
+
+	220.170.0.0/24  Agro Sustentavel
+			1.5	    Faz. São José ()					user : solinfnet.agrosustentavel.fz_sao_jose
+
+	220.171.0.0/24 	Agua Azul		
+			1.5		Agua Azul							user : solinfnet.aguazul.fz_agua_azul
+
+	220.172.0.0/24  Franciosi (Irmãos Franciosi)
+			1.5 	 Santa Isabel 						user : solinfnet.franciosi.fz_sta_isabel
+			2.5      Fazenda Santana					user : solinfnet.franciosi.fz_santana
+			3.5      Fazenda São José					user : solinfnet.franciosi.fz_sao_jose
+			4.5		 Fazenda Santo Antônio				user : solinfnet.franciosi.fz_santo_antonio
+			5.105    CDG Confiança 400000 				user : solinfnet.franciosi.fz_confianca.f_400000
+			6.5		 Faz. Santa Paula 					user : solinfnet.franciosi.fz_santa_paula
+			7.5		 Faz. Confianca						user : solinfnet.franciosi.fz_confianca.f_15000
+            8.105	 Faz. Campo Grande F71000			user : solinfnet.franciosi.fz_campogrande.f_71000
+
+	220.173.0.0/24	LGGL
+			1.5		EnodeB								user: solinfnet.lggl.enodeb
+			 .2 	 Antena eNodeB 						(usr: admin | pw: Baicells@123)
+ 
+	220.174.0.0/24 	Tereza Jacomo (Balestra Agro)
+			1.5		Faz. Limeira						user : solinfnet.tereza_jacomo.fz_limeira
+			2.5		Pontox05							user : solinfnet.tereza_jacomo.fz_pontox05
+			
+	220.175.0.0/24 	Frankanna
+			1.5		Faz. Frankanna TO (São Bento)		user : solinfnet.frankanna_to.fz_frankanna
+			2.5		Faz. Frankanna PR					user : solinfnet.frankanna_to.fz_frankannapr
+
+	220.176.0.0/24 ARROZEIRA PELOTAS AGRO
+			1.5		Faz. Arrozeira Pelotas RS			user : solinfnet.arrozeira_pelotas.fz_arrozeira_pelota (usr: parceiro | pw: #123Mudar)
+            2.105	Faz. Arrozeira Pelotas RS 4G		user : solinfnet.arrozeira_pelotas.fz_arrozeira_pelota.F1000
+
+	220.177.0.0/24	Agropecuaria Pontal
+			1.5 	Fazenda Parceira Pontal				user : solinfnet.agropecuaria_pontal.fz_parceira
+			1.105	Gateway 10000 						user : solinfnet.agropecuaria_pontal.fz_parceira_f_10000
+
+	220.178.0.0/24	Coragon Agropecuaria
+			1.5		Coragon Jaguarao					user : solinfnet.coragon_agropecuaria.fz_jaguarao		
+			2.5		Fazenda Coragon (Chasqueiro)		user : solinfnet.coragon_agropecuaria.fz_coragon
+            3.105	Concentraor Móvel F3000      		user : solinfnet.coragon_agropecuaria.f_3000
+            3.115	Concentraor Móvel F4000      		user : solinfnet.coragon_agropecuaria.f_4000
+
+	220.179.0.0/24  Multifazendas 						
+			1.5		Santa Maria 						user:  solinfnet.multifazendas.fz_sta_maria
+			2.5		Fortaleza 	 						user:  solinfnet.multifazendas.fz_fortaleza
+			3.5		Banco da Terra 	 					user:  solinfnet.multifazendas.fz_banco_da_terra
+			4.5		Rancho K 	 	 					user:  solinfnet.multifazendas.fz_rancho_k
+
+	220.180.0.0/24  Irmãos Walker
+			1.5      Faz. Alvorada 						user : solinfnet.irmaos_walker.fz_alvorada
+
+	220.181.0.0/24  Campanario Agropecuaria
+			1.5      Faz. Campanario					user : solinfnet.campanario_agropecuaria.fz_campanario
+
+	220.182.0.0/24  Grupo Segredo
+			1.5      Faz. Segredo						user : solinfnet.grupo_segredo.fz_segredo
+			
+	220.183.0.0/24	Ralf Karly (Agri Crop)							
+			1.5		Faz. Aliança					   	user : solinfnet.grupo_ralfkarly.fz_alianca
+			
+	220.184.0.0/24	 Prevedello AGRO				
+			1.5		 Fazenda Vitória				   	user : solinfnet.prevedello_agro.fz_vitoria
+
+	220.185.0.0/24	 Sociedade Franciosi				
+			1.5		 Faz. Santa Lúcia				   	user : solinfnet.sociedade_franciosi.fz_sta_lucia
+			2.5		 Faz. Jatobá					   	user : solinfnet.sociedade_franciosi.fz_jatoba
+			3.5		 Faz. Evangelista					user : solinfnet.sociedade_franciosi.fz_evangelista
+			4.5      Faz. Santo Expedito                user : solinfnet.sociedade_franciosi.fz_santo_expedito
+			5.5		 Faz. Grande Leste					user : solinfnet.sociedade_franciosi.fz_grande_leste
+			6.5		 
+			6.105	 SILO SANTO EXPEDITO - GPRS			user : solinfnet.sociedade_franciosi.f_5000
+            7.5	     Caixa D'agua SANTO EXPEDITO		user : solinfnet.sociedade_franciosi.fz_santo_expedito_caixa_dagua
+
+	220.186.0.0/24	 Grupo Dourados				
+			1.5		 Fazenda Dourados				   	user : solinfnet.grupo_dourados.fz_para
+
+	220.187.0.0/24	 Adir Parizzi
+			1.5		 Faz. São Bento					  	user : solinfnet.grupo_adir.fz_sao_bento
+			2.5		 Faz. Lagoa							user : solinfnet.grupo_adir.fz_lagoa
+			
+	220.188.0.0/24  LFG (Luiz Fernando Gonçalves) 	    
+			1.5		Faz. Chimarrão					    user : solinfnet.grupo_lfg.fz_chimarrao	
+			2.5		Faz. São José						user : solinfnet.grupo_lfg.fz_saojose
+			
+	220.189.0.0/24  Grupo Cima
+			1.5		Faz. Cima II - Torre Sede		    user : solinfnet.grupo_cima.fz_cima2	
+			2.5		Faz. Cima II - Caixa D'Água		    user : solinfnet.grupo_cima.fz_cima2_cxagua	
+
+	220.190.0.0/24  Sementes Ipiranga 	    
+			1.5		Faz. Ipiranga					    user : solinfnet.sementes_ipiranga.fz_ipiranga
+			2.5		Faz. Cecilia					    user : solinfnet.sementes_ipiranga.fz_cecilia
+			3.5
+			3.15		CDG 1011					    user : solinfnet.sementes_ipiranga.CDG_1011
+
+	220.191.0.0/24  Akio Ide 	    
+			1.5		Faz. Osman III					    user : solinfnet.akio_ide.fz_osman3
+			
+	220.192.0.0/24  Agro São Jorge								
+			1.5		Faz São Jorge f1000 e f1001			user : solinfnet.sao_jorge.fz_saojorge
+			2.5		Faz Sao Jorge f1002 e f1003			user : solinfnet.sao_jorge.fz_saojorge2
+
+	220.193.0.0/24  Canoa Mirim 	    
+			1.5		Faz. Canoa Mirim					
+			1.105	Concentrador Móvel 1000				user : solinfnet.canoa_mirim.fz_canoa_mirim.f_1000
+
+	220.194.0.0/24  Grupo Pscheidt								
+			1.5		Faz Santa Catarina					user : solinfnet.grupo_pscheidt.fz_sta_catarina
+			2.5		Faz Ribeirão Preto					user : solinfnet.grupo_pscheidt.fz_ribeirao_preto
+
+	220.195.0.0/24  Faz. Santa Maria (Carlos Ferrari Junior)								
+			1.5		Faz. Santa Maria 					user : solinfnet.santa_maria.fz_sta_maria
+
+    220.196.0.0/24  Tamburi
+			1.5		Faz. Tamburi						user : solinfnet.tamburi.faz_tamburi
+			2.5		Concentradores móveis Tamburi
+			2.15	Concentrador 10010			        user : solinfnet.tamburi.faz_tamburi.f_10010
+			2.25	Concentrador 10011			        user : solinfnet.tamburi.faz_tamburi.f_10011
+			2.35	Concentrador 10012			        user : solinfnet.tamburi.faz_tamburi.f_10012
+			2.45	Concentrador 10013			        user : solinfnet.tamburi.faz_tamburi.f_10013
+			2.55	Concentrador 10014			        user : solinfnet.tamburi.faz_tamburi.f_10014
+			2.65	Concentrador 10015			        user : solinfnet.tamburi.faz_tamburi.f_10015
+			2.75	Concentrador 10016			        user : solinfnet.tamburi.faz_tamburi.f_10016
+			3.5		Faz.Portal							user : solinfnet.tamburi.faz_tamburi_pontal
+			4.5		Faz. Chavante						user : solinfnet.tamburi.faz_tamburi_chavante
+
+    220.197.0.0/24  Faz. Santo Antônio (Projeto Marlise Ricardi)
+			1.5		Faz. Santo Antônio					user : solinfnet.santo_antonio.faz_santo_antonio	
+
+    220.198.0.0/24  Faz. Wehrmann
+            1.5		Faz. Santa Barbara					user : solinfnet.wehrmann.faz_santa_barbara
+            2.5		Faz. Sede 2 						user : solinfnet.wehrmann.faz_sede
+
+    220.199.0.0/24  Riza Sementes
+            1.5		Faz. Curitiba (bahia)			    user : solinfnet.riza_sementes.faz_curitiba
+            2.5 	Faz. Liberdade (SILO) 				user : solinfnet.riza_sementes.faz_liberdade
+            3.5 	Faz. Primavera        				user : solinfnet.riza_sementes.faz_primavera
+            4.5 	Faz. Santa Helena       			user : solinfnet.riza_sementes.faz_santa_helena
+            5.5 	Faz. Tropeiro       			    user : solinfnet.riza_sementes.faz_tropeiro
+            6.5 	Faz. Scusse       			        user : solinfnet.riza_sementes.faz_scusse
+            7.5     Faz. São Paulo                      user : solinfnet.riza_sementes.faz_sao_paulo
+			8.5     Faz. Oriental						user : solinfnet.riza_sementes.faz_oriental
+			9.5     Faz. Siriema						user : solinfnet.riza_sementes.faz_siriema
+			10.5    Faz. BMF 							user : solinfnet.riza_sementes.faz_bmf
+            11.5    Faz. Diplomata  					user : solinfnet.riza_sementes.faz_diplomata
+            12.5    Faz. Ryo Matsu  					user : solinfnet.riza_sementes.faz_ryo_matsu
+            13.5    Faz. Guaratã 	  					user : solinfnet.riza_sementes.faz_guaranta
+            14.5    Faz. Pato Branco 	  				user : solinfnet.riza_sementes.faz_pato_braco
+            15.105  Concentrador Móvel Ceres 17000		user : solinfnet.riza_sementes.faz_ceres.f_17000
+            15.115  Concentrador Móvel Ceres 17001		user : solinfnet.riza_sementes.faz_ceres.f_17001
+
+    220.200.0.0/24  Agro Paraná
+            1.5		Faz. Céu Aberto					    user : solinfnet.agro_parana.faz_ceu_aberto
+            2.5		Faz. Sede 2 					    user : solinfnet.agro_parana.faz_sede2
+
+    220.201.0.0/24  Faz. Bonanza
+    		1.5 	Faz. Bonanza 						user : solinfnet.bonanza.fz_bonanza
+
+	220.202.0.0/24 	Lucena Grãos
+					1.5
+					 .105 	Gateway 1001 (Barracão)		user : solinfnet.lucena_graos.f_1001
+					 .115 	Gateway 1000 				user : solinfnet.lucena_graos.f_1000
+					2.5 	Sede Lucena 				user : solinfnet.lucena_graos.Faz_sede_lucena
+
+    220.203.0.0/24  Faz Ourives
+            1.5		Faz. Barra do Corda				    user : solinfnet.ourives.faz_barra_do_corda
+
+    220.204.0.0/24  Agrobrava
+            1.5		Faz. Colorado - Silo Sede F10000    user : solinfnet.agrobrava.faz_colorado.f10000
+            2.105	Faz. Colorado - Poste 			    user : solinfnet.agrobrava.faz_colorado.f11000
+
+    220.205.0.0/24  NSA (Lucas Menegueti)
+            1.5		 Faz. Nossa Senhora				    user : solinfnet.nsa.faz_nossa_senhora
+
+    220.206.0.0/24  Ibacem
+            1.5		 Faz. Ibacem				        user : solinfnet.ibacem.faz_ibacem
+
+    220.207.0.0/24  Agropecuaria Sastre
+            1.5		 Faz. Itaporanga				    user : solinfnet.agropecuaria_sastre.faz_sastre
+            2.5		 Faz. Itaporanga Garimpo		    user : solinfnet.agropecuaria_sastre.faz_itaporanga_garimpo
+            3.5		 Faz. Cristo Rei        		    user : solinfnet.agropecuaria_sastre.faz_cristorei
+            4.5		 Faz. Flor da Serra        		    user : solinfnet.agropecuaria_sastre.faz_flor_da_serra
+
+    220.208.0.0/24  Irmãos Lago
+            1.105	 Faz.irmaos Lago F10000				user : solinfnet.irmaos_lago.faz_irmaos_lago.f10000
+
+
+
+    220.210.0.0/24  Fava Sementes
+            1.5		Faz. São Luiz (10000)			    user : solinfnet.fava_sementes.faz_sao_luiz
+            2.5		Faz. Agroman (30000)			    user : solinfnet.fava_sementes.faz_agroman
+            3.5		Faz. João Augusto				    user : solinfnet.fava_sementes.faz_agusto
+            4.5		Faz. Santa Clara				    user : solinfnet.fava_sementes.faz_santa_clara
+            5.5		Faz. Santa Úrsula				    user : solinfnet.fava_sementes.faz_santa_ursula
+            6.5		Faz. Savana 					    user : solinfnet.fava_sementes.faz_savana
+            7.5		Faz. Fronteira 					    user : solinfnet.fava_sementes.faz_fronteira
+            8.5		Faz. Esperança 					    user : solinfnet.fava_sementes.faz_esperanca
+            9.5		Faz. Beirute					    user : solinfnet.fava_sementes.faz_beirute
+           10.5		Faz. Recanto					    user : solinfnet.fava_sementes.faz_recanto
+           12.5		Faz. Santa Úrsula - Poste X01	    user : solinfnet.fava_sementes.faz_santa_ursula_x01
+           13.5     Faz. Santa Vitoria				    user : solinfnet.fava_sementes.faz_sta_vitoria
+           14.5     Faz. Santa Vitoria-Torre Vitoria 2  user : solinfnet.fava_sementes.faz_sta_vitoria_f37001
+
+	220.220.0.0/24  Jequitiba
+			1.5 	Faz. Panteão 						user : solinfnet.jequitiba.fz_panteao
+			2.5  	Faz. Entre Rios 					user : solinfnet.jequitiba.fz_entre_rios
+		   	3.5 	Faz. Xingu 							user : solinfnet.jequitiba.fz_xingu
+			4.5 	Faz. Trinagulo						user : solinfnet.jequitiba.fz_triangulo
+			5.5 	Faz. Coliseu						user : solinfnet.jequitiba.fz_coliseu
+			6.5     Armazém                             user : solinfnet.jequitiba.fz_armazem
+
+	220.221.0.0/24	Grupo Gottardi Lopes
+			1.5 	 Faz. Guaciara 						user : solinfnet.grupo_gottardi_lopes.fz_guaciara (SENHA RB: $0l1nfN3t)
+			2.5		 Faz. Rio Preto						user : solinfnet.grupo_gottardi_lopes.fz_rio_preto	
+
+	220.222.0.0/24	Grupo Doma
+			1.5		Faz. Dona Maria						user : solinfnet.grupo_doma.fz_dona_maria
+ 
+    220.223.0.0/24  Land Irrigação 
+	        1.5    Faz. Land Irrigação                 	user : solinfnet.landirrigacao.fz_land_irrigacao
+			2.105	   Faz. Cristina 					user : solinfnet.landirrigacao.fz_cristina.f_20000
+				
+	220.224.0.0/24  Ragagnin 
+			1.5		Santo Antônio					   	user : solinfnet.ragagnin.fz_ragagnin		
+			2.5 	Torre 5 (Unidade Meia Meia) 	    user : solinfnet.ragagnin.fz_torre5	
+            3.5     Pouso Alegre 			    		user : solinfnet.ragagnin.fz_pouso_alegre
+			4.5		Jataí (Torres 13000)				user : solinfnet.ragagnin.fz_jatai
+			5.5 	Quero Quero	(Torre 14000)			user : solinfnet.ragagnin.fz_quero_quero
+
+	220.225.0.0/24 	Nova Agro	
+					1.5 								user : solinfnet.nova_agro.fz_nova_agros
+
+	220.226.0.0/24 	Continental	(Sebastião - Jacintho Continental)
+					1.5 Sede Velha						user : solinfnet.continental.fz_sede_velha
+					2.5 Silos							user : solinfnet.continental.fz_silos
+					3.5 Móveis
+					 .105 	Gateway 100 				user : solinfnet.continental.f_100
+
+    220.227.0.0/24 	AG Teixeira
+              1.5 Faz. Santa Terezinha MS   			user : solinfnet.agteixeira.fz_santa_terezinha.ms
+              2.5 Faz. Nossa Senhora MS   			    user : solinfnet.agteixeira.fz_nossa_senhora.ms
+              3.5 Faz. Santa Lidia MS   			    user : solinfnet.agteixeira.fz_santa_lidia.ms
+              4.5 Faz. Porto Alegre MS   			    user : solinfnet.agteixeira.fz_porto_alegre.ms
+              5.5 Faz. Mãe Nina MS   			        user : solinfnet.agteixeira.fz_mae_nina.ms
+              6.5 Faz. Belo Horizonte_Silo PR   		user : solinfnet.agteixeira.fz_belo_horizonte_silo.pr
+              7.5 Faz. Belo Horizonte_X11 Poste PR   	user : solinfnet.agteixeira.fz_belo_horizonte_x11_poste.pr
+              8.5 Faz. Belo Horizonte_X08 Poste PR   	user : solinfnet.agteixeira.fz_belo_horizonte_x08_poste.pr
+              9.5 Faz. Belo Horizonte_X13 Poste PR   	user : solinfnet.agteixeira.fz_belo_horizonte_x13_poste.pr

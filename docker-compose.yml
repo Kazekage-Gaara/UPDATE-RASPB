@@ -1,0 +1,62 @@
+services:
+  app:
+    build: ./backend
+    ports:
+      - "8000:8000"
+    env_file:
+      - .env
+    environment:
+      - TARGET_VERSION=${TARGET_VERSION}
+    depends_on:
+      - redis
+    restart: always
+    healthcheck:
+      test: ["CMD", "python", "-c", "import urllib.request,sys; sys.exit(0 if urllib.request.urlopen('http://localhost:8000/docs', timeout=2).status==200 else 1)"]
+      interval: 30s
+      timeout: 5s
+      retries: 3
+      start_period: 20s
+    volumes:
+      # C-6: ya no se monta ./backend:/app (pisaba el código del Dockerfile).
+      # Solo exponemos datos y binarios que sí deben venir del host.
+      - ./data:/app/data
+      - ./updates:/app/updates:ro
+    # network_mode: host
+
+  worker:
+    build: ./backend
+    command: celery -A tasks worker --loglevel=info -c 8
+    env_file:
+      - .env
+    environment:
+      - TARGET_VERSION=${TARGET_VERSION}
+    depends_on:
+      - redis
+    restart: always
+    healthcheck:
+      test: ["CMD", "celery", "-A", "tasks", "inspect", "ping", "-t", "5"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 30s
+    volumes:
+      - ./data:/app/data
+      - ./updates:/app/updates:ro
+    # network_mode: host
+
+  redis:
+    image: redis:7-alpine
+    restart: always
+    # I-6: persistencia de la cola de Celery
+    command: ["redis-server", "--appendonly", "yes"]
+    volumes:
+      - redis-data:/data
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 30s
+      timeout: 5s
+      retries: 3
+    # network_mode: host
+
+volumes:
+  redis-data:

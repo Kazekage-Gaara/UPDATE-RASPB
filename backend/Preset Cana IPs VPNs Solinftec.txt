@@ -1,0 +1,1264 @@
+Rotas IPs VPNs Solinftec
+
+//Cana
+//Clientes sem user definido precisa criar rota com IP
+
+	210.1.0.0/24  	Alto Alegre
+			1.5		 Junqueira 		 							user : solinfnet.alto_alegre.usi_junqueira
+			2.5 	 Floresta									user : solinfnet.alto_alegre.usi_floresta
+			4.5 	 Florestopolis								user : solinfnet.alto_alegre.usi_floresta
+			5.5 	 Santa Inácio								user : solinfnet.alto_alegre.usi_floresta
+			6.5 	 C. Móveis Junqueira						
+			 .105 	 C. Móveis Junqueira - F7000				user : solinfnet.alto_alegre.usi_junqueira.f_7000
+			 .115 	 C. Móveis Junqueira - F7001				user : solinfnet.alto_alegre.usi_junqueira.f_7001
+			 .125 	 C. Móveis Junqueira - F7002				user : solinfnet.alto_alegre.usi_junqueira.f_7002
+			 .135 	 C. Móveis Junqueira - F7003				user : solinfnet.alto_alegre.usi_junqueira.f_7003
+			 .145 	 C. Móveis Junqueira - F7004				user : solinfnet.alto_alegre.usi_junqueira.f_7004
+			 .155 	 C. Móveis Junqueira - F7005				user : solinfnet.alto_alegre.usi_junqueira.f_7005
+			 .165 	 C. Móveis Junqueira - F7006				user : solinfnet.alto_alegre.usi_junqueira.f_7006
+			 .175 	 C. Móveis Junqueira - F7007				user : solinfnet.alto_alegre.usi_junqueira.f_7007
+			 .185 	 C. Móveis Junqueira - F7008				user : solinfnet.alto_alegre.usi_junqueira.f_7008
+			7.5 	 C. Móveis Frentes Junqueira						
+			 .105 	 C. Móvel Frente 01	 						user : solinfnet.alto_alegre.usi_junqueira.f_60310
+			 .115 	 C. Móvel Frente 02  						user : solinfnet.alto_alegre.usi_junqueira.f_60624
+			 .125 	 C. Móvel Frente 03  						user : solinfnet.alto_alegre.usi_junqueira.f_60611
+			 .135 	 C. Móvel Frente 04  						user : solinfnet.alto_alegre.usi_junqueira.f_60613
+			 .145 	 C. Móvel Frente 05  						user : solinfnet.alto_alegre.usi_junqueira.f_60609
+			 .155 	 C. Móvel Frente 06  						user : solinfnet.alto_alegre.usi_junqueira.f_60625
+			 .165 	 C. Móvel Frente 07  						user : solinfnet.alto_alegre.usi_junqueira.f_60612
+			 .175 	 C. Móvel Frente 08  						user : solinfnet.alto_alegre.usi_junqueira.f_60626
+			 .185 	 C. Móvel Frente de Plantio 01				user : solinfnet.alto_alegre.usi_junqueira.f_60608
+			 .195 	 C. Móvel Frente de Plantio 02				user : solinfnet.alto_alegre.usi_junqueira.f_60627
+			8.5 	 C. Móveis Frentes Santo Inácio						
+			 .105 	 C. Móvel Frente 20							user : solinfnet.alto_alegre.usi_santo_inacio.f_60607
+			 .115 	 C. Móvel Frente 25							user : solinfnet.alto_alegre.usi_santo_inacio.f_60600
+			 .125 	 C. Móvel Frente 26							user : solinfnet.alto_alegre.usi_santo_inacio.f_60602
+			 .135 	 C. Móvel Frente 27							user : solinfnet.alto_alegre.usi_santo_inacio.f_60605
+			 .145 	 C. Móvel Frente 28							user : solinfnet.alto_alegre.usi_santo_inacio.f_60637
+			 .155 	 C. Móvel Frente 29							user : solinfnet.alto_alegre.usi_santo_inacio.f_60619
+			 .165 	 C. Móvel Frente 30							user : solinfnet.alto_alegre.usi_santo_inacio.f_60620
+			 .175 	 C. Móvel Frente 31							user : solinfnet.alto_alegre.usi_santo_inacio.f_60606
+			 .185 	 C. Móvel Frente de Plantio 01				user : solinfnet.alto_alegre.usi_santo_inacio.f_60148
+			 .195 	 C. Móvel Frente de Plantio 02				user : solinfnet.alto_alegre.usi_santo_inacio.f_60017
+			9.5 	 C. Móveis Frentes Floresta						
+			 .105 	 C. Móvel Frente 01							user : solinfnet.alto_alegre.usi_floresta.f_60621
+			 .115 	 C. Móvel Frente 02							user : solinfnet.alto_alegre.usi_floresta.f_60610
+			 .125 	 C. Móvel Frente 03							user : solinfnet.alto_alegre.usi_floresta.f_60053
+			 .135 	 C. Móvel Frente 04							user : solinfnet.alto_alegre.usi_floresta.f_60021
+			 .145 	 C. Móvel Frente 05							user : solinfnet.alto_alegre.usi_floresta.f_60014
+			 .155 	 C. Móvel Frente de Plantio 01				user : solinfnet.alto_alegre.usi_floresta.f_60623
+			10.5 	 C. Móveis Frentes Florestópolis						
+			 .105 	 C. Móvel Frente 60							user : solinfnet.alto_alegre.usi_florestopolis.f_60635
+			 .115 	 C. Móvel Frente 61							user : solinfnet.alto_alegre.usi_florestopolis.f_60142
+			 .125 	 C. Móvel Frente 62							user : solinfnet.alto_alegre.usi_florestopolis.f_60159
+			 .135 	 C. Móvel Frente 63							user : solinfnet.alto_alegre.usi_florestopolis.f_60632
+			 .145 	 C. Móvel Frente 64							user : solinfnet.alto_alegre.usi_florestopolis.f_60641
+			 .155 	 C. Móvel Frente 65							user : solinfnet.alto_alegre.usi_florestopolis.f_60634
+			 .165 	 C. Móvel Frente de Plantio 01				user : solinfnet.alto_alegre.usi_florestopolis.f_60122
+
+	210.2.0.0/24	Sonora
+			1.5 	 Sonora	 		 							user : solinfnet.sonora.usi_sonora
+			 .165	 Concentrador 1010 							user : solinfnet.sonora.usi_sonora.f_1010
+			 .175	 Concentrador 1011 							user : solinfnet.sonora.usi_sonora.f_1011
+			 .185	 Concentrador 1014 							user : solinfnet.sonora.usi_sonora.f_1014
+			 .195	 Concentrador 1030 							user : solinfnet.sonora.usi_sonora.f_1030
+ 			 .205	 Concentrador 1031 							user : solinfnet.sonora.usi_sonora.f_1031
+ 			 .215	 Concentrador 1032 							user : solinfnet.sonora.usi_sonora.f_1032
+ 			 .225	 Concentrador 1033 e 1034					user : solinfnet.sonora.usi_sonora.f_1033
+
+	210.3.0.0/24	Usina Ipiranga	
+			1.5		 Descalvado									user : solinfnet.ipiranga.uni_descalvado
+			2.5 	 Iacanga
+			3.5 	 Mococa
+			 .105	  Mococa	Móvel							user : solinfnet.ipiranga.mococa.f_8000_8001
+			4.5      Passos
+			 .105    Torre Rio Grande               			user : solinfnet.ipiranga.passos.f_6001	
+			 .115 	 Concentrador Balança						user : solinfnet.ipiranga.passos.f_6000
+			 .125 	 Concentrador Area de Vivencia				user : solinfnet.ipiranga.passos.f_6003
+
+	210.4.0.0/24	CRV
+			1.5 	 Capinopolis
+			 1.105	 Capinopolis Móvel							user : solinfnet.crv.capinopolis.f_1000
+			 1.115	 Capinopolis Móvel 							user : solinfnet.crv.capinopolis.f_1006
+			 1.125	 Capinopolis Móvel 							user : solinfnet.crv.capinopolis.f_1003
+			 1.135 	 Capinapolis Móvel 							user : solinfnet.crv.capinopolis.f_1005
+			 1.145 	 Capinapolis Móvel 							user : solinfnet.crv.capinopolis.f_1004
+			 1.155   CONCENTRADOR MOVEL							user : solinfnet.crv.capinopolis.f_1014
+			 1.175 	 Capinapolis Móvel 							user : solinfnet.crv.capinopolis.f_1007
+			 1.185 	 Capinapolis Móvel 							user : solinfnet.crv.capinopolis.f_1008
+			 1.195 	 Capinapolis Móvel 							user : solinfnet.crv.capinopolis.f_1009
+			 1.205 	 Capinapolis Móvel 							user : solinfnet.crv.capinopolis.f_1010
+			 1.215	 Capinopolis Móvel							user : solinfnet.crv.capinopolis.f_1011
+			 1.225	 Capinopolis Móvel							user : solinfnet.crv.capinopolis.f_1001
+			 1.235	 Capinopolis Móvel							user : solinfnet.crv.capinopolis.f_1012
+			 1.245	 Capinopolis Móvel 							user : solinfnet.crv.capinopolis.f_1013
+			 1.95	 Capinopolis Móvel 							user : solinfnet.crv.capinopolis.f_1014
+			 1.85	 Capinopolis Móvel 							user : solinfnet.crv.capinopolis.f_1015
+			 1.75	 Capinopolis Móvel 							user : solinfnet.crv.capinopolis.f_1016
+			 1.85	 Concentrador Frente 4						user : solinfnet.crv.capinopolis.f_1017
+
+	210.5.0.0/24	São Manoel
+			1.5 	 São Manoel
+			 .105	  São Manoel Móvel							user : solinfnet.s_manoel.usi_s_manoel.f_989
+             .115	  São Manoel Móvel Starlink					user : solinfnet.s_manoel.usi_s_manoel.f_996
+
+	210.6.0.0/24	Bandeirantes
+			1.5 	 Agropecúária 3I (Maravilha do Araguaia)	user : solinfnet.bandeirantes.agropecuaria_3i
+			2.5 	 Bandeirantes		
+			 .105 	 Bandeirantes								user : solinfnet.bandeirantes.bandeirantes.f_2000
+			 .115 	 Bandeirantes 								user : solinfnet.bandeirantes.bandeirantes.f_2001
+			 .125 	 Bandeirantes 								user : solinfnet.bandeirantes.bandeirantes.f_2002
+
+	210.7.0.0/24	DVPA
+			1.5 	 DVPA 										user : solinfnet.dvpa.usi_dvpa
+			 .115 	 DVPA 										user : solinfnet.dvpa.usi_dvpa.f_1001
+			 .135 	 DVPA 										user : solinfnet.dvpa.usi_dvpa.f_1002
+			 .155 	 DVPA 										user : solinfnet.dvpa.usi_dvpa.f_1005
+			 .165 	 DVPA 										user : solinfnet.dvpa.usi_dvpa.f_1009
+			 .175 	 DVPA 										user : solinfnet.dvpa.usi_dvpa.f_1006
+			 .185 	 DVPA 										user : solinfnet.dvpa.usi_dvpa.f_1010
+			 .195	 DVPA 										user : solinfnet.dvpa.usi.dvpa.f_1012
+			 .205	 Concentrador Móvel 1015					user : solinfnet.dvpa.usi.dvpa.f_1015
+			 .215    DVPA 										user : solinfnet.dvpa.usi.dvpa.f_1014
+             .225    Concentrador Movel Starlink				user : solinfnet.dvpa.usi.dvpa.f_30091
+             
+	(UBIQUITI: Usuário> admin Senhas> SolinfNet2023)
+
+	210.8.0.0/24	Nardini
+			1.5 	 Nardini
+			.105 	 Concnetrador 1006							user : solinfnet.nardini.usi_nardini.f_1006
+			.115 	 Concentrador 1005 							user : solinfnet.nardini.usi_nardini.f_1005
+			.125 	 Concentrador 212							user : solinfnet.nardini.usi_nardini.f_212
+			.135 	 Concentrador 213 							user : solinfnet.nardini.usi_nardini.f_213
+			.145 	 Concentrador 215 							user : solinfnet.nardini.usi_nardini.f_215
+			.155 	 Concentrador 15 							user : solinfnet.nardini.usi_nardini.f_15
+
+	210.9.0.0/24	Colombo
+			1.5 	 Palestina
+			 .105 	 Palestina 									user : solinfnet.colombo.usi_palestina.f_2000
+			 .115	 Palestina  								user : solinfnet.colombo.usi_palestina.f_2001
+			 .125	 Palestina  								user : solinfnet.colombo.usi_palestina.f_2002
+			 .135	 Palestina  								user : solinfnet.colombo.usi_palestina.f_2003
+ 			 .145	 Palestina  								user : solinfnet.colombo.usi_palestina.f_1000
+			 .155	 Palestina  								user : solinfnet.colombo.usi_palestina.f_2004
+			 .165	 Palestina  								user : solinfnet.colombo.usi_palestina.f_2005
+			 .175	 Palestina  								user : solinfnet.colombo.usi_palestina.f_2006
+			 .185	 Palestina  								user : solinfnet.colombo.usi_palestina.f_2007
+			 .195	 Palestina  								user : solinfnet.colombo.usi_palestina.f_2008
+			2.5 	Santa Albertina
+			 .105 	 Santa Albertina 							user : solinfnet.colombo.usi_santa_albertina.f_5000
+			 .115 	 Santa Albertina 							user : solinfnet.colombo.usi_santa_albertina.f_5001
+			 .125    Santa Albertina                            user : solinfnet.colombo.usi_santa_albertina.f_5002
+			 .135    Santa Albertina                            user : solinfnet.colombo.usi_santa_albertina.f_5003
+			 .145    Santa Albertina                            user : solinfnet.colombo.usi_santa_albertina.f_5004
+			 .155    Santa Albertina                            user : solinfnet.colombo.usi_santa_albertina.f_5005
+			 .165    Santa Albertina                            user : solinfnet.colombo.usi_santa_albertina.f_5006
+			 .175    Santa Albertina                            user : solinfnet.colombo.usi_santa_albertina.f_5007			 			 			 			 
+			3.5 	Ariranha
+			 . 75	 Concentrador Móvel	1030			        user : solinfnet.colombo.usi_ariranha.f_1030
+			 . 85	 Concentrador Móvel	1031			        user : solinfnet.colombo.usi_ariranha.f_1031
+			 . 95	 Concentrador Móvel	1027			        user : solinfnet.colombo.usi_ariranha.f_1027
+			 .105 	 Ariranha 									user : solinfnet.colombo.usi_ariranha.f_10000
+			 .115	 Ariranha									user : solinfnet.colombo.usi_ariranha.f_10001
+			 .125 	 Ariranha 									user : solinfnet.colombo.usi_ariranha.f_1002
+			 .135 	 Ariranha 									user : solinfnet.colombo.usi_ariranha.f_1003
+			 .145	 Ariranha									user : solinfnet.colombo.usi_ariranha.f_10005
+			 .155	 Ariranha									user : solinfnet.colombo.usi_ariranha.f_1001
+			 .165	 Ariranha									user : solinfnet.colombo.usi_ariranha.f_1005
+             .175	 Ariranha									user : solinfnet.colombo.usi_ariranha.f_1004
+			 .185	 Concentrador Móvel	1022			        user : solinfnet.colombo.usi_ariranha.f_1022
+             .195	 Concentrador Móvel	1023			        user : solinfnet.colombo.usi_ariranha.f_1023
+             .205	 Concentrador Móvel	1024			        user : solinfnet.colombo.usi_ariranha.f_1024
+             .215	 Concentrador Móvel	1029			        user : solinfnet.colombo.usi_ariranha.f_1029
+             .225	 Concentrador Móvel	1028			        user : solinfnet.colombo.usi_ariranha.f_1028
+             .235	 Concentrador Móvel	1033			        user : solinfnet.colombo.usi_ariranha.f_1033
+             .245	 Concentrador Móvel	1032			        user : solinfnet.colombo.usi_ariranha.f_1032
+
+	210.10.0.0/24 	Branco Peres Cana
+			1.5 	Branco Peres Cana	 						user : solinfnet.branco_peres_cana.usi_branco_peres
+			 .205 	 Branco Peres Cana	 						user : solinfnet.branco_peres_cana.usi_branco_peres.f_1021
+			 .215 	 Branco Peres Cana (F_68019)	 			user : solinfnet.branco_peres_cana.usi_branco_peres.f_680182_680183
+			 .225 	 Branco Peres Cana (F_68020) 				user : solinfnet.branco_peres_cana.usi_branco_peres.f_680184_680185
+			 .235	 Branco Peres Cana (F_68018)				user : solinfnet.branco_peres_cana.usi_branco_peres.f_68018
+			 .245 	 Branco Peres Cana (f_68017)				user : solinfnet.branco_peres_cana.usi_branco_peres.f_68017
+			2.245    Branco Peres Cana (F_68019) 				user : solinfnet.branco_peres_cana.usi_branco_peres.f_68019
+			2.235    Branco Peres Cana (F_68016) 				user : solinfnet.branco_peres_cana.usi_branco_peres.f_68016
+
+	210.11.0.0/24 	Cooperval
+			1.5 	 Usina Cooperval			 	
+			 .105 	 Concentrador 1000			 				user : solinfnet.cooperval.usi_cooperval.f_1000
+			 .115 	 Concentrador 1001			 				user : solinfnet.cooperval.usi_cooperval.f_1001
+			 .125 	 Concentrador 1002			 				user : solinfnet.cooperval.usi_cooperval.f_1002
+
+	210.12.0.0/24	Nova America
+			1.105	 Concentrador 21001							user : solinfnet.nova_america.fz_taruma.f_21001
+			1.115 	Concentrador 403 							user : solinfnet.nova_america.fz_taruma.f_403
+			1.125 	Concentrador 502 							user : solinfnet.nova_america.fz_taruma.f_502
+			1.135 	Concentrador 505 							user : solinfnet.nova_america.fz_taruma.f_505
+			1.145 	Concentrador 5050 							user : solinfnet.nova_america.fz_taruma.f_5050
+			1.155	Concentrador de backup						user : solinfnet.nova_america.fz_taruma.f_505
+
+	210.13.0.0/24	Viterra
+			1.5  	 Nova Unialco								user : solinfnet.viterra.fz_novaunialco
+			  .15	 Concentrador móvel 1025					user : solinfnet.viterra.fz_novaunialco.f_1025
+			  .25    Concentrador móvel 1021					user : solinfnet.viterra.fz_novaunialco.f_1021
+			 .175	 Concentrador 1022							user : solinfnet.viterra.fz_novaunialco.f_1022
+			 .185 	 Concentrador 1000 							user : solinfnet.viterra.fz_novaunialco.f_1000
+			 .195 	 Concentrador 1013 							user : solinfnet.viterra.fz_novaunialco.f_1013
+			 .205 	 Concentrador 1011 							user : solinfnet.viterra.fz_novaunialco.f_1011
+			 .215 	 Concentrador 1020 							user : solinfnet.viterra.fz_novaunialco.f_1020			 
+			 .225 	 Concentrador 1017 							user : solinfnet.viterra.fz_novaunialco.f_1017
+ 			 .235 	 Concentrador 1009 							user : solinfnet.viterra.fz_novaunialco.f_1009
+  			 .245 	 Concentrador 1010							user : solinfnet.viterra.fz_novaunialco.f_1010
+             2.5      Rio Vermelho								user : solinfnet.viterra.fz_rio_vermelho (RDP: user:.\solinftec pw: $0L1nft3c)
+			3.5 	 Móvel Rio Vermelho
+			 .145 	 Gateway 2302								user : solinfnet.viterra.fz_riovermelho.f_2302
+			 .155 	 Gateway 2305 								user : solinfnet.viterra.fz_riovermelho.f_2305
+			 .165	 Gatewayu 2328								user : solinfnet.viterra.fz_riovermelho.f_2328
+			 .185 	 Gateway 2308 								user : solinfnet.viterra.fz_riovermelho.f_2308
+			 .205 	 Gateway 2310 								user : solinfnet.viterra.fz_riovermelho.f_2310
+			 .215 	 Gateway 2307 								user : solinfnet.viterra.fz_riovermelho.f_2307
+			 .225 	 Gateway 14481 								user : solinfnet.viterra.fz_riovermelho.f_14481
+			 .235 	 Gateway 2307 								user : solinfnet.viterra.fz_riovermelho.f_2327
+             fz_riovermelho.f_14481
+            .235     Concentrador Movel 1027                    user : solinfnet.viterra.fz_novaunialco.f_1027
+            .245    Concentrador.f_1028                         user : solinfnet.vitera.fz_novaunialco.f_1028
+            4.5
+             .105 	Concentrador 1026							user : solinfnet.viterra.fz_novaunialco.f_1026
+             .115 	Concentrador 1006							user : solinfnet.viterra.fz_novaunialco.f_1006
+             .125 	Concentrador 1008							user : solinfnet.viterra.fz_novaunialco.f_1008
+
+	210.14.0.0/24	SJA
+			1.105	 Con. Manutenção oficina				
+			1.115	 Con. Central C.O.I 						
+			1.125	 Gateway - MOBI 950092		
+			1.135	GW Casa								
+			1.145	GW Poço									
+			1.155 	GW - MOBI 950092 							user : solinfnet.sja.usi_sja.f_2000
+			1.165 	Frente 1									user : solinfnet.sja.usi_sja.f_2001
+			1.175 	Frente 2									user : solinfnet.sja.usi_sja.f_2002
+			1.185 	Frente 3									user : solinfnet.sja.usi_sja.f_2003
+			1.195 	Frente 4									user : solinfnet.sja.usi_sja.f_2004
+			1.205 	Frente 5									user : solinfnet.sja.usi_sja.f_2005
+			1.215 	Frente 6									user : solinfnet.sja.usi_sja.f_2006
+			1.225 	Frente 7									user : solinfnet.sja.usi_sja.f_2007
+			1.235 	Frente 9									user : solinfnet.sja.usi_sja.f_2009
+			1.245 	Gateway de Apoio							user : solinfnet.sja.usi_sja.f_4000
+			2.5 	SJA TORRES
+			2.105	Torre Araçoiaba								user : solinfnet.sja.usi_sja.f_3000
+			2.115	Torre Eng. D´água							user : solinfnet.sja.usi_sja.f_3001
+			2.125	Torre Água Branca							user : solinfnet.sja.usi_sja.f_3002
+			2.135	Torre Tiuna									user : solinfnet.sja.usi_sja.f_3003
+			2.145	Torre Botafogo								user : solinfnet.sja.usi_sja.f_3004
+			2.155	Torre General								user : solinfnet.sja.usi_sja.f_3005
+
+	210.15.0.0/24	Cocal
+			1.105 	 Movel Narandiba 1							user : solinfnet.cocal.fz_narandiba.f_1000
+			1.115 	 Movel Narandiba 2							user : solinfnet.cocal.fz_narandiba.f_1001
+			1.125 	 Movel Narandiba 3							user : solinfnet.cocal.fz_narandiba.f_1002
+			1.135 	 Movel Narandiba 4							user : solinfnet.cocal.fz_narandiba.f_1003
+			2.105 	 Movel Paraguaçu Paulista 1					user : solinfnet.cocal.fz_paraguacu_paulista.f_2000
+			2.115 	 Movel Paraguaçu Paulista 2					user : solinfnet.cocal.fz_paraguacu_paulista.f_2001
+			2.125 	 Movel Paraguaçu Paulista 3					user : solinfnet.cocal.fz_paraguacu_paulista.f_2002
+			2.135 	 Movel Paraguaçu Paulista 4					user : solinfnet.cocal.fz_paraguacu_paulista.f_2003
+			2.145	 Movel Paraguaçu Paulista 5 				user : solinfnet.cocal.fz_paraguacu_paulista.f_2004
+            3.       Passatempo 
+            3.15	 Torre Passa Tempo F4017             		user : solinfnet.cocal.fz_passatempo.f_4017 - ok
+            3.25	 TORRE FAZENDA CERVO            	   		user : solinfnet.cocal.fz_passatempo.f_4018 - ok
+            3.35	 Torre Assentamento Estrela F4019      		user : solinfnet.cocal.fz_passatempo.f_4019
+            3.45	 Torre Faz Dallas F4020              		user : solinfnet.cocal.fz_passatempo.f_4020 - ok
+            3.55	 Torre Assentamento São Pedro F4021    		user : solinfnet.cocal.fz_passatempo.f_4021 - ok
+            3.65	 Torre Assentamento Bebedouro F4022    		user : solinfnet.cocal.fz_passatempo.f_4022 - ok
+            3.75	 Torre Faz. Alvorada - RF F4023     		user : solinfnet.cocal.fz_passatempo.f_4023 - ok
+            3.85	 TORRE CAPAO SECO                 			user : solinfnet.cocal.fz_passatempo.f_4024 - ok
+			3.95	 TORRE BOM SUCESSO							user : solinfnet.cocal.fz_passatempo.f_4025 - ok
+			3.105	 Balança Passatempo P0-300 e P7-310			user : solinfnet.cocal.fz_passatempo.f_300_310
+			3.115	 Movel Passatempo 301						user : solinfnet.cocal.fz_passatempo.f_301 - ok
+			3.125	 Movel Passatempo 302						user : solinfnet.cocal.fz_passatempo.f_302 - ok
+			3.135	 Movel Passatempo 303						user : solinfnet.cocal.fz_passatempo.f_303 - ok
+			3.145	 Movel Passatempo 304						user : solinfnet.cocal.fz_passatempo.f_304 - ok
+			3.155 	 Movel Passatempo 411 						user : solinfnet.cocal.fz_passatempo.f_411
+			3.165	 TORRE GUARANI								user : solinfnet.cocal.fz_passatempo.f_4026 - ok
+			3.175	 TORRE DALLAS								user : solinfnet.cocal.fz_passatempo.f_4027 - ok
+			3.185	 TORRE BEBEDOURO 							user : solinfnet.cocal.fz_passatempo.f_4028 - ok
+			3.195	 TORRE SOLAR DOS DEUSES						user : solinfnet.cocal.fz_passatempo.f_4029 - ok
+			3.205	 TORRE MARGARIDA ALVES 						user : solinfnet.cocal.fz_passatempo.f_4032 - ok
+			3.215	 Movel Passatempo 421 					    user : solinfnet.cocal.fz_passatempo.f_421
+			3.225	 Movel Passatempo 422 					    user : solinfnet.cocal.fz_passatempo.f_422
+            4.       Rio Brilhante
+            4.15	 Torre Faz. Proteção F4011               	user : solinfnet.cocal.fz_rio_brilhante.Torre_Protecao - ok
+            4.25	 Torre Assentamento São Judas-Escola F4012  user : solinfnet.cocal.fz_rio_brilhante.saojudas_escola - ok
+            4.35	 Torre Assentamento Triangulo F4013  		user : solinfnet.cocal.fz_rio_brilhante.f_4013 - ok
+            4.45	 Torre Faz. Tita F4014               		user : solinfnet.cocal.fz_rio_brilhante.faz.tita.F4014
+            4.55	 Torre Distrito Prudencio Thomas F4015 		user : solinfnet.cocal.fz_rio_brilhante.f_4015
+            4.65	 Torre Faz Mimoso F4016             		user : solinfnet.cocal.fz_rio_brilhante.f_4016
+            4.105	 Balança Rio Brilhante P0-400 e P7-410		user : solinfnet.cocal.fz_rio_brilhante.f_400_410 - ok
+			4.115	 Movel Rio Brilhante 411 					user : solinfnet.cocal.fz_rio_brilhante.f_411 - ok
+			4.125	 Movel Rio Brilhante 412 					user : solinfnet.cocal.fz_rio_brilhante.f_412 - ok
+			4.135	 Movel Rio Brilhante 413 					user : solinfnet.cocal.fz_rio_brilhante.f_413 - ok
+			4.145	 Movel Rio Brilhante 414 					user : solinfnet.cocal.fz_rio_brilhante.f_414 - ok
+            4.155	 Movel Vinhaça Localizada Rio Brilhante 419 user : solinfnet.cocal.fz_rio_brilhante.f_419 - ok
+            4.165	 Movel Frente AMV Rio Brilhante F611        user : solinfnet.cocal.fz_rio_brilhante.f_611 - ok
+			5.105	 Torre 501 				 					user : solinfnet.cocal.f_501 - ok
+			5.115	 Torre 502 				 					user : solinfnet.cocal.f_502 - ok
+			5.125	 Torre 503 				 					user : solinfnet.cocal.f_503 - ok
+            5.135	 GATEWAY MOVEL FRENTE AMV TERCEIRO			user : solinfnet.cocal.fz_rio_brilhante.f_511 - ok
+
+
+	210.16.0.0/24 	Goiasa
+			1.115 	 Movel 1001 								user : solinfnet.goiasa.f_1001
+			1.125 	 Movel 1002 								user : solinfnet.goiasa.f_1002
+			1.135 	 Movel 1003 								user : solinfnet.goiasa.f_1003
+			1.145 	 Movel 1004 								user : solinfnet.goiasa.f_1004
+			1.155 	 Movel 1005 								user : solinfnet.goiasa.f_1005
+			1.165 	 Movel 1006 								user : solinfnet.goiasa.f_1006
+			1.175 	 Movel 1007 								user : solinfnet.goiasa.f_1007
+			1.185 	 Movel 1008 								user : solinfnet.goiasa.f_1008
+			1.195 	 Movel 1009 								user : solinfnet.goiasa.f_1009
+			1.205 	 Movel 1010 								user : solinfnet.goiasa.f_1010
+			1.215 	 Movel 1011 								user : solinfnet.goiasa.f_1011
+			1.225 	 Movel 1012 								user : solinfnet.goiasa.f_1012
+			1.235 	 Movel 1013 								user : solinfnet.goiasa.f_1013
+			1.245    Usina 1014/1064                            user : solinfnet.goiasa.f_1014
+			1.95 	 Movel 1015 								user : solinfnet.goiasa.f_1015
+			1.85 	 Movel 1016 								user : solinfnet.goiasa.f_1016
+
+	210.17.0.0/24	Grupo Pavani
+			1.5
+			 .105	 Concentrador Faz. Tamanduá					user : solinfnet.grupo_pavani.fz_tamandua.f_10000
+
+	210.18.0.0/24 	Grupo Pedra
+	 		1.5 	 Matriz
+	 		 .105 	 Concentrador 1010 							user : solinfnet.grupo_pedra.usi_matriz.f_1010
+	 		 .115 	 Concentrador 1011 (ok)						user : solinfnet.grupo_pedra.usi_matriz.f_1011
+	 		 .125 	 Concentrador 1012 							user : solinfnet.grupo_pedra.usi_matriz.f_1012
+ 	 		 .135 	 Concentrador 1013 							user : solinfnet.grupo_pedra.usi_matriz.f_1013
+ 	 		 .145 	 Torre Ibirá (GPRS) Divide com a Ipiranga	user : solinfnet.grupo_pedra.usi_matriz.f_1014
+ 	 		 .155 	 Concentrador 1015 (ok)						user : solinfnet.grupo_pedra.usi_matriz.f_1015
+	 		 .165 	 Concentrador 1016 (16)						user : solinfnet.grupo_pedra.usi_matriz.f_1016
+ 	 		 .175 	 Concentrador 1017 (ok)						user : solinfnet.grupo_pedra.usi_matriz.f_1017
+ 	 		 .185 	 Concentrador 1036 (ok)						user : solinfnet.grupo_pedra.usi_matriz.f_1036
+ 	 		 .195 	 Concentrador 1020 (ok)						user : solinfnet.grupo_pedra.usi_matriz.f_1020
+	 		2.5 	 Ipê
+ 	 		 .105 	 Concentrador 1033							user : solinfnet.grupo_pedra.usi_ipe.f_1033
+  	 		 .115 	 Concentrador 1037							user : solinfnet.grupo_pedra.usi_ipe.f_1037
+  	 		 .125 	 Concentrador 1000							user : solinfnet.grupo_pedra.usi_ipe.f_1000
+ 	 		 .135 	 Concentrador 1034							user : solinfnet.grupo_pedra.usi_ipe.f_1034
+ 	 		 .145 	 Concentrador 1038							user : solinfnet.grupo_pedra.usi_ipe.f_1038
+ 	 		 .155 	 Concentrador 1035							user : solinfnet.grupo_pedra.usi_ipe.f_1035
+ 	 		 .165 	 Concentrador 62299							user : solinfnet.grupo_pedra.usi_ipe.f_62299
+	 		3.5 	 Buriti
+	 		 .105 	  Concentrador f_1004 						user : solinfnet.grupo_pedra.fz_buriti.f_1040
+	 		4.5 	 Cedro 										user : solinfnet.grupo_pedra.fz_cedro
+	 		 .145 	 Concentrador 10003							user : solinfnet.grupo_pedra.fz_cedro.f_10003
+			 .155 	 Concentrador 10005							user : solinfnet.grupo_pedra.fz_cedro.f_10005
+			 .165	 Poste 04 8M GPRS							user : solinfnet.grupo_pedra.fz_cedro.f_10006
+ 			 .175	 Torre 04 8M GPRS							user : solinfnet.grupo_pedra.fz_cedro.f_10004
+	  		5.5 	 Cedro T3									user : solinfnet.grupo_pedra.fz_cedro_t3
+
+	210.19.0.0/24 	Usina Santa Helena
+			1.115 	 Matriz 									user : solinfnet.usi_santa_helena.f_1001
+
+	210.20.0.0/24 	Viralcool Pitangueiras
+			1.105 	 Concnetrador Torre							user : solinfnet.usi_viralcool_pitang.f_1002
+			2.5 	Ibituva
+			2.105 	 Balança									user : solinfnet.viralcool_pitangueiras.fz_ibituva.f_2000
+
+	210.21.0.0/24	Grupo JB
+			1.5  	 
+			.105 	 Concentrador 10000							user : solinfnet.grupo_jb.fz_lasa.f_10000
+			.115 	 Concentrador 10001							user : solinfnet.grupo_jb.fz_lasa.f_10001
+			.125 	 Concentrador 10002							user : solinfnet.grupo_jb.fz_lasa.f_10002
+			.135 	 Concentrador 10003							user : solinfnet.grupo_jb.fz_lasa.f_10003
+
+	210.22.0.0/24 	Serranópolis
+			1.5
+			 .105 	 Concnetrador 1000				user : solinfnet.usi_serranopolis.f_1000
+			 .115 	 Concnetrador 1010				user : solinfnet.usi_serranopolis.f_1010
+			 .125 	 Concnetrador 1110				user : solinfnet.usi_serranopolis.f_1110			 
+			 .135 	 Concnetrador 1109 - Frente 2	user : solinfnet.usi_serranopolis.f_1109 
+			 .145 	 Concnetrador 1107 - Frente 3	user : solinfnet.usi_serranopolis.f_1107
+			 .155 	 Concnetrador 1111 				user : solinfnet.usi_serranopolis.f_1111
+
+	210.23.0.0 		Santa Fé
+			1.5
+			.105	Concentrador 10000				user : solinfnet.santa_fe.fz_santa_fe.f_10000
+			.115	Concentrador 10001				user : solinfnet.santa_fe.fz_santa_fe.f_10001
+			.125	Concentrador 10002				user : solinfnet.santa_fe.fz_santa_fe.f_10002
+
+	210.24.0.0/24 	Usina Lins						
+			1.5
+			 .105 	 Concnetrador 1000				user : solinfnet.usina_lins.usi_lins.f_1000
+			 .115 	 Concnetrador 1001				user : solinfnet.usina_lins.usi_lins.f_1001
+			 .125 	 Concnetrador 1002				user : solinfnet.usina_lins.usi_lins.f_1002
+
+	210.25.0.0/24	Grupo RGE
+			1.5
+			.105 	Concentrador 1000				user : solinfnet.gruporge.fz_cachoeira.f_1000
+			.115 	Concentrador 1001 				user : solinfnet.gruporge.fz_cachoeira.f_1001
+			.125 	Concentrador 1002 				user : solinfnet.gruporge.fz_cachoeira.f_1002
+			.135 	Concentrador 1003 				user : solinfnet.gruporge.fz_cachoeira.f_1003
+			.145 	Concentrador 1004 				user : solinfnet.gruporge.fz_cachoeira.f_1004
+			.155	Concentrador 1005				user : solinfnet.gruporge.fz_cachoeira.f_1005
+			.165 	Concentrador 1006 				user : solinfnet.gruporge.fz_cachoeira.f_1006
+			.175	Concentrador 10007				user : solinfnet.gruporge.fz_cachoeira.f_10007
+			.185    Poste X07 - 10m                 user : solinfnet.gruporge.fz_cachoeira.f_11000
+			.195    TORRE 2 - 45m                   user : solinfnet.gruporge.fz_cachoeira.f_11001  
+            .205    Poste x2 - 10m                  user : solinfnet.gruporge.fz_cachoeira.f_11002
+            .215    ........		                user : solinfnet.gruporge.fz_cachoeira.f_11004
+
+	210.26.0.0/24 	Uberaba
+			1.105 	Concentrador 1000 				user : solinfnet.uberaba.uberaba.f_1000
+			1.115	Concentrador 1001				user : solinfnet.uberaba.uberaba_f_1001		
+			1.125	Concentrador 1002				user : solinfnet.uberaba.uberaba_f_1002
+			1.135	
+			1.145	Concentrador 1004				user : solinfnet.uberaba.uberaba_f_1004
+			1.155	
+			1.185	Concentrador 1008 				user : solinfnet.uberaba.uberaba_f_1008	(contigencia)
+			2.105 	 Concentrador 2000 				user : solinfnet.uberaba.santo_antonio.f_2000
+
+	210.27.0.0/24  	Coprodia 
+			1.5 	Usina Coprodia					user : solinfnet.usina.coprodia
+			2.105 	Torre Campo Belo				user : solinfnet.coprodia.f_106
+			2.115 	Torre Sede Pindorama			user : solinfnet.coprodia.f_105
+			3.105 	Concentrador bkp 01				user : solinfnet.coprodia.f_300
+			3.115 	Concentrador bkp 02				user : solinfnet.coprodia.f_301
+			3.125	Concentrador bkp 03 			user : solinfnet.coprodia.f_302
+			3.135	Concentrador bkp 04				user : solinfnet.coprodia.f_303
+			3.145   Concentrador bkp 05				user : solinfnet.coprodia.f_304
+			
+	210.28.0.0/24 	Zilor
+			1.5 	 Zilor 							user : solinfnet.zilor.usi_zilor
+			 .10 	  RDP 							user : zilloren\uqtsolinftec  |  password : Zilor2017
+			          PRTG							http://210.28.1.10/public/mapshow.htm?id=2333&mapid=29653098-9E43-4391-AEF2-BEB821D0CCF8
+			2.5
+			2.105	 Concentrador vivência			user : solinfnet.zilor.usi_zilor.f_1114
+			2.115	 Concentrador vivência			user : solinfnet.zilor.usi_zilor.f_1115
+			2.125    Concentrador vivência 			user : solinfnet.zilor.usi_zilor.f_1116
+			2.135    Concentrador vivência			user : solinfnet.zilor.usi_zilor.f_1117
+			2.145 	 Zilor Movel 104|105 			user : solinfnet.zilor.usi_zilor.f_104_105
+			2.175 	 Zilor Movel 107 	 			user : solinfnet.zilor.usi_zilor.f_107
+			2.195    Zilor Movel 109|110			user : solinfnet.zilor.usi_zilor.f_109_110
+			2.205    Zilor Movel 111|112			user : solinfnet.zilor.usi_zilor.f_111_112
+			2.215    Zilor Movel 113|114			user : solinfnet.zilor.usi_zilor.f_113_114
+			2.225    Zilor Movel 115|116			user : solinfnet.zilor.usi_zilor.f_115_116
+			3.5
+			3.245    Zilor Barra Grande 1020 		user : solinfnet.zilor.usi_zilor.f_1020
+			3.235    Zilor Movel 1122|1123			user : solinfnet.zilor.usi_zilor.f_1122_1123
+		
+
+	210.29.0.0/24	DaMata
+			1.5 	DaMata
+			2.105 	Concentrador 1060				user : solinfnet.damata.usi_damata.f_1060
+			2.115	Concentrador 1061				user : solinfnet.damata.usi_damata.f_1061
+			2.125	Concentrador 1062				user : solinfnet.damata.usi_damata.f_1062
+			2.135	Concentrador 1063				user : solinfnet.damata.usi_damata.f_1063
+
+	210.30.0.0/24	Viralcool Castilho
+	 		1.95 	 Movel Mobi 1040 				user : solinfnet.viralcool_castilho.usi_viralcool_castilho.f_1040
+	 		1.105 	 Usina 							user : solinfnet.viralcool_castilho.usi_viralcool_castilho.f_1001
+	 		1.115 	 Movel Fiorino 1000 			user : solinfnet.viralcool_castilho.usi_viralcool_castilho.f_1000
+	 		1.125 	 Movel Mobi 1003 				user : solinfnet.viralcool_castilho.usi_viralcool_castilho.f_1003
+	 		1.135 	 Movel Mobi 1006 e 1007			user : solinfnet.viralcool_castilho.usi_viralcool_castilho.f_1006_1007
+	 		1.145 	 Movel Mobi 1008 e 1009			user : solinfnet.viralcool_castilho.usi_viralcool_castilho.f_1008_1009
+	 		1.155 	 Movel Mobi 1010 e 1011			user : solinfnet.viralcool_castilho.usi_viralcool_castilho.f_1010_1011
+	 		1.165 	 Movel Mobi 1012 e 1013			user : solinfnet.viralcool_castilho.usi_viralcool_castilho.f_1012_1013
+	 		1.175 	 Movel Mobi 1014 e 1015			user : solinfnet.viralcool_castilho.usi_viralcool_castilho.f_1014_1015
+	 		1.185 	 Movel Mobi 1016 e 1017			user : solinfnet.viralcool_castilho.usi_viralcool_castilho.f_1016_1017
+	 		1.195 	 Movel Mobi 1018 e 1019			user : solinfnet.viralcool_castilho.usi_viralcool_castilho.f_1018_1019
+	 		1.205 	 Movel Mobi 1020 e 1021			user : solinfnet.viralcool_castilho.usi_viralcool_castilho.f_1020_1021
+	 		1.215 	 Movel Mobi 1022 e 1023			user : solinfnet.viralcool_castilho.usi_viralcool_castilho.f_1022_1023
+	 		1.225 	 Movel Mobi 1024 e 1025			user : solinfnet.viralcool_castilho.usi_viralcool_castilho.f_1024_1025
+	 		1.235 	 Movel Mobi 1026 e 1027			user : solinfnet.viralcool_castilho.usi_viralcool_castilho.f_1026_1027
+	 		1.245 	 Movel Mobi 1028 e 1029			user : solinfnet.viralcool_castilho.usi_viralcool_castilho.f_1028_1029
+			1.95 	 Móvel 1032 					user : solinfnet.viralcool_castilho.usi_castilho.f_1032
+			1.85 	 Móvel 1036 					user : solinfnet.viralcool_castilho.usi_castilho.f_1036
+			1.75     Concentrador Móvel - 1030		user : solinfnet.viralcool_castilho.usi_castilho.f_1030			
+				
+	210.31.0.0/24	US Sugar
+			1.135 	 HUB 103 Móvel 					user : solinfnet.ussugar.f_103
+			1.145 	 HUB 104 Móvel 					user : solinfnet.ussugar.f_104
+			1.155 	 HUB 105 Móvel 					user : solinfnet.ussugar.f_105
+			1.165 	 HUB 106 Móvel 					user : solinfnet.ussugar.f_106
+			1.175 	 HUB 107 Móvel 					user : solinfnet.ussugar.f_107
+			1.185 	 HUB 108 Móvel 					user : solinfnet.ussugar.f_108
+			1.195 	 HUB 109 Móvel 					user : solinfnet.ussugar.f_109
+
+	210.32.0.0/24 	
+
+	210.33.0.0/24 	Atvos
+	 		1.5 	UMV
+	 		.105 	 Móvel 6024 					user : solinfnet.atvos.umv.f_6024
+	 		.115 	 Móvel 6021 					user : solinfnet.atvos.umv.f_6021
+	 		.125     Móvel 6022   					user : solinfnet.atvos.umv.f_6022
+	 		.135 	 Móvel 6025 					user : solinfnet.atvos.umv.f_6025
+	 		2.5 	UCP
+	 		 .105 	 Móvel 3020 					user : solinfnet.atvos.ucp.f_3020
+	 		 .115 	 Móvel 3022 					user : solinfnet.atvos.ucp.f_3022
+	 		 .125 	 Móvel 3003 (4G) 				user : solinfnet.atvos.ucp.f_3003
+	 		 .135 	 Móvel 3016						user : solinfnet.atvos.ucp.f_3016
+	 		 .145 	 Móvel 3019						user : solinfnet.atvos.ucp.f_3019
+	 		3.5 	UCR
+	 		 .105 	 Móvel 7015						user : solinfnet.atvos.ucr.f_7015
+	 		4.5     UEL
+	 		 .105 	 Móvel 8008 					user : solinfnet.atvos.uel.f_8008 (senha: Geotecnologia#2024K)
+	 		 .115    Móvel 8051 					user : solinfnet.atvos.uel.f_8051 (senha: Geotecnologia#2024K)
+	 		5.5     UAE
+	 		 .105    Móvel 9060 					user : solinfnet.atvos.uae.f_9060
+	 		 .115    Móvel 6020 					user : solinfnet.atvos.uae.f_6020
+	 		6.5 	URC
+	 		 .105 	 Móvel 1014 					user : solinfnet.atvos.urc.f_1014
+
+
+	210.34.0.0/24	Coruripe Alagoas
+			1.105	 Concentrador 1000				user : solinfnet.coruripe.fz_alagoas.f_1000
+			1.115	 Concentrador 1001				user : solinfnet.coruripe.fz_alagoas.f_1001
+			1.125 	 Concentrador 1002 				user : solinfnet.coruripe.fz_alagoas.f_1002
+			1.135    Concentrador 1003 				user : solinfnet.coruripe.fz_alagoas.f_1003	
+			1.145	 Concentrador 1010 				user : solinfnet.coruripe.fz_alagoas.f_1010
+			1.155 	 Concentrador 1005 				user : solinfnet.coruripe.fz_alagoas.f_1005
+            1.165 	 Concentrador 1012  			user : solinfnet.coruripe.fz_alagoas.f_1012
+            1.175 	 Concentrador 1013  			user : solinfnet.coruripe.fz_alagoas.f_1013
+            1.185 	 Concentrador 1009  			user : solinfnet.coruripe.fz_alagoas.f_1009
+
+	210.35.0.0/24	Estivas
+			1.105	 Concentrador 01				user : solinfnet.estivas.usi_estivas.f_1004
+			1.115	 Concentrador 02				user : solinfnet.estivas.usi_estivas.f_1003
+			1.125	 Concentrador 03				user : solinfnet.estivas.usi_estivas.f_1000
+			1.135	 Concentrador 04				user : solinfnet.estivas.usi_estivas.f_1005
+			2.105    Estivas 2000 (Nordeste)        user : solinfnet.estivas.usi_nordeste.f_2000
+			
+
+	210.36.0.0/24	Pauliceia
+			1.105	 Concentrador 1015				user : solinfnet.pauliceia.usi_pauliceia.f_1015
+			1.115 	 Concentrador 					user : solinfnet.pauliceia.usi_pauliceia.f_1015
+			1.125	 Concentrador Móvel				user : solinfnet.pauliceia.usi_pauliceia.f_1020
+
+	210.37.0.0/24 	BP
+			1.105    Itumbiara 1001 e 1002 			user : solinfnet.bp.uni_itumbiara.f_1001_1002
+			1.115 	 Itumbiara 1003 e 1004 			user : solinfnet.bp.uni_itumbiara.f_1003_1004
+			1.125    Itumbiara 1005 e 1006 			user : solinfnet.bp.uni_itumbiara.f_1005_1006
+			1.135 	 Itumbiara 1007 e 1008 			user : solinfnet.bp.uni_itumbiara.f_1007_1008
+			1.145 	 Itumbiara 1009 e 1010 			user : solinfnet.bp.uni_itumbiara.f_1009_1010
+			2.105	 Monte Verde 20000				user : solinfnet.bp.monte_verde.f_20000
+			2.115	 Monte Verde 20001				user : solinfnet.bp.monte_verde.f_20001
+			2.125 	 Monte Verde 20002				user : solinfnet.bp.monte_verde.f_20002
+			2.135 	 Monte Verde 20003				user : solinfnet.bp.monte_verde.f_20003
+			3.105 	 Ituiutaba 4000 				user : solinfnet.bp.uni_ituiutaba.f_4000
+			3.115 	 Ituiutaba 4001 				user : solinfnet.bp.uni_ituiutaba.f_4001
+			3.125 	 Ituiutaba 4002 				user : solinfnet.bp.uni_ituiutaba.f_4002
+			3.135 	 Ituiutaba 4003 				user : solinfnet.bp.uni_ituiutaba.f_4003
+			3.145 	 Ituiutaba 4004 				user : solinfnet.bp.uni_ituiutaba.f_4004
+			4.105 	 Guariroba 3000 				user : solinfnet.bp.uni_guariroba.f_3000
+			4.115 	 Guariroba 3001 				user : solinfnet.bp.uni_guariroba.f_3001
+			4.125 	 Guariroba 3002 				user : solinfnet.bp.uni_guariroba.f_3002
+			5.105 	 Frutal 5000 					user : solinfnet.bp.uni_frutal.f_5000
+			5.115 	 Frutal 5001 					user : solinfnet.bp.uni_frutal.f_5001
+			5.125 	 Frutal 5002 					user : solinfnet.bp.uni_frutal.f_5002
+			5.135 	 Frutal 5003 					user : solinfnet.bp.uni_frutal.f_5003
+			5.145 	 Frutal 5004 					user : solinfnet.bp.uni_frutal.f_5004
+			5.155 	 Frutal 5005 					user : solinfnet.bp.uni_frutal.f_5005
+			6.105 	 Pedro Afonso 6000 				user : solinfnet.bp.uni_pedro_afonso.f_6000 (6001 Preambulo 7)
+			6.125 	 Pedro Afonso 6002 				user : solinfnet.bp.uni_pedro_afonso.f_6002
+			6.135 	 Pedro Afonso 6003 				user : solinfnet.bp.uni_pedro_afonso.f_6003
+			6.145 	 Pedro Afonso 6004 				user : solinfnet.bp.uni_pedro_afonso.f_6004
+			6.155 	 Pedro Afonso 6005 				user : solinfnet.bp.uni_pedro_afonso.f_6005
+			6.165 	 Pedro Afonso 6006 				user : solinfnet.bp.uni_pedro_afonso.f_6006
+			7.145 	 Ouro Oeste 7004 				user : solinfnet.bp.uni_ouro_oeste.f_7004
+            8.105 	 Itapagipe 11005 				user : solinfnet.bp.uni_itapagipe.f_11005
+            8.115 	 Itapagipe 11006 				user : solinfnet.bp.uni_itapagipe.f_11006
+
+	210.38.0.0/24	Jalles Machado
+			1.105	 Concentrador 01				user : solinfnet.jalles_machado.usi_jalles_machado.f_13731
+			1.115	 Concentrador 01				user : solinfnet.jalles_machado.usi_jalles_machado.f_13717
+			1.125	 Concentrador 50562				user : solinfnet.jalles_machado.usi_jalles_machado.f_50652
+			1.135	 Concentrador 1008				user : solinfnet.jalles_machado.f_1008
+			1.145	 Concentrador 1009				user : solinfnet.jalles_machado.f_1009
+			1.155	 Concentrador 1010				user : solinfnet.jalles_machado.f_1010
+			1.165	 Concentrador 1011				user : solinfnet.jalles_machado.f_1011
+			1.175	 Concentrador 1012			    user : solinfnet.jalles_machado.f_1012
+			1.185	 Concentrador 1013				user : solinfnet.jalles_machado.f_1013
+			1.195	 Concentrador 1014				user : solinfnet.jalles_machado.f_1014
+			1.205	 Concentrador 1015				user : solinfnet.jalles_machado.f_1015
+			1.215	 Concentrador 3007 e 3008		user : solinfnet.jalles_machado.f_3007_3008
+			2.5		 Santa Vitoria
+			2.105 	 Concentrador 3000 				user : solinfnet.jalles_machado.usi_santa_vitoria.f_3000
+			2.115 	 Concentrador 3001 				user : solinfnet.jalles_machado.usi_santa_vitoria.f_3001
+			2.135	 Concentrador 3003				user : solinfnet.jalles_machado.usi_santa_vitoria.f_3003
+			2.145	 Concentrador 3004				user : solinfnet.jalles_machado.usi_santa_vitoria.f_3004
+			2.155	 Concentrador 3005				user : solinfnet.jalles_machado.usi_santa_vitoria.f_3005
+			3.5 	 OTAVIO LAGE
+			 .105 	  Gateway 501 					user : solinfnet.jalles_machado.usi_otavio_lages.f_501
+			 .115 	  Gateway 502 					user : solinfnet.jalles_machado.usi_otavio_lages.f_502
+			 .125 	  Gateway 503 					user : solinfnet.jalles_machado.usi_otavio_lages.f_503
+			 .135 	  Gateway 504 					user : solinfnet.jalles_machado.usi_otavio_lages.f_504
+			 .145 	  Gateway 505 					user : solinfnet.jalles_machado.usi_otavio_lages.f_505
+			 .155 	  Gateway 506 					user : solinfnet.jalles_machado.usi_otavio_lages.f_506
+
+	210.39.0.0/24 	Coruripe
+			1.105  	 Iturama Móvel 2020 			user : solinfnet.coruripe.fz_iturama.f_2020
+			1.115  	 Iturama Móvel 2009 			user : solinfnet.coruripe.fz_iturama.f_2009
+			1.125 	 Iturama Móvel 802020			user : solinfnet.coruripe.fz_iturama.f_802020
+			1.135 	 Iturama Móvel 802022 			user : solinfnet.coruripe.fz_iturama.f_802022
+			1.145 	 Iturama Frota 1 				user : solinfnet.coruripe.fz_iturama.f_1
+			1.155 	 Iturama Frota 2 				user : solinfnet.coruripe.fz_iturama.f_2
+
+	210.40.0.0/24	Santo Ângelo
+			1.245 	 Concnetrador 					user : solinfnet.santo_angelo.usi_sto_angelo.f_1016
+			1.235 	 Concnetrador 					user : solinfnet.santo_angelo.usi_sto_angelo.f_1017
+			1.225 	 Concnetrador 					user : solinfnet.santo_angelo.usi_sto_angelo.f_1010
+			1.215 	 Concnetrador 					user : solinfnet.santo_angelo.usi_sto_angelo.f_2033
+			1.205 	 Concnetrador 					user : solinfnet.santo_angelo.usi_sto_angelo.f_2047
+			1.195 	 Concnetrador 					user : solinfnet.santo_angelo.usi_sto_angelo.f_276
+			1.185 	 Concentrador 					user : solinfnet.santo_angelo.usi_sto_angelo.f_1047
+
+	210.41.0.0/24 	Santa Isabel
+			1.105 	 Concentrador Móvel 111 		user : solinfnet.santa_isabel.f_111
+			1.115 	 Concentrador Móvel 112 		user : solinfnet.santa_isabel.f_112
+			1.125 	 Concentrador Móvel 113 		user : solinfnet.santa_isabel.f_113
+			1.135 	 Concentrador Móvel 129			user : solinfnet.santa_isabel.f_129
+			2.5 	 Novo Horizonte
+			2.105 	 Concentrador 120/F133  		user : solinfnet.santa_isabel.usi_novo_horizonte.f_120
+			2.115 	 Concentrador 118/F121  		user : solinfnet.santa_isabel.usi_novo_horizonte.f_118
+			2.125 	 Concentrador 117/F107  		user : solinfnet.santa_isabel.usi_novo_horizonte.f_117
+			2.135 	 Concentrador 114/F104  		user : solinfnet.santa_isabel.usi_novo_horizonte.f_114
+			2.145 	 Concentrador 133/Reserva  		user : solinfnet.santa_isabel.usi_novo_horizonte.f_133
+			2.155 	 Concentrador 119/F131  		user : solinfnet.santa_isabel.usi_novo_horizonte.f_119
+			2.165 	 Concentrador 111/F101  		user : solinfnet.santa_isabel.usi_novo_horizonte.f_111
+			2.175 	 Concentrador 112/F102  		user : solinfnet.santa_isabel.usi_novo_horizonte.f_112
+			2.185 	 Concentrador 115/F105  		user : solinfnet.santa_isabel.usi_novo_horizonte.f_115
+			2.195 	 Concentrador 116/F106  		user : solinfnet.santa_isabel.usi_novo_horizonte.f_116			
+			2.205 	 Concentrador 113/F103  		user : solinfnet.santa_isabel.usi_novo_horizonte.f_113
+			3.5 	 Mendonça
+			3.105 	 Concentrador 130/F227	  		user : solinfnet.santa_isabel.usi_mendonca.f_130
+			3.115 	 Concentrador 126/206	  		user : solinfnet.santa_isabel.usi_mendonca.f_126
+			3.125 	 Concentrador 125/F205	  		user : solinfnet.santa_isabel.usi_mendonca.f_125
+			3.135 	 Concentrador 127/F221	  		user : solinfnet.santa_isabel.usi_mendonca.f_127
+			3.145 	 Concentrador 121/F201	  		user : solinfnet.santa_isabel.usi_mendonca.f_121
+			3.155 	 Concentrador 128/F224	  		user : solinfnet.santa_isabel.usi_mendonca.f_128
+			3.165 	 Concentrador 132/F207	  		user : solinfnet.santa_isabel.usi_mendonca.f_132
+			3.175 	 Concentrador 124/F204	  		user : solinfnet.santa_isabel.usi_mendonca.f_124
+			3.185 	 Concentrador 123/F203	  		user : solinfnet.santa_isabel.usi_mendonca.f_123
+			3.195 	 Concentrador 134/F133	  		user : solinfnet.santa_isabel.usi_mendonca.f_134
+			3.205 	 Concentrador 129/F226	  		user : solinfnet.santa_isabel.usi_mendonca.f_129
+			3.215 	 Concentrador 122/F202	  		user : solinfnet.santa_isabel.usi_mendonca.f_122
+			3.225 	 Concentrador 131/COA	  		user : solinfnet.santa_isabel.usi_novo_horizonte.f_131
+
+	210.42.0.0/24 	USL
+			1.105 	 Gateway Usina 					user : solinfnet.usl.f_1000
+			1.115 	 Gateway Jamaica 				user : solinfnet.usl.f_1001
+			1.125 	 Gateway Hamonia				user : solinfnet.usl.f_1002
+			1.135 	 Gateway Palmeiras				user : solinfnet.usl.f_1003
+
+	210.43.0.0/24 	Cevasa
+			1.5
+			2.105 	 Usina Batatais 2000			user : solinfnet.cevasa.usi_batatais.f_2000
+			2.115 	 Usina Batatais 2001			user : solinfnet.cevasa.usi_batatais.f_2001
+			2.125 	 Usina Batatais 2002			user : solinfnet.cevasa.usi_batatais.f_2002
+			2.135 	 Usina Batatais 2003			user : solinfnet.cevasa.usi_batatais.f_2003
+			2.145 	 Usina Batatais 2004			user : solinfnet.cevasa.usi_batatais.f_2004
+			2.155 	 Usina Batatais 2005			user : solinfnet.cevasa.usi_batatais.f_2005
+			2.165 	 Usina Batatais 2006			user : solinfnet.cevasa.usi_batatais.f_2006
+			2.175 	 Usina Batatais 2007			user : solinfnet.cevasa.usi_batatais.f_2007
+			2.185 	 Usina Batatais 2008			user : solinfnet.cevasa.usi_batatais.f_2008
+			2.195 	 Usina Batatais 2009			user : solinfnet.cevasa.usi_batatais.f_2009
+			2.205 	 Usina Batatais 2010			user : solinfnet.cevasa.usi_batatais.f_2010
+			3.105 	 Usina Batatais 3000 			user : solinfnet.cevasa.usi_batatais.f_3000 
+			3.115 	 Usina Batatais 3001 			user : solinfnet.cevasa.usi_batatais.f_3001
+			3.125 	 Usina Batatais 3002 			user : solinfnet.cevasa.usi_batatais.f_3002
+			3.135 	 Usina Batatais 3003 			user : solinfnet.cevasa.usi_batatais.f_3003
+			2.215 	 Usina Batatais 2011			user : solinfnet.cevasa.usi_batatais.f_2011
+			2.225 	 Usina Batatais 2012			user : solinfnet.cevasa.usi_batatais.f_2012
+			2.235    Usina Batatais 2013 			user : solinfnet.cevasa.usi_batatais.f_2013
+            
+	210.44.0.0/24 	Clealco
+			1.105 	Concentrador 1 					user: solinfnet.clealco.f_10000 (SlotA-10000/SlotB-10004)
+			1.115 	Concentrador 2 					user: solinfnet.clealco.f_10001 (SlotA-10001/SlotB-10005)
+			1.125 	Concentrador 3					user: solinfnet.clealco.f_10002 (SlotA-10002/SlotB-10006)
+			1.135 	Concentrador 4					user: solinfnet.clealco.f_10003 (SlotA-10002/SlotB-10007)
+
+	210.45.0.0/24 	Usina Pinheiro
+			1.5 	 Sede Usina Pinheiro			user : solinfnet.usina_pinheiro
+			1.105 	 Gateway 1000 					user : solinfnet.usina_pinheiro.f_1000
+			1.115 	 Gateway 1001 					user : solinfnet.usina_pinheiro.f_1001
+			1.125 	 Gateway 1002 					user : solinfnet.usina_pinheiro.f_1002
+			1.135	 Gateway 1003					user : solinfnet.usina_pinheiro.f_1003
+			1.145 	 Gateway 2399 					user : solinfnet.usina_pinheiro.f_2399
+			1.155 	 Gateway 2377 					user : solinfnet.usina_pinheiro.f_2377
+			1.165	 Gateway 1004					user : solinfnet.usina_pinheiro.f_1004
+			2.5 	 Sede Usina Tabuão				user : solinfnet.pinheiro.usi_tabuao
+			3.5 	 Sede Usina Pedras				user : solinfnet.pinheiro.usi_pedras
+
+	210.46.0.0/24	Vale do Paraná
+			1.5 	
+			 .245	 Concentrador 1056 				user : solinfnet.valedoparana.usi_valedoparana.f_1056
+			 .235	 Concentrador 1036 				user : solinfnet.valedoparana.usi_valedoparana.f_1036
+			 .225	 Concentrador 1053 				user : solinfnet.valedoparana.usi_valedoparana.f_1053
+			 .215	 Concentrador 1066 				user : solinfnet.cmnp_melhoramentos.usi_valedoparana.f_1066
+
+	210.47.0.0/24 	Cofco
+			1.5
+			1.105   Usina Pontirendaba				user : solinfnet.cofco.usi_pontirendaba.f_26262
+			2.105 	CATANDUVA						user : solinfnet.cofco.usi_catanduva.f_500511
+
+	210.48.0.0/24 	Agricola de Los Llanos
+			1.5
+			1.245   Usina Bioenergy 1000			user : solinfnet.agricola_dll.usi_bioenergy.f_1000
+			1.235   Usina Bioenergy	1001 			user : solinfnet.agricola_dll.usi_bioenergy.f_1001
+			1.225   Usina Bioenergy	1002	 		user : solinfnet.agricola_dll.usi_bioenergy.f_1002
+			1.215   Usina Bioenergy	1003	 		user : solinfnet.agricola_dll.usi_bioenergy.f_1003
+			1.205 	Usina Bioenergy 1004 			user : solinfnet.agricola_dll.usi_bioenergy.f_1004
+			1.195 	Usina Bioenergy 1005 			user : solinfnet.agricola.dll.usi.bioenergy_f_1005
+			1.185 	Usina Bioenergy 1006 			user : solinfnet.agricola_dll.usi_bioenergy.f_1006
+			1.175 	Usina Bioenergy 1007 			user : solinfnet.agricola.dll.usi.bioenergy_f_1007
+
+	210.49.0.0/24 	Magdalena
+		   1.105 	 Gateway 1000 					user : solinfnet.magdalena.usi_magdalena.f_1000
+		   1.115 	 Gateway 1001 					user : solinfnet.magdalena.usi_magdalena.f_1001
+		   1.125 	 Gateway 1002 					user : solinfnet.magdalena.usi_magdalena.f_1002
+
+	210.50.0.0/24 	Usina Santa Terezinha
+			1.105    Torre Usina 					user : solinfnet.usi_sta_terezinha.f_1000
+			1.115	 Torre Paschoina 				user : solinfnet.usi_sta_terezinha.f_1001
+			1.125 	 Torre Bortolon 				user : solinfnet.usi_sta_terezinha.f_1002
+			1.135 	 Torre Sitio Alves				user : solinfnet.usi_sta_terezinha.f_1003
+			1.145 	 Torre Caturra					user : solinfnet.usi_sta_terezinha.f_1004
+			1.155	 Móvel I 						user : solinfnet.usi_sta_terezinha.f_1010
+			1.165 	 Móvel II 						user : solinfnet.usi_sta_terezinha.f_1011
+			1.175 	 Móvel III 						user : solinfnet.usi_sta_terezinha.f_1012
+			1.185 	 Móvel IV 						user : solinfnet.usi_sta_terezinha.f_1013
+			1.195 	 Móvel V 						user : solinfnet.usi_sta_terezinha.f_1014
+			1.205 	 Móvel VI 						user : solinfnet.usi_sta_terezinha.f_1015
+			1.215 	 Móvel VII 						user : solinfnet.usi_sta_terezinha.f_1016
+			1.225 	 Móvel VIII 					user : solinfnet.usi_sta_terezinha.f_1017
+			1.235 	 Móvel IX 						user : solinfnet.usi_sta_terezinha.f_1018
+			1.245 	 Móvel X 						user : solinfnet.usi_sta_terezinha.f_1019
+			1.95 	 Móvel XI 						user : solinfnet.usi_sta_terezinha.f_1020
+			1.85 	 Móvel XII 						user : solinfnet.usi_sta_terezinha.f_1021
+			1.75 	 Móvel XIII						user : solinfnet.usi_sta_terezinha.f_1022
+			1.65 	 Móvel XIV 						user : solinfnet.usi_sta_terezinha.f_1023 (TORRE 1023 e 10231 P7)
+			1.55	 TORRE ALTAMIRA			        user : solinfnet.usi_sta_terezinha.f_1005
+			1.45	 TORRE SITIO DANILO				user : solinfnet.usi_sta_terezinha.f_1006
+			2.5		 Terra Rica
+			2.15     Concentrador Móvel 2010		user : solinfnet.usi_sta_terezinha.f_2010
+			2.25     Concentrador Móvel 2011		user : solinfnet.usi_sta_terezinha.f_2011
+			2.35     Concentrador Móvel 2012		user : solinfnet.usi_sta_terezinha.f_2012
+			2.105    Torre Faz. Dom Diniz - 60M		user : solinfnet.usi_sta_terezinha.f_2000
+			2.115    Torre Faz. São José - 25M      user : solinfnet.usi_sta_terezinha.f_2001
+			2.125	 Torre 03 Morrinhos - 25M   	user : solinfnet.usi_sta_terezinha.f_2002
+			2.135 	 Gateway 2003 					user : solinfnet.usi_sta_terezinha.f_2003
+			3.5 	 Paranacity						
+			3.15     Concentrador Móvel 3010		user : solinfnet.usi_sta_terezinha.f_3010
+			3.25	 Concentrador Móvel 3011        user : solinfnet.usi_sta_terezinha.f_3011
+			3.35     Concentrador Móvel 3012		user : solinfnet.usi_sta_terezinha.f_3012
+			3.45	 Concentrador Móvel 3013		user : solinfnet.usi_sta_terezinha.f_3013
+			3.55	 Concentrador Móvel 3014		user : solinfnet.usi_sta_terezinha.f_3014
+			3.105    Torre Estância Oasis - 60M     user : solinfnet.usi_sta_terezinha.f_3000
+			3.115    Torre Snt Antônio Poema - 50M  user : solinfnet.usi_sta_terezinha.f_3001
+			3.125    Torre Candão - 50M				user : solinfnet.usi_sta_terezinha.f_3002
+			3.135    Torre P. de C. do Sul - 60M    user : solinfnet.usi_sta_terezinha.f_3003
+			4.5		 Iguatemi				
+			4.15     Concentrador Móvel 4010		user : solinfnet.usi_sta_terezinha.f_4010
+			4.25     Concentrador Móvel 4011        user : solinfnet.usi_sta_terezinha.f_4011
+			4.35     Concentrador Móvel 4012		user : solinfnet.usi_sta_terezinha.f_4012
+			4.45     Concentrador Móvel 4013 		user : solinfnet.usi_sta_terezinha.f_4013
+			4.55     Concentrador Móvel 4014		user : solinfnet.usi_sta_terezinha.f_4014
+			4.105    Torre Faz. Monjolinho - 60M    user : solinfnet.usi_sta_terezinha.f_4000
+			4.115    Torre Arest - 60M				user : solinfnet.usi_sta_terezinha.f_4001
+			4.125    Torre Estrela Dalva - 60M		user : solinfnet.usi_sta_terezinha.f_4002
+			5.5		 Cidade Gaúcha (CGA)
+			5.15	 Concentrador Móvel 5010		user : solinfnet.usi_sta_terezinha.f_5010
+			5.25	 Concentrador Móvel 5011		user : solinfnet.usi_sta_terezinha.f_5011
+			5.35	 Concentrador Móvel 5012		user : solinfnet.usi_sta_terezinha.f_5012
+			5.45	 Concentrador Móvel 5013		user : solinfnet.usi_sta_terezinha.f_5013
+			5.105	 Torre Posto Combustível		user : solinfnet.usi_sta_terezinha.f_5000
+			5.115	 Torre São Manoel 				user : solinfnet.usi_sta_terezinha.f_5001
+			5.125	 Torre Fazenda Danilo			user : solinfnet.usi_sta_terezinha.f_5002
+			5.135	 Torre Fazenda Caturra			user : solinfnet.usi_sta_terezinha.f_5003
+			6.5		 Rondon
+			6.15	 Concentrador Móvel 6010		user : solinfnet.usi_sta_terezinha.f_6010	
+			6.25	 Concentrador Móvel 6011		user : solinfnet.usi_sta_terezinha.f_6011
+			6.35	 Concentrador Móvel 6012		user : solinfnet.usi_sta_terezinha.f_6012
+			6.45	 Concentrador Móvel 6013		user : solinfnet.usi_sta_terezinha.f_6013
+			6.105	 Torre Refeitório				user : solinfnet.usi_sta_terezinha.f_6000
+			6.115	 Torre Maria das Neves			user : solinfnet.usi_sta_terezinha.f_6001
+			6.125	 Torre Brigão					user : solinfnet.usi_sta_terezinha.f_6002
+			6.135	 Torre Roderjan					user : solinfnet.usi_sta_terezinha.f_6003
+			7.5		 Ivaté
+			7.15 	 Concentrador Móvel 7010		user : solinfnet.usi_sta_terezinha.f_7010
+			7.25	 Concentrador Movel 7011		user : solinfnet.usi_sta_terezinha.f_7011
+			7.35	 Concentrador Móvel 7012		user : solinfnet.usi_sta_terezinha.f_7012
+			7.45	 Concentrador Móvel 7013		user : solinfnet.usi_sta_terezinha.f_7013
+			7.55	 Concentrador Móvel 7014		user : solinfnet.usi_sta_terezinha.f_7014
+			7.65	 Concentrador Móvel 7015		user : solinfnet.usi_sta_terezinha.f_7015
+			7.105	 Torre Unidade Ivaté			user : solinfnet.usi_sta_terezinha.f_7000
+			7.115	 Torre Cidade Ivaté				user : solinfnet.usi_sta_terezinha.f_7001
+			7.125	 Torre URP						user : solinfnet.usi_sta_terezinha.f_7002
+			7.135	 Torre de Umuarama				user : solinfnet.usi_sta_terezinha.f_7003
+			7.145	 Torre Jerusalem				user : solinfnet.usi_sta_terezinha.f_7004
+			7.155	 Torre Eldorado					user : solinfnet.usi_sta_terezinha.f_7005
+
+	210.51.0.0/24 	USM 	
+			1.105	Gateway Movel 10000				user : solinfnet.usina_usm.f_10000
+			1.115	Gateway Movel 10001				user : solinfnet.usina_usm.f_10001
+
+
+
+	210.52.0.0/24 	Cooperb (Cana Nova)
+			1.5		Matriz							user : solinfnet.usina_cooperb.matriz
+            1.225    Torre Santander 4G				user : solinfnet.usina_cooperb.fz_lambari.f_100006
+			1.245    Movel 104 						user : solinfnet.usina_cooperb.fz_lambari.f_104
+			1.235    Movel 106 						user : solinfnet.usina_cooperb.fz_lambari.f_106
+            2.5		Mirassol						user : solinfnet.usina_cooperb.mirassol
+
+	210.53.0.0/24 	Usina Santa Maria
+			1.5 	 Usina Santa Maria				user : solinfnet.usina_stamaria
+			2.5 	 Usina Santa Maria 2			user : solinfnet.usina_stamaria2
+			3.115	Gateway Movel 10001				user : solinfnet.usina_usm.f_10001
+			3.125  	Gateway Móvel 10002 			user : solinfnet.usina_usm.f_10002
+			3.135   Gateway Movel 10003				user : solinfnet.usina_usm.f_10003
+			3.145   Gateway Movel 10004				user : solinfnet.usina_usm.f_10004
+			3.155   Gateway Movel 10005				user : solinfnet.usina_usm.f_10005
+
+
+	210.54.0.0/24 	ANSA
+			1.105 	 Torre Piacatu (1000) 			user : solinfnet.ansa.f_1000
+			1.115 	 Torre Guanabara (1001)         user : solinfnet.ansa.f_1001
+
+	210.55.0.0/24 	Cofco
+			1.5 	 Matriz
+			1.245    Concentrador 30671				user : solinfnet.cofco.usi_matriz.f_30671
+			1.235    Concentrador 30636 			user : solinfnet.cofco.usi_matriz.f_30636
+			1.225    Concentrador 10006				user : solinfnet.cofco.usi_matriz.f_10006
+			1.215    Concentrador 1003  			user : solinfnet.cofco.usi_matriz.f_1003
+
+	210.56.0.0/24 Itamarati (UISA)
+			1.165 	 Concentrador Bandeirantes II 	user : solinfnet.itamarati.f_106
+
+	210.57.0.0/24 	Moreno
+			1.15		Concentrador Escritório		user : solinfnet.moreno.f_1000
+			1.25		Concentrador 1001			user : solinfnet.moreno.f_1001
+			1.105		Concentrador frota 16		user : solinfnet.moreno.f_16
+			1.115		Concentrador frota 17 		user : solinfnet.moreno.f_17
+			1.125		Concentrador frota 18 		user : solinfnet.moreno.f_18
+			1.135		Concentrador Móvel 1010		user : solinfnet.moreno.f_1010
+			1.145		Concentrador Móvel 1011	    user : solinfnet.moreno.f_1011
+			1.155		Concentrador Móvel 1012		user : solinfnet.moreno.f_1012
+			1.165		Concentrador Móvel 1013		user : solinfnet.moreno.f_1013
+			1.175		Concentrador Móvel 1014		user : solinfnet.moreno.f_1014
+			1.185		Concentrador Móvel 19		user : solinfnet.moreno.f_19
+
+	210.58.0.0/24 	Agrocana
+			1.105 	 Concentrador 1000 				user : solinfnet.agrocana.f_1000
+			1.115 	 Concentrador 1001 				user : solinfnet.agrocana.f_1001
+			1.125 	 Concentrador 1002 				user : solinfnet.agrocana.f_1002
+			1.135 	 Concentrador 1003 				user : solinfnet.agrocana.f_1003
+			1.145 	 Concentrador 1004 				user : solinfnet.agrocana.f_1004
+			1.155 	 Concentrador 1005 				user : solinfnet.agrocana.f_1005
+			1.165 	 Concentrador 1006				user : solinfnet.agrocana.f_1006
+			1.175 	 Concentrador 1007				user : solinfnet.agrocana.f_1007
+			1.185 	 Concentrador 1008				user : solinfnet.agrocana.f_1008
+			1.195 	 Concentrador 1009				user : solinfnet.agrocana.f_1009
+			1.205 	 Concentrador 1010				user : solinfnet.agrocana.f_1010
+			1.215 	 Concentrador 1011				user : solinfnet.agrocana.f_1011
+			1.225 	 Concentrador 1012				user : solinfnet.agrocana.f_1012
+			1.235 	 Concentrador 1013				user : solinfnet.agrocana.f_1013
+			1.245 	 Concentrador 1014				user : solinfnet.agrocana.f_1014
+			1.95 	 Concentrador 1015				user : solinfnet.agrocana.f_1015
+			1.85 	 Concentrador 1016				user : solinfnet.agrocana.f_1016
+			1.75	 Concentrador 1017				user : solinfnet.agrocana.f_1017
+			1.65	 Concentrador 1018				user : solinfnet.agrocana.f_1018
+			
+	210.59.0.0/24 	La Grecia 	
+			1.105	Frota 1001 						user : solinfnet.la_grecia.f_1001
+			1.115 	Frota 1002						user : solinfnet.la_grecia.f_1002
+			1.125   Frota 1003 						user : solinfnet.la_grecia.f_1003
+			1.135   Frota 1004 						user : solinfnet.la_grecia.f_1004
+			
+	210.60.0.0/24 	Santa Adelia
+			1.105 	 6000 Móvel JB 					user : solinfnet.santa_adelia.f_6000
+			1.115 	 6001 Móvel JB 					user : solinfnet.santa_adelia.f_6001
+			1.125 	 6002 Móvel JB 					user : solinfnet.santa_adelia.f_6002
+			1.135	 Concentrador Móvel 6003		user : solinfnet.santa_adelia.f_6003
+			1.145 	 Concentrador Balança			user : solinfnet.santa_adelia.f_110
+			2.105 	 Balanca Perreira Barreto 		user : solinfnet.santa_adelia.perreira_barreto.f_5005_5006
+
+	210.61.0.0/24 	Nova Produtiva
+			1.105 	 Frota 10000 					user : solinfnet.nova_produtiva.f_10000
+
+	210.62.0.0/24 	 Usina Guaíra
+			1.165 	  Concentrador 10006 			user : solinfnet.usi_guaira.f_10006
+
+	210.63.0.0/24 	 Usina Alta Mogiana
+			1.105	  Concentrador 9693				user : solinfnet.usi_alta_mogiana.f_9693
+			1.115 	  Concentrador 9694 			user : solinfnet.usi_alta_mogiana.f_9694
+
+	210.64.0.0/24 	Veredas
+			1.105 	 Gateway 1000 					user : solinfnet.veredas.f_1000
+			1.115 	 Gateway 1001					user : solinfnet.veredas.f_1001
+            1.125 	 Gateway 1002					user : solinfnet.veredas.f_1002
+
+	210.65.0.0/24 	Denusa AGR
+			1.105 	 Gateway 1000					user : solinfnet.denusaagr.f_1000
+			1.115 	 Gateway 1001 					user : solinfnet.denusaagr.f_1001
+			1.125 	 Gateway 1002 					user : solinfnet.denusaagr.f_1002
+			
+	210.66.0.0/24	Usina Água Bonita
+			1.15 	 Gateway 1000 					user : solinfnet.aguabonita.f_1000
+			1.105		Gateway 15000				user : solinfnet.aguabonita.f_15000
+			1.115		Gateway 15001				user : solinfnet.aguabonita.f_15001
+			1.125		Gateway 15002				user : solinfnet.aguabonita.f_15002
+			1.135		Gateway 15003				user : solinfnet.aguabonita.f_15003
+
+	210.67.0.0/24 	Agrícola Sarto
+			1.205 	Gateway 1010 					user : solinfnet.agricola_sarto.f_1010
+			1.215   Gateway 1212					user : solinfnet.agricola_sarto.f_1212
+			1.225   Gateway 1313					user : solinfnet.agricola_sarto.f_1313
+			1.235	Gateway 1011					user : solinfnet.agricola_sarto.f_1011
+			1.245	Gateway 1003					user : solinfnet.agricola_sarto.f_1003
+
+	210.68.0.0/24 	Bio Aroeira
+			1.105 	Concentrador 1000 				user : solinfnet.bio_aroeira.f_1000 (Desativado a internet pro wireless: /etc/sysctl.conf e tirar o comentário #net.ipv4.ip_forward=1)
+			1.115   Concentraor  1002				user : solinfnet.bio_aroeira.f_1002
+			1.125	Concentrador 1001				user : solinfnet.bio_aroeira.f_1001
+			1.135 	Preambulo Balança 3001/3002		user : solinfnet.bio_aroeira.f_3001
+			1.145   Concentrador Móvel 3010			user : solinfnet.bio_aroeira.f_3010
+			1.155	Concentrador Móvel 3011			user : solinfnet.bio_aroeira.f_3011
+
+	210.69.0.0/24	IB Logistica
+			1.105	Gateway 1000		      		user : solinfnet.ib_logistica.f_1000
+			1.115	Concentrador Móvel 1001 		user : solinfnet.ib_logistica.f_1001
+			1.125	Concentrador Móvel 1002			user : solinfnet.ib_logistica.f_1002
+			1.135	Concentrador Móvel 1003			user : solinfnet.ib_logistica.f_1003
+			
+	210.70.0.0/24 	Atena
+			1.105 	 Gateway 1000  					user : solinfnet.atena.f_1000
+
+	210.71.0.0/24	Usinas Clotilde
+			1.105	 Gateway 1931					user : solinfnet.usiclotilde.f_1931
+			1.115	 Gateway 1932					user : solinfnet.usiclotilde.f_1932
+
+	210.72.0.0/24 	Santa Lucia
+			1.5 	 Usina Santa Lucia				user : solinfnet.usina_stalucia
+
+	210.73.0.0/24   Agro Cana Caiana
+			1.105 	 ACC 10000 						user : solinfnet.acc.f_10000
+
+	210.74.0.0/24 	Grupo Farias
+			1.105 	 GATEWAY 1000					user : solinfnet.grupo_farias.f_1000
+			1.115 	 GATEWAY 1001					user : solinfnet.grupo_farias.f_1001
+			1.125 	 GATEWAY 1002					user : solinfnet.grupo_farias.f_1002
+			1.135	 Gateway 1006 					user : solinfnet.grupo_farias.f_1006
+			1.145	 Gateway 1005 					user : solinfnet.grupo_farias.f_1005
+			1.155	 Gateway 1007					user : solinfnet.grupo_farias.f_1007
+			1.165	 Gateway 1008					user : solinfnet.grupo_farias.f_1008
+			1.175	 Gateway 1009					user : solinfnet.grupo_farias.f_1009
+			1.185	 Gateway 1010					user : solinfnet.grupo_farias.f_1010
+			1.195	 Gateway 1011					user : solinfnet.grupo_farias.f_1011
+			1.205    Gateway 1003 					user : solinfnet.grupo_farias.f_1003
+			1.215    Gateway 1101                   user : solinfnet.grupo_farias.f_1101
+			1.225    Gateway 1102                   user : solinfnet.grupo_farias.f_1102
+			1.235    Gateway 1103                   user : solinfnet.grupo_farias.f_1103
+			1.245    Gateway 1201                   user : solinfnet.grupo_farias.f_1201
+			1.95     Gateway 1202                   user : solinfnet.grupo_farias.f_1202
+			1.85	 Gateway 1203					user : solinfnet.grupo_farias.f_1203
+
+	210.75.0.0/24   Pantaleon 
+	       1.105    GATEWAY 100011 					user : solinfnet.pantaleon.f_100011
+	       1.115    GATEWAY 100012 					user : solinfnet.pantaleon.f_100012
+	       1.125 	Gateway 10006 					user : solinfnet.pantaleon.f_10006
+
+	210.76.0.0/24   Usina São João (USJ)
+		   1.105 	 Concentrador 1000 				user : solinfnet.usj.f_1000
+		   1.115	 Concentrador 1001 				user : solinfnet.usj.f_1001
+		   1.125	 Concentrador 1002 				user : solinfnet.usj.f_1002
+
+	210.77.0.0/24   Pagrisa 
+	       1.105    GATEWAY 10000 					user : solinfnet.pagrisa.f_10000
+	       1.115    GATEWAY 10001 					user : solinfnet.pagrisa.f_10001
+   	       1.125    GATEWAY 10002 					user : solinfnet.pagrisa.f_10002
+	       1.135    GATEWAY 10003 					user : solinfnet.pagrisa.f_10003
+
+	210.78.0.0/24   AgroBig 
+	       1.105    GATEWAY 10000 					user : solinfnet.agrobig.f_10000
+	       1.115    GATEWAY 10001 					user : solinfnet.agrobig.f_10001
+	       1.125    GATEWAY 10002 					user : solinfnet.agrobig.f_10002
+		   1.135	GATEWAY 10004				    user : solinfnet.agrobig.f_10004
+
+	210.79.0.0/24	Agro Serra
+			1.105	Gateway 1000					user : solinfnet.agroserra.f_1000
+			1.15	Concentrador Móvel 1010			user : solinfnet.agroserra.f_1010
+			
+	210.80.0.0/24   Tereos - Guarani
+		   1.45     Concentrador Móvel 253 			user : solinfnet.tereos.guarani.f_253
+		   1.55 	Concnetrador Móvel 30820606		user : solinfnet.tereos.guarani.f_30820606
+		   1.65 	Concnetrador Móvel 2323082 		user : solinfnet.tereos.guarani.f_2323082
+		   1.75 	Concnetrador Móvel 7310 		user : solinfnet.tereos.guarani.f_7310
+		   1.85 	Concnetrador Móvel 700058 		user : solinfnet.tereos.guarani.f_700058
+   		   1.95 	Concnetrador Móvel 200 			user : solinfnet.tereos.guarani.f_200
+	       1.105    Concnetrador Móvel 12			user : solinfnet.tereos.guarani.f_12
+	       1.115    Concnetrador Móvel 267			user : solinfnet.tereos.guarani.f_267
+	       1.125    Concnetrador Móvel 15			user : solinfnet.tereos.guarani.f_15
+		   1.135	Concnetrador Móvel 1008			user : solinfnet.tereos.guarani.f_1008
+		   1.145	Concnetrador Móvel 255			user : solinfnet.tereos.guarani.f_255
+		   1.155	Torre F65						user : solinfnet.tereos.guarani.f_65
+		   1.165	Concnetrador Móvel 244			user : solinfnet.tereos.guarani.f_244
+		   1.175	Concnetrador Móvel 253			user : solinfnet.tereos.guarani.f_243
+   		   1.185	Concnetrador Móvel 1000			user : solinfnet.tereos.guarani.f_1000
+   		   1.195	Concnetrador Móvel 64			user : solinfnet.tereos.guarani.f_64
+   		   1.205	Concnetrador Móvel 1007			user : solinfnet.tereos.guarani.f_1007
+   		   1.215	Concnetrador Móvel 137			user : solinfnet.tereos.guarani.f_137
+   		   1.225	Concnetrador Móvel 3004500		user : solinfnet.tereos.guarani.f_3004500
+   		   1.235	Concnetrador Móvel 150 			user : solinfnet.tereos.guarani.f_150
+   		   1.245	Concnetrador Móvel 100 			user : solinfnet.tereos.guarani.f_100
+		   2.5		Mandu
+		   2.105									user : solinfnet.tereos.guarani.f_30040502
+		   3.5 	 	São José
+		   3.105	Concentrador Móvel 3082327		user : solinfnet.tereos.guarani.f_3082327
+
+    210.81.0.0/24    Carmelita
+           1.105 	Concentrador Móvel 1000 	    user : solinfnet.carmelita.carmelita.f_1000
+           1.115 	Concentrador Móvel 1001 	    user : solinfnet.carmelita.carmelita.f_1001
+
+    210.82.0.0/24   Salto Botelho
+           1.105 	 SBA 1000 					    user : solinfnet.salto_botelho.sba.f_1000
+           1.115 	 SBA 1001 					    user : solinfnet.salto_botelho.sba.f_1001
+           1.125 	 SBA 1002 					    user : solinfnet.salto_botelho.sba.f_1002
+           1.135 	 SBA 1003 					    user : solinfnet.salto_botelho.sba.f_1003
+           1.145 	 SBA 1004 					    user : solinfnet.salto_botelho.sba.f_1004
+
+    210.83.0.0/24   Adecoagro
+     	   1.5 		 Ivinhema
+           1.105 	 Concentrador Sat. 2001781	    user : solinfnet.adecoagro.ivi.f_2001781
+           1.115     Concentrador Sat. 2001783	    user : solinfnet.adecoagro.ivi.f_2001783
+           1.125     Concentrador Sat. 2001784	    user : solinfnet.adecoagro.ivi.f_2001784
+           1.135     Concentrador Sat. 2001785	    user : solinfnet.adecoagro.ivi.f_2001785
+           1.145     Concentrador Sat. 2001786	    user : solinfnet.adecoagro.ivi.f_2001786
+           1.155     Concentrador Sat. 2001787	    user : solinfnet.adecoagro.ivi.f_2001787
+           1.165     Concentrador Sat. 2001780	    user : solinfnet.adecoagro.ivi.f_2001780
+
+
+    210.84.0.0/24   Cucáu
+     	   1.5 		 Usina Cucáu
+           1.105 	 Concentrador 1000 			    user : solinfnet.cucau.f_1000
+           1.115 	 Concentrador 1001 			    user : solinfnet.cucau.f_1001
+           1.125 	 Concentrador 1002 			    user : solinfnet.cucau.f_1002
+           1.135 	 Concentrador 1003 			    user : solinfnet.cucau.f_1003
+           1.145 	 Concentrador 1004 			    user : solinfnet.cucau.f_1004
+           1.155 	 Concentrador 1005 			    user : solinfnet.cucau.f_1005
+           1.165 	 Concentrador 1006 			    user : solinfnet.cucau.f_1006
+           1.175 	 Concentrador 1007 			    user : solinfnet.cucau.f_1007
+
+    210.85.0.0/24    Valdez
+           1.105     Concentrador 100               user : solinfnet.valdez.f_100
+
+    210.86.0.0/24    Cerradinho
+           1.105     Concentrador 125               user : solinfnet.cerradinho.f_125
+           1.115     Concentrador 126               user : solinfnet.cerradinho.f_126
+           1.125     Concentrador 127               user : solinfnet.cerradinho.f_127
+           1.135     Concentrador 128               user : solinfnet.cerradinho.f_128
+           1.145     Concentrador 129               user : solinfnet.cerradinho.f_129
+           1.155     Concentrador 130               user : solinfnet.cerradinho.f_130
+           1.165     Concentrador 131               user : solinfnet.cerradinho.f_131
+           1.175     Concentrador 132               user : solinfnet.cerradinho.f_132
+		   1.185	 Concentrador Plantio 133		user : solinfnet.cerradinho.f_133
+
+    210.87.0.0/24 	 Humus Agroterra
+    	   1.105 	  Gateway Móvel 10000 			user : solinfnet.humusagroterra.f_10000
+		   
+	210.88.0.0/24	Usina Cerradão			
+		   1.5		Cerradão
+		   1.105	Concentrador Móvel 1000		   	user : solinfnet.cerradao.f_1000
+		   1.115	C. Movel 1001 (P0) e 10011 (P7)	user : solinfnet.cerradao.f_1001
+		   1.125	Concentrador Movel 1002			user : solinfnet.cerradao.f_1002
+		   1.135	Concentrador Movel 1003			user : solinfnet.cerradao.f_1003
+		   1.145	Concentrador Movel 1004			user : solinfnet.cerradao.f_1004
+		   1.155	Concentrador Movel 1005			user : solinfnet.cerradao.f_1005
+		   1.165	Concentrador Movel 1006			user : solinfnet.cerradao.f_1006
+		   1.175	Concentrador Movel 1007			user : solinfnet.cerradao.f_1007
+		   1.185	Concentrador Movel 1008 		user : solinfnet.cerradao.f_1008
+		   1.195	Concentrador Movel 1009 		user : solinfnet.cerradao.f_1009
+           1.205	Concentrador Movel 10001 		user : solinfnet.cerradao.f_10001
+           1.215	Concentrador Movel 100011 		user : solinfnet.cerradao.f_100011
+		   1.225	Concentrador Movel 1010 		user : solinfnet.cerradao.f_1010
+		   1.235	Concentrador Movel 1011 		user : solinfnet.cerradao.f_1011
+		   1.245	Concentrador Movel 1012 		user : solinfnet.cerradao.f_1012
+  		   1.95		Concentrador Movel 1013 		user : solinfnet.cerradao.f_1013
+  		   1.85		Concentrador Movel 1014 		user : solinfnet.cerradao.f_1014
+  		   1.75		Concentrador Movel 1015 		user : solinfnet.cerradao.f_1015
+  		   1.65		Concentrador Movel 1016 		user : solinfnet.cerradao.f_1016
+  		   1.55		Concentrador Movel 1017 		user : solinfnet.cerradao.f_1017
+		   1.45		Concentrador Movel 1018 		user : solinfnet.cerradao.f_1018
+		   1.35		Concentrador Movel 1019 		user : solinfnet.cerradao.f_1019
+		   1.25		Concentrador Movel 1020 		user : solinfnet.cerradao.f_1020
+		   1.15		Concentrador Movel 1021 		user : solinfnet.cerradao.f_1021
+		   2.5 	    Cerradão
+		   2.15		Concentrador Movel 1023			user : solinfnet.cerradao.f_1023
+		   2.25     Concentrador Movel 1024 		user : solinfnet.cerradao.f_1024
+		   2.35 	Concentrador Móvel 1022 		user : solinfnet.cerradao.f_1022
+		   2.45 	Concentrador Móvel 1025 		user : solinfnet.cerradao.f_1025
+		   2.55 	C. Movel 1026 (P0) e 10012 (P7)	user : solinfnet.cerradao.f_1026
+		   2.65 	Concentrador Móvel 1027 		user : solinfnet.cerradao.f_1027
+		   2.75 	Concentrador Móvel 1028 		user : solinfnet.cerradao.f_1028
+
+	210.89.0.0/24 Usina Caete
+		   1.5    Matriz				
+		   1.105  Concentrador Móvel 12264  	    user : solinfnet.caete.f_11105
+		   1.115  Concentrador Móvel 11106		    user : solinfnet.caete.f_11106
+		   1.125  Concentrador 30665 				user : solinfnet.caete.f_30665
+           1.135  Concentrador 12265 				user : solinfnet.caete.f_12265
+           1.145  Concentrador 30659 				user : solinfnet.caete.f_30659
+           1.155  Concentrador 30636 				user : solinfnet.caete.f_30636
+           1.165  Concentrador 31530 				user : solinfnet.caete.f_31530
+           1.175  Concentrador 30517 				user : solinfnet.caete.f_30517
+           1.185  Concentrador 36614 				user : solinfnet.caete.f_36614
+
+
+	210.90.0.0/24 Grupo JB VSA
+		   1.105 	Pedra Americana VSA				user : solinfnet.grupo_jb_vsa.f_1000
+		   2.105    Balança VSA  		    		user : solinfnet.grupo_jb_vsa.f_10000
+
+	210.91.0.0/24 ACP
+		   1.105 	Gateway 16999998				user : solinfnet.acp.f_16999998
+		   1.115 	Gateway 16999999				user : solinfnet.acp.f_16999999
+           1.125 	Gateway 16999997				user : solinfnet.acp.f_16999997
+           1.135 	Gateway 16999996				user : solinfnet.acp.f_16999996
+		   1.145	Gateway 165555593 				user : solinfnet.acp.f_165555593
+		   1.155	Gateway 165555594				user : solinfnet.acp.f_165555594
+		   1.165	Gateway 165555595				user : solinfnet.acp.f_165555595
+		   1.175    Gateway 165555591 				user : solinfnet.acp.f_165555591
+		   1.185    Gateway 165555592 				user : solinfnet.acp.f_165555592
+		   2.5 		Brasilândia
+		   2.105    Gateway 2000 	 				user : solinfnet.acp.usi_brasilandia.f_2000
+		   2.115    Gateway 2001 	 				user : solinfnet.acp.usi_brasilandia.f_2001
+		   2.125 	Gateway 2002 					user : solinfnet.acp.usi_brasilandia.f_2002
+		   3.105 	Gateway 165555590				user : solinfnet.acp.usi_campina_verde.f_165555590
+		   3.115 	Gateway 165555589				user : solinfnet.acp.usi_campina_verde.f_165555589
+
+	210.92.0.0/24 Araporã
+		   1.105 	Gateway 10000 					user : solinfnet.arapora.f_10000
+		   1.115 	Gateway 10001 					user : solinfnet.arapora.f_10001
+		   1.125 	Gateway 10002 					user : solinfnet.arapora.f_10002
+
+	210.93.0.0/24 	Pitangueiras
+			1.5 	 Usina Pitangueiras				user : solinfnet.usina_pitangueiras
+
+	210.94.0.0/24	Usina Caçu
+			1.105                                   user : solinfnet.cacu.f_1000  
+			1.115                                   user : solinfnet.cacu.f_1001
+			1.125                                   user : solinfnet.cacu.f_1002
+			1.135                                   user : solinfnet.cacu.f_1003
+			1.145                                   user : solinfnet.cacu.f_1004
+			1.155	CONCENTRADOR BALANÇA (PCTS)		user : solinfnet.cacu.f_1005
+            1.165	Gateway Movel Frente 5  		user : solinfnet.cacu.f_1006
+
+	210.95.0.0/24 URAA
+			1.105                                   user : solinfnet.uraa.f_1000
+			1.115                                   user : solinfnet.uraa.f_1001
+			1.125                                   user : solinfnet.uraa.f_1002
+			1.135                                   user : solinfnet.uraa.f_1003
+			1.145                                   user : solinfnet.uraa.f_1004
+			1.155                                   user : solinfnet.uraa.f_1005
+			1.165                                   user : solinfnet.uraa.f_1006
+			1.175 Balança                           user : solinfnet.uraa.f_1007
+			1.185                                   user : solinfnet.uraa.f_1008
+
+	210.96.0.0/24 CEV - Central Energética Vicentina
+		   1.105 	Gateway 10000 					user : solinfnet.cev.f_10000
+		   1.115 	Gateway 10001 					user : solinfnet.cev.f_10001
+		   1.125 	Gateway 10002 					user : solinfnet.cev.f_10002
+		   1.135 	Gateway 10003 					user : solinfnet.cev.f_10003
+
+    210.97.0.0/24 Maity
+           1.105 Gateway 860                        user : solinfnet.maity.f_860
+           1.115 Gateway 858                        user : solinfnet.maity.f_858
+           1.125 Gateway 859                        user : solinfnet.maity.f_859
+           1.135 Gateway 846                        user : solinfnet.maity.f_846
+
+    210.98.0.0/24 	Aralco
+    	   1.105     Gateway Móvel 100 				user : solinfnet.aralco.aralco.f_100
+    	    .115     Gateway Móvel 101 				user : solinfnet.aralco.aralco.f_101
+    	   2.105     Gateway Móvel 110 				user : solinfnet.aralco.figueira.f_110
+    	   3.105     Gateway Móvel 120 				user : solinfnet.aralco.generalco.f_120
+
+    210.99.0.0/24 	Alcoolvale
+    	   1.105     Vivencia 1 	 				user : solinfnet.alcoolvale.f_1000
+    	   1.115     Vivencia 2 	 				user : solinfnet.alcoolvale.f_1001
+    	   1.125     Vivencia 3 	 				user : solinfnet.alcoolvale.f_1002
+    	   1.135     Balança de Entrada				user : solinfnet.alcoolvale.f_1003
+
+    210.100.0.0/24 	Bevap
+    	   1.105     Concentrador Móvel 1015		user : solinfnet.bevap.f_1015
+    	   1.115     Concentrador Móvel 1008		user : solinfnet.bevap.f_1008
+    	   1.125     Concentrador Móvel 1002		user : solinfnet.bevap.f_1002
+    	   1.135     Concentrador Móvel 1001		user : solinfnet.bevap.f_1001
+           1.145     Concentrador Móvel 1012		user : solinfnet.bevap.f_1012
+           1.155     Concentrador Móvel 1011		user : solinfnet.bevap.f_1011
+           1.165     Concentrador Móvel 1022		user : solinfnet.bevap.f_1022
+
+   	210.101.0.0/24 	SJC
+   			1.105 	 Gateway Starlink 1012 			user : solinfnet.sjc.urd.f_1012
+   			2.105 	 Gateway Starlink 1023 			user : solinfnet.sjc.usf.f_1023
+
+    210.102.0.0/24 	Iberia
+   			1.105 	 Gateway Starlink 5000 			user : solinfnet.iberia.f_5000
+            1.115 	 Gateway Starlink 5001			user : solinfnet.iberia.f_5001
+            1.125 	 Gateway Starlink 5002			user : solinfnet.iberia.f_5002
+            1.135 	 Gateway Starlink 5003			user : solinfnet.iberia.f_5003
+
+    210.103.0.0/24	Coruripe Limeira D'Oeste
+			1.105	 Concentrador 2078				user : solinfnet.coruripe.limeiradoeste.f_2078
+            1.115	 Concentrador 2099				user : solinfnet.coruripe.limeiradoeste.f_2099
+            1.125	 Concentrador 2104				user : solinfnet.coruripe.limeiradoeste.f_2104
+
+    210.104.0.0/24	Umoe
+			1.105	 Usina 100 						user : solinfnet.umoe.f_100
+			1.115	 Usina 101 						user : solinfnet.umoe.f_101
+			1.125	 Usina 103 						user : solinfnet.umoe.f_103
+			1.135	 Usina 105 						user : solinfnet.umoe.f_105
+			1.145	 Usina 106 						user : solinfnet.umoe.f_106
+			1.155	 Usina 107 						user : solinfnet.umoe.f_107
+			1.165	 Usina 108 						user : solinfnet.umoe.f_108
+			1.175	 Usina 109 						user : solinfnet.umoe.f_109
+			1.185	 Usina 113 						user : solinfnet.umoe.f_113
+			1.195	 Usina 114 						user : solinfnet.umoe.f_114
+			2.105 	 Móvel 112 						user : solinfnet.umoe.f_112
+			2.115    Móvel 209                      user : solinfnet.umoe.f_209
+
+    210.105.0.0/24	 São Luiz						
+			1.105	 Concentrador Móvel F1000		user : solinfnet.saoluiz.f_1000
+
+    210.106.0.0/24	 Alcoeste
+            1.105	 Gateway Movel 10000 GPRS   	user : solinfnet.alcoeste.f_10000
+
+    210.107.0.0/24	 Iaco
+            1.105	 Gateway Movel 150 GPRS   		user : solinfnet.iaco.f_150
+            1.115	 Gateway Movel 151 GPRS   		user : solinfnet.iaco.f_151
+
+    210.108.0.0/24	 AgroVale
+            1.105	 Gateway Movel 1000 		   	user : solinfnet.agrovale.f_1000
+			1.115	 Gateway Movel 1002				user : solinfnet.agrovale.f_1002
+
+    210.109.0.0/24	 Delta
+            1.105	 Gateway Movel 105109 		   	user : solinfnet.delta.f_105109
+
+    210.110.0.0/24	 WD
+            1.105	 Gateway Movel 50031 		   	user : solinfnet.wd.f_50031
+
+    210.111.0.0/24       Diana
+			1.105	 Gateway Movel 301 		   	user : solinfnet.diana_f_301
+			1.115	 Gateway Movel 302 		   	user : solinfnet.diana_f_302
+			1.125	 Gateway Movel 303 		   	user : solinfnet.diana_f_303
+			1.135	 Gateway Movel 304 		   	user : solinfnet.diana_f_304
+			1.145	 Gateway Movel 305 		   	user : solinfnet.diana_f_305
+			1.155	 Gateway Movel 321 		   	user : solinfnet.diana_f_321
+			1.155	 Gateway Movel 1234		   	user : solinfnet.diana_f_1234
+			
+	210.112.0.0/24   FBE					    
+	      1.105		 Gateway Movel F1000	   user : solinfnet.fbe_f.1000
+	      1.115		 Gateway Movel F1001	   user : solinfnet.fbe_f.1001
+          1.125		 Gateway Movel F1372	   user : solinfnet.fbe_f.1372
+          1.135		 Gateway Movel F1267	   user : solinfnet.fbe_f.1267
+
+	210.113.0.0/24   Utinga					    
+	      1.105		 Gateway Movel F1007	   user : solinfnet.utinga.f_1007
