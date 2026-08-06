@@ -17,9 +17,10 @@ def parse_clientes_file(filepath, tipo_cultivo):
             lines = f.readlines()
 
         clientes_data = {}          # subred -> {nombre, ip_mikrotik}
-        unidades_data = []          # {ip, nombre, subred}
+        unidades_por_clave = {}     # (subred, tercer octeto) -> {ip, nombre, subred}
         current_subred = None
         current_octetos = None
+        last_tercer = None
 
         for line in lines:
             s = line.strip()
@@ -31,21 +32,44 @@ def parse_clientes_file(filepath, tipo_cultivo):
             if m_sub:
                 current_subred = m_sub.group(1)
                 current_octetos = current_subred.split('.')[:2]
+                last_tercer = None
                 if current_subred not in clientes_data:
                     clientes_data[current_subred] = {'nombre': m_sub.group(2).strip(), 'ip_mikrotik': None}
                 continue
 
-            # Unidad: línea "N.5  Nombre ..."  (N = tercer octeto)
+            # Unidad base: línea "N.5 Nombre ...". Tiene prioridad para nombrar la unidad/fazenda.
             m_uni = re.match(r'^(\d{1,3})\.5\s+(.+)$', s)
             if m_uni and current_subred and current_octetos:
                 tercer = m_uni.group(1)
+                last_tercer = tercer
                 nombre = _limpiar_nombre(m_uni.group(2))
                 if not nombre:
                     continue
                 ip_mk = f"{current_octetos[0]}.{current_octetos[1]}.{tercer}.5"
                 if current_subred in clientes_data and clientes_data[current_subred]['ip_mikrotik'] is None:
                     clientes_data[current_subred]['ip_mikrotik'] = ip_mk
-                unidades_data.append({'ip': ip_mk, 'nombre': nombre, 'subred': current_subred})
+                unidades_por_clave[(current_subred, tercer)] = {'ip': ip_mk, 'nombre': nombre, 'subred': current_subred}
+                continue
+
+            # Gateway/unidad directa: "N.105 Nombre" o ".105 Nombre". Se usa si no existe N.5.
+            m_gw = re.match(r'^(?:(\d{1,3})?\.)?(?:10[5-9]|1[1-9]\d)\s+(.+)$', s)
+            if m_gw and current_subred and current_octetos:
+                tercer = m_gw.group(1) or last_tercer
+                if not tercer:
+                    continue
+                last_tercer = tercer
+                key = (current_subred, tercer)
+                if key in unidades_por_clave:
+                    continue
+                nombre = _limpiar_nombre(m_gw.group(2))
+                if not nombre:
+                    continue
+                ip_mk = f"{current_octetos[0]}.{current_octetos[1]}.{tercer}.5"
+                if current_subred in clientes_data and clientes_data[current_subred]['ip_mikrotik'] is None:
+                    clientes_data[current_subred]['ip_mikrotik'] = ip_mk
+                unidades_por_clave[key] = {'ip': ip_mk, 'nombre': nombre, 'subred': current_subred}
+
+        unidades_data = list(unidades_por_clave.values())
 
         # Upsert clientes
         for subred, data in clientes_data.items():
@@ -59,7 +83,7 @@ def parse_clientes_file(filepath, tipo_cultivo):
                 db.add(Cliente(nombre=data['nombre'], tipo_cultivo=tipo_cultivo,
                                subred=subred, ip_mikrotik=data['ip_mikrotik']))
 
-        # Upsert unidades (solo las .5)
+        # Upsert unidades
         for u in unidades_data:
             cliente = db.query(Cliente).filter(Cliente.subred == u['subred']).first()
             if not cliente:

@@ -9,7 +9,7 @@ from database import get_db, init_db
 from models import Gateway, UpdateHistory, Cliente, Unidad
 from config import Config
 from datetime import datetime
-import os, io, xlsxwriter, secrets, ipaddress
+import os, io, xlsxwriter, secrets, ipaddress, threading, time
 
 app = FastAPI(title="SolinfNet Control Center")
 templates = Jinja2Templates(directory=".")
@@ -42,9 +42,34 @@ def validate_ipv4(ip: str) -> str:
     except ValueError:
         raise HTTPException(status_code=400, detail=f"IPv4 inválida: {ip}")
 
+_client_import_scheduler_started = False
+
+def import_clients_from_presets():
+    try:
+        from parsers.parse_clientes import importar_todos_los_clientes
+        total = importar_todos_los_clientes(limpiar_previo=False)
+        print(f"[CLIENTES] Importacion de presets completada: {total} clientes procesados")
+    except Exception as e:
+        print(f"[CLIENTES] Error importando presets: {e}")
+
+def start_client_import_scheduler():
+    global _client_import_scheduler_started
+    if _client_import_scheduler_started:
+        return
+    _client_import_scheduler_started = True
+
+    def loop():
+        while True:
+            time.sleep(24 * 60 * 60)
+            import_clients_from_presets()
+
+    threading.Thread(target=loop, daemon=True, name="client-preset-importer").start()
+
 @app.on_event("startup")
 def startup():
     init_db()
+    import_clients_from_presets()
+    start_client_import_scheduler()
 
 @app.get("/", response_class=HTMLResponse)
 async def read_root(request: Request):

@@ -378,7 +378,7 @@ body::after{
                     </div>
 
                     <!-- Modo Presentación -->
-                    <button onclick="startKiosk()" title="Modo Presentación (F)"
+                    <button onclick="startKiosk()" title="Modo Presentación (F)" data-i18n-title="presentation_mode"
                     class="p-2 rounded-lg bg-white/10 hover:bg-white/20 transition glass flex items-center justify-center min-w-[36px] min-h-[36px]">
                     <svg class="w-5 h-5 text-emerald-200" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9.75 17L9 20l-1 1h8l-1-1-.75-3M3 13h18M5 17h14a2 2 0 002-2V5a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"/></svg>
                     </button>
@@ -526,6 +526,11 @@ body::after{
                         <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"/></svg>
                         <span data-i18n="btn_scan_all">Escanear Todos</span>
                     </button>
+                    <button onclick="updateMultipleIPs()" id="btnUpdateMultiple"
+                        class="bg-brand-700 hover:bg-brand-800 text-white px-5 py-2.5 rounded-lg font-medium text-sm transition flex items-center gap-2 disabled:opacity-50 disabled:cursor-not-allowed shadow-sm">
+                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-8l-4-4m0 0L8 8m4-4v12"/></svg>
+                        <span data-i18n="btn_update_all">Actualizar Todos</span>
+                    </button>
                     <span id="multipleIpCount" class="text-sm text-slate-400 dark:text-slate-500 font-medium"></span>
                 </div>
                 <div id="multipleScanResults" class="mt-4 space-y-2"></div>
@@ -559,27 +564,27 @@ body::after{
 
                 <!-- FILTERS -->
                 <div class="grid grid-cols-1 md:grid-cols-6 gap-2.5 mb-4">
-                    <input type="text" id="filterSearch" placeholder="🔍 Buscar IP, cliente, unidad..."
+                    <input type="text" id="filterSearch" placeholder="🔍 Buscar IP, cliente, unidad..." data-i18n-placeholder="filter_search_placeholder"
                            class="col-span-2 bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-600 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-brand-500 transition"
                            oninput="applyFilters()">
                     <select id="filterCliente" onchange="applyFilters()" class="bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-600 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-brand-500 transition">
-                        <option value="">Todos los clientes</option>
+                        <option value="" data-i18n="opt_all_clients">Todos los clientes</option>
                     </select>
                     <select id="filterCultivo" onchange="applyFilters()" class="bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-600 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-brand-500 transition">
-                        <option value="">Todos los cultivos</option>
+                        <option value="" data-i18n="opt_all_crops">Todos los cultivos</option>
                         <option value="graos">Grãos</option>
                         <option value="perenes">Perenes</option>
                         <option value="cana">Cana</option>
                     </select>
                     <select id="filterEstado" onchange="applyFilters()" class="bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-600 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-brand-500 transition">
-                        <option value="">Todos los estados</option>
-                        <option value="UPDATED">✅ Actualizado</option>
-                        <option value="PENDING">🔄 Pendiente</option>
-                        <option value="OFFLINE">❌ Offline</option>
-                        <option value="ERROR">⚠️ Error</option>
+                        <option value="" data-i18n="opt_all_statuses">Todos los estados</option>
+                        <option value="UPDATED" data-i18n="opt_status_updated">✅ Actualizado</option>
+                        <option value="PENDING" data-i18n="opt_status_pending">🔄 Pendiente</option>
+                        <option value="OFFLINE" data-i18n="opt_status_offline">❌ Offline</option>
+                        <option value="ERROR" data-i18n="opt_status_error">⚠️ Error</option>
                     </select>
                     <select id="filterOS" onchange="applyFilters()" class="bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-600 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-brand-500 transition">
-                        <option value="">Todos los SO</option>
+                        <option value="" data-i18n="opt_all_os">Todos los SO</option>
                         <option value="jessie">⚠️ Debian 8 (jessie)</option>
                         <option value="stretch">⚠️ Debian 9 (stretch)</option>
                         <option value="buster">✅ Debian 10 (buster)</option>
@@ -588,15 +593,15 @@ body::after{
                 </div>
                 <div class="flex items-center gap-2.5 mb-3">
                     <select id="filterRelay" onchange="applyFilters()" class="bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-600 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-brand-500 transition w-auto">
-                        <option value="">Todos los Relay</option>
-                        <option value="true">✅ Con Relay LPWAN</option>
-                        <option value="false">❌ Sin Relay LPWAN</option>
+                        <option value="" data-i18n="opt_all_relay">Todos los Relay</option>
+                        <option value="true" data-i18n="opt_relay_with">✅ Con Relay LPWAN</option>
+                        <option value="false" data-i18n="opt_relay_without">❌ Sin Relay LPWAN</option>
                     </select>
                     <div class="flex-1"></div>
                     <span class="text-xs text-slate-400 dark:text-slate-500 font-medium">
-                        Mostrando: <strong id="filteredCount" class="text-slate-600 dark:text-slate-300">0</strong> de <strong id="totalCount" class="text-slate-600 dark:text-slate-300">0</strong>
+                        <span data-i18n="filter_showing">Mostrando</span>: <strong id="filteredCount" class="text-slate-600 dark:text-slate-300">0</strong> <span data-i18n="filter_of">de</span> <strong id="totalCount" class="text-slate-600 dark:text-slate-300">0</strong>
                     </span>
-                    <button onclick="clearFilters()" class="text-xs text-brand-600 dark:text-brand-400 hover:underline font-medium">Limpiar filtros</button>
+                    <button onclick="clearFilters()" class="text-xs text-brand-600 dark:text-brand-400 hover:underline font-medium" data-i18n="filter_clear">Limpiar filtros</button>
                 </div>
 
                 <!-- Table -->
@@ -632,12 +637,12 @@ body::after{
                 <!-- Pagination -->
                 <div id="paginationControls" class="flex items-center justify-between mt-4 hidden">
                     <div class="flex items-center gap-2">
-                        <span class="text-xs text-slate-400 dark:text-slate-500">Mostrar:</span>
+                        <span class="text-xs text-slate-400 dark:text-slate-500"><span data-i18n="pagination_show">Mostrar</span>:</span>
                         <select id="pageSize" onchange="changePageSize()" class="bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-600 rounded-lg px-2 py-1 text-xs font-medium focus:outline-none focus:ring-2 focus:ring-brand-500">
                             <option value="25">25</option>
                             <option value="50" selected>50</option>
                             <option value="100">100</option>
-                            <option value="all">Todo</option>
+                            <option value="all" data-i18n="pagination_all">Todo</option>
                         </select>
                     </div>
                     <div id="paginationBtns" class="flex items-center gap-1"></div>
@@ -683,7 +688,7 @@ body::after{
 <th data-i18n="th_crop">Cultivo</th>
 <th class="text-center" data-i18n="th_total">Total</th>
 <th class="text-center text-red-500" data-i18n="th_offline">Offline/Error</th>
-<th class="text-center">% Fallo</th>
+<th class="text-center" data-i18n="th_failure_pct">% Fallo</th>
 </tr></thead>
                         <tbody id="topFallosTable"></tbody>
                     </table>
@@ -701,7 +706,7 @@ body::after{
                 <div class="overflow-x-auto">
                     <table class="data-table">
 <thead><tr>
-<th>Fecha</th><th>Gateway</th><th>Cliente</th><th>Versión</th><th>Duración</th><th>Estado</th>
+<th data-i18n="history_date">Fecha</th><th>Gateway</th><th data-i18n="th_client">Cliente</th><th data-i18n="th_version">Versión</th><th data-i18n="history_duration">Duración</th><th data-i18n="th_status">Estado</th>
 </tr></thead>
                         <tbody id="recentUpdatesTable"></tbody>
                     </table>
@@ -762,6 +767,7 @@ body::after{
                 app_subtitle: "Gestión y Actualización de Gateways",
                 target_version: "Versión objetivo",
                 change_theme: "Cambiar tema",
+                presentation_mode: "Modo Presentación (F)",
                 stat_total: "Total",
                 stat_updated: "Actualizados",
                 stat_pending: "Pendientes",
@@ -775,6 +781,7 @@ body::after{
                 scan_multiple: "Escanear Múltiples IPs",
                 scan_multiple_placeholder: "Ingresa IPs separadas por coma, espacio o nueva línea\nEjemplo: 220.30.22.105, 220.30.22.115",
                 btn_scan_all: "Escanear Todos",
+                btn_update_all: "Actualizar Todos",
                 inventory_title: "Inventario de Gateways",
                 btn_refresh: "Actualizar",
                 btn_update_selected: "Actualizar",
@@ -802,6 +809,7 @@ body::after{
                 scan_connecting: "Conectando...", scan_scanning: "Escaneando...", scan_error: "Error",
                 progress_all_completed: "✅ Todas las actualizaciones completadas",
                 progress_total: "Total: {count} gateway(s)",
+                progress_waiting_start: "En cola...",
                 history_title: "Historial de {ip}",
                 footer_text: "SolinfNet Control Center © 2026 • Departamento SolinfNet",
                 step_scanning: "Escaneando versión...",
@@ -842,13 +850,68 @@ body::after{
                 toast_info: "ℹ️ Información",
                 btn_cancel: "Cancelar",
                 btn_confirm: "Confirmar",
-                confirm_title: "Confirmar acción"
+                confirm_title: "Confirmar acción",
+                opt_all_clients: "Todos los clientes",
+                opt_all_crops: "Todos los cultivos",
+                opt_all_statuses: "Todos los estados",
+                opt_status_updated: "✅ Actualizado",
+                opt_status_pending: "🔄 Pendiente",
+                opt_status_offline: "❌ Offline",
+                opt_status_error: "⚠️ Error",
+                opt_all_os: "Todos los SO",
+                opt_all_relay: "Todos los Relay",
+                opt_relay_with: "✅ Con Relay LPWAN",
+                opt_relay_without: "❌ Sin Relay LPWAN",
+                filter_search_placeholder: "🔍 Buscar IP, cliente, unidad...",
+                filter_showing: "Mostrando",
+                filter_of: "de",
+                filter_clear: "Limpiar filtros",
+                pagination_show: "Mostrar",
+                pagination_all: "Todo",
+                th_failure_pct: "% Fallo",
+                no_gateways_found: "No se encontraron gateways",
+                history_loading: "Cargando historial...",
+                history_empty_title: "Sin historial todavía",
+                history_empty_body: "Este gateway aún no tiene actualizaciones, configuraciones ni instalaciones de Mono registradas.",
+                history_date: "Fecha",
+                history_operation: "Operación",
+                history_detail_version: "Detalle / Versión",
+                history_duration: "Duración",
+                history_result: "Resultado",
+                history_update_op: "🚀 ACTUALIZAR",
+                recent_updates_empty: "No hay actualizaciones recientes",
+                chart_unassigned: "Sin Asignar",
+                relay_with: "Con Relay LPWAN",
+                relay_without: "Sin Relay",
+                relay_unknown: "Sin Información",
+                map_popup_client: "Cliente",
+                map_popup_unit: "Unidad",
+                map_popup_description: "Descripción",
+                map_popup_fleet: "Flota",
+                map_popup_version: "Versión",
+                map_popup_status: "Estado",
+                map_popup_coordinates: "Coordenadas",
+                mono_install_title: "Instalar Mono 6.x",
+                mono_starting: "Iniciando...",
+                mono_can_take_hours: "Mono - puede demorar horas",
+                mono_starting_toast: "📦 Iniciando instalación de Mono en {ip}...",
+                processing: "Procesando...",
+                config_applying: "Aplicando configuración estándar...",
+                config_success_changed: "✅ Configurado: {changes} ({duration}s)",
+                config_success_no_changes: "✅ Configuración ya estaba correcta ({duration}s)",
+                error_prefix: "Error",
+                error_loading_history: "Error cargando historial",
+                error_starting_config: "Error iniciando configuración",
+                error_configuring_ip: "Error configurando {ip}",
+                error_starting_mono: "Error iniciando instalación de Mono",
+                error_installing_mono: "Error instalando Mono en {ip}"
             },
             pt: {
                 app_title: "SolinfNet Control Center",
                 app_subtitle: "Gestão e Atualização de Gateways",
                 target_version: "Versão alvo",
                 change_theme: "Mudar tema",
+                presentation_mode: "Modo Apresentação (F)",
                 stat_total: "Total",
                 stat_updated: "Atualizados",
                 stat_pending: "Pendentes",
@@ -862,6 +925,7 @@ body::after{
                 scan_multiple: "Escanear Múltiplos IPs",
                 scan_multiple_placeholder: "Insira IPs separados por vírgula, espaço ou nova linha\nExemplo: 220.30.22.105, 220.30.22.115",
                 btn_scan_all: "Escanear Todos",
+                btn_update_all: "Atualizar Todos",
                 inventory_title: "Inventário de Gateways",
                 btn_refresh: "Atualizar",
                 btn_update_selected: "Atualizar",
@@ -889,6 +953,7 @@ body::after{
                 scan_connecting: "Conectando...", scan_scanning: "Escaneando...", scan_error: "Erro",
                 progress_all_completed: "✅ Todas as atualizações concluídas",
                 progress_total: "Total: {count} gateway(s)",
+                progress_waiting_start: "Na fila...",
                 history_title: "Histórico de {ip}",
                 footer_text: "SolinfNet Control Center © 2026 • Departamento SolinfNet",
                 step_scanning: "Escaneando versão...",
@@ -929,7 +994,61 @@ body::after{
                 toast_info: "ℹ️ Informação",
                 btn_cancel: "Cancelar",
                 btn_confirm: "Confirmar",
-                confirm_title: "Confirmar ação"
+                confirm_title: "Confirmar ação",
+                opt_all_clients: "Todos os clientes",
+                opt_all_crops: "Todos os cultivos",
+                opt_all_statuses: "Todos os status",
+                opt_status_updated: "✅ Atualizado",
+                opt_status_pending: "🔄 Pendente",
+                opt_status_offline: "❌ Offline",
+                opt_status_error: "⚠️ Erro",
+                opt_all_os: "Todos os SO",
+                opt_all_relay: "Todos os Relay",
+                opt_relay_with: "✅ Com Relay LPWAN",
+                opt_relay_without: "❌ Sem Relay LPWAN",
+                filter_search_placeholder: "🔍 Buscar IP, cliente, unidade...",
+                filter_showing: "Mostrando",
+                filter_of: "de",
+                filter_clear: "Limpar filtros",
+                pagination_show: "Mostrar",
+                pagination_all: "Tudo",
+                th_failure_pct: "% Falha",
+                no_gateways_found: "Nenhum gateway encontrado",
+                history_loading: "Carregando histórico...",
+                history_empty_title: "Sem histórico ainda",
+                history_empty_body: "Este gateway ainda não tem atualizações, configurações nem instalações de Mono registradas.",
+                history_date: "Data",
+                history_operation: "Operação",
+                history_detail_version: "Detalhe / Versão",
+                history_duration: "Duração",
+                history_result: "Resultado",
+                history_update_op: "🚀 ATUALIZAR",
+                recent_updates_empty: "Não há atualizações recentes",
+                chart_unassigned: "Não Atribuído",
+                relay_with: "Com Relay LPWAN",
+                relay_without: "Sem Relay",
+                relay_unknown: "Sem Informação",
+                map_popup_client: "Cliente",
+                map_popup_unit: "Unidade",
+                map_popup_description: "Descrição",
+                map_popup_fleet: "Frota",
+                map_popup_version: "Versão",
+                map_popup_status: "Status",
+                map_popup_coordinates: "Coordenadas",
+                mono_install_title: "Instalar Mono 6.x",
+                mono_starting: "Iniciando...",
+                mono_can_take_hours: "Mono - pode demorar horas",
+                mono_starting_toast: "📦 Iniciando instalação do Mono em {ip}...",
+                processing: "Processando...",
+                config_applying: "Aplicando configuração padrão...",
+                config_success_changed: "✅ Configurado: {changes} ({duration}s)",
+                config_success_no_changes: "✅ A configuração já estava correta ({duration}s)",
+                error_prefix: "Erro",
+                error_loading_history: "Erro ao carregar histórico",
+                error_starting_config: "Erro ao iniciar configuração",
+                error_configuring_ip: "Erro configurando {ip}",
+                error_starting_mono: "Erro ao iniciar instalação do Mono",
+                error_installing_mono: "Erro instalando Mono em {ip}"
             }
         };
 
@@ -942,6 +1061,16 @@ body::after{
                 str = str.replace(`{${k}}`, v);
             }
             return str;
+        }
+
+        function statusLabel(status) {
+            const map = {
+                UPDATED: t('status_updated'),
+                PENDING: t('status_pending'),
+                OFFLINE: t('status_offline'),
+                ERROR: t('status_error')
+            };
+            return map[status] || status || '-';
         }
 
         function applyTranslations() {
@@ -1246,12 +1375,12 @@ body::after{
                     return;
                 }
 
+                const updateData = await updateRes.json();
                 document.getElementById('updateProgress').classList.remove('hidden');
-                startProgressMonitoring();
+                startProgressMonitoring(updateData.tasks);
                 updateStep(tempId, 'step2', t('step_updating'), 'blue');
                 updateStep(tempId, 'step3', t('step_waiting'), 'blue');
 
-                const updateData = await updateRes.json();
                 const taskId = updateData.tasks[0].task_id;
                 const updateResult = await waitForTask(taskId, true);
                 const finalStatus = updateResult.result?.status || updateResult.state;
@@ -1320,13 +1449,20 @@ body::after{
             });
         }
 
-        // ============ MULTIPLE SCAN ============
+        // ============ MULTIPLE SCAN / UPDATE ============
+        function setMultipleButtonsDisabled(disabled) {
+            const scanBtn = document.getElementById('btnScanMultiple');
+            const updateBtn = document.getElementById('btnUpdateMultiple');
+            if (scanBtn) scanBtn.disabled = disabled;
+            if (updateBtn) updateBtn.disabled = disabled;
+        }
+
         async function scanMultipleIPs() {
             const input = document.getElementById('multipleIpsInput').value;
             const ips = parseIPs(input);
             if (ips.length === 0) { showToast(t('toast_ip_required'), 'warning'); return; }
 
-            document.getElementById('btnScanMultiple').disabled = true;
+            setMultipleButtonsDisabled(true);
             const resultsDiv = document.getElementById('multipleScanResults');
             resultsDiv.innerHTML = `<p class="text-indigo-600 dark:text-indigo-400 font-medium text-sm flex items-center gap-2"><svg class="w-4 h-4 animate-spin" fill="none" viewBox="0 0 24 24"><circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle><path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z"></path></svg>${esc(t('toast_scanning', { count: ips.length }))}</p>`;
             showToast(t('toast_scanning', { count: ips.length }), 'info');
@@ -1342,7 +1478,43 @@ body::after{
                     document.getElementById(tempId).innerHTML = `<span class="font-mono font-semibold text-sm">${esc(ip)}</span><span class="text-red-600 dark:text-red-400 text-sm">${esc(t('scan_error'))}</span>`;
                 }
             }
-            document.getElementById('btnScanMultiple').disabled = false;
+            setMultipleButtonsDisabled(false);
+        }
+
+        async function updateMultipleIPs() {
+            const input = document.getElementById('multipleIpsInput').value;
+            const ips = parseIPs(input);
+            if (ips.length === 0) { showToast(t('toast_ip_required'), 'warning'); return; }
+
+            const confirmed = await showModal(
+                t('confirm_title'),
+                t('confirm_update_multiple', { count: ips.length, version: TARGET_VERSION }),
+                t('btn_update')
+            );
+            if (!confirmed) return;
+
+            setMultipleButtonsDisabled(true);
+            showToast(t('toast_update_started', { ip: ips.join(', ') }), 'info');
+            document.getElementById('multipleScanResults').innerHTML = '';
+
+            let started = false;
+            try {
+                const res = await fetch('/api/update', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ ips }) });
+                if (!res.ok) { const error = await res.json(); showToast(error.detail, 'error'); return; }
+                const updateData = await res.json();
+                document.getElementById('updateProgress').classList.remove('hidden');
+                started = true;
+                startProgressMonitoring(updateData.tasks, {
+                    clearInput: true,
+                    inputId: 'multipleIpsInput',
+                    onComplete: () => setMultipleButtonsDisabled(false)
+                });
+            } catch (err) {
+                console.error(err);
+                showToast(t('toast_update_error'), 'error');
+            } finally {
+                if (!started) setMultipleButtonsDisabled(false);
+            }
         }
 
         async function checkStatus(taskId, domId, ip, isMultiple = false) {
@@ -1469,7 +1641,7 @@ body::after{
         function renderGateways(gateways) {
             const tbody = document.getElementById('gatewayTable');
             if (gateways.length === 0) {
-                tbody.innerHTML = `<tr><td colspan="12" class="px-4 py-12 text-center text-slate-400"><div class="flex flex-col items-center gap-2"><svg class="w-10 h-10 text-slate-300 dark:text-slate-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M9.172 16.172a4 4 0 015.656 0M9 10h.01M15 10h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/></svg><span class="text-sm">No se encontraron gateways</span></div></td></tr>`;
+                tbody.innerHTML = `<tr><td colspan="12" class="px-4 py-12 text-center text-slate-400"><div class="flex flex-col items-center gap-2"><svg class="w-10 h-10 text-slate-300 dark:text-slate-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M9.172 16.172a4 4 0 015.656 0M9 10h.01M15 10h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/></svg><span class="text-sm">${esc(t('no_gateways_found'))}</span></div></td></tr>`;
                 return;
             }
             tbody.innerHTML = gateways.map(g => {
@@ -1511,7 +1683,7 @@ body::after{
 <div class="flex gap-1">
 <button onclick="viewHistory('${esc(g.ip)}')" class="action-btn" title="${esc(t('btn_history_tooltip'))}"><svg class="text-blue-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"/></svg></button>
 <button onclick="configureGateway('${esc(g.ip)}')" class="action-btn" title="${esc(t('btn_configure_tooltip'))}"><svg class="text-indigo-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.066 2.573c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.573 1.066c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.066-2.573c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z"/><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"/></svg></button>
-${(g.os_codename === 'jessie' || g.os_codename === 'stretch') ? `<button onclick="installMono('${esc(g.ip)}', '${esc(g.os_version)}')" class="action-btn" title="Instalar Mono 6.x"><svg class="text-red-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20 7l-8-4-8 4m16 0l-8 4m8-4v10l-8 4m0-10L4 7m8 4v10M4 7v10l8 4"/></svg></button>` : ''}
+${(g.os_codename === 'jessie' || g.os_codename === 'stretch') ? `<button onclick="installMono('${esc(g.ip)}', '${esc(g.os_version)}')" class="action-btn" title="${esc(t('mono_install_title'))}"><svg class="text-red-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20 7l-8-4-8 4m16 0l-8 4m8-4v10l-8 4m0-10L4 7m8 4v10M4 7v10l8 4"/></svg></button>` : ''}
 </div>
 </td>
 </tr>`;
@@ -1531,7 +1703,7 @@ ${(g.os_codename === 'jessie' || g.os_codename === 'stretch') ? `<button onclick
         function populateClientFilter(gateways) {
             const select = document.getElementById('filterCliente');
             const clientes = [...new Set(gateways.map(g => g.cliente).filter(c => c))].sort();
-            select.innerHTML = '<option value="">Todos los clientes</option>';
+            select.innerHTML = `<option value="">${esc(t('opt_all_clients'))}</option>`;
             clientes.forEach(c => {
                 select.innerHTML += `<option value="${esc(c)}">${esc(c)}</option>`;
             });
@@ -1618,21 +1790,122 @@ ${(g.os_codename === 'jessie' || g.os_codename === 'stretch') ? `<button onclick
             try {
                 const res = await fetch('/api/update', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ ips }) });
                 if (!res.ok) { const error = await res.json(); showToast(error.detail, 'error'); return; }
+                const updateData = await res.json();
                 document.getElementById('updateProgress').classList.remove('hidden');
-                startProgressMonitoring();
+                startProgressMonitoring(updateData.tasks);
                 selectedGateways.clear();
                 loadGateways();
             } catch (err) { showToast(t('toast_update_error'), 'error'); }
             finally { document.getElementById('btnUpdate').disabled = false; isUpdating = false; }
         }
 
-        function startProgressMonitoring() {
+        function startProgressMonitoring(tasksToTrack = null, options = {}) {
             if (updateProgressInterval) clearInterval(updateProgressInterval);
+
+            const trackedTasks = Array.isArray(tasksToTrack) && tasksToTrack.length > 0 ? tasksToTrack : null;
+            const trackedById = trackedTasks ? new Map(trackedTasks.map(task => [task.task_id, task])) : null;
+            const completedById = new Map();
+            const missingPollsById = new Map();
+            const progressContent = document.getElementById('progressContent');
+
+            const renderTaskCard = (task, completed = false) => {
+                const percent = completed ? 100 : (task.percent || 0);
+                const resultStatus = task.result?.status || task.state;
+                const isSuccess = completed && task.state === 'SUCCESS' && !['FAILED', 'BLOCKED', 'ERROR'].includes(resultStatus);
+                const icon = completed ? (isSuccess ? '✅' : '❌') : '<svg class="w-4 h-4 animate-spin" fill="none" viewBox="0 0 24 24"><circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle><path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z"></path></svg>';
+                const msg = completed ? (task.result?.msg || task.error || 'OK') : (tProgress(task.message) || t('progress_waiting_start'));
+                return `<div class="bg-white/10 rounded-lg p-4">
+                    <div class="flex justify-between items-center mb-2"><span class="font-mono font-bold text-sm">${esc(task.ip || '')}</span><span class="text-sm font-bold flex items-center gap-2">${icon}${percent}%</span></div>
+                    <div class="w-full bg-white/20 rounded-full h-1.5"><div class="bg-white h-1.5 rounded-full progress-bar" style="width: ${percent}%"></div></div>
+                    <p class="text-xs text-white/70 mt-2">${esc(msg)}</p></div>`;
+            };
+
+            const renderInitial = () => {
+                if (!trackedTasks || !progressContent) return;
+                progressContent.innerHTML = trackedTasks.map(task => renderTaskCard({ ...task, state: 'PENDING', percent: 0, message: t('progress_waiting_start') })).join('');
+            };
+
+            renderInitial();
+
             updateProgressInterval = setInterval(async () => {
                 try {
                     const res = await fetch('/api/update/progress');
                     const data = await res.json();
-                    const progressContent = document.getElementById('progressContent');
+                    if (!progressContent) return;
+
+                    const active = trackedById ? data.active.filter(task => trackedById.has(task.task_id)) : data.active;
+                    const justCompleted = trackedById ? data.completed.filter(task => trackedById.has(task.task_id)) : data.completed;
+                    justCompleted.forEach(task => completedById.set(task.task_id, task));
+                    let completed = Array.from(completedById.values());
+
+                    if (trackedById) {
+                        const activeIds = new Set(active.map(task => task.task_id));
+                        let pending = trackedTasks
+                            .filter(task => !activeIds.has(task.task_id) && !completedById.has(task.task_id))
+                            .map(task => ({ ...task, state: 'PENDING', percent: 0, message: t('progress_waiting_start') }));
+
+                        if (pending.length > 0) {
+                            const directStatuses = await Promise.all(pending.map(async task => {
+                                try {
+                                    const statusRes = await fetch(`/api/update/status/${task.task_id}`);
+                                    return statusRes.ok ? await statusRes.json() : { missing: true };
+                                } catch (err) {
+                                    console.error(err);
+                                    return { missing: true };
+                                }
+                            }));
+
+                            const directActive = [];
+                            directStatuses.forEach((status, idx) => {
+                                const base = pending[idx];
+                                if (!status || status.missing) {
+                                    const misses = (missingPollsById.get(base.task_id) || 0) + 1;
+                                    missingPollsById.set(base.task_id, misses);
+                                    if (misses >= 3) {
+                                        completedById.set(base.task_id, {
+                                            ...base,
+                                            state: 'FAILURE',
+                                            error: currentLang === 'pt'
+                                                ? 'Não foi possível recuperar o estado final desta tarefa.'
+                                                : 'No se pudo recuperar el estado final de esta tarea.'
+                                        });
+                                    }
+                                    return;
+                                }
+                                missingPollsById.delete(base.task_id);
+                                const normalized = { ...base, ...status, task_id: base.task_id, ip: status.ip || base.ip };
+                                if (status.state === 'SUCCESS' || status.state === 'FAILURE') completedById.set(base.task_id, normalized);
+                                else directActive.push(normalized);
+                            });
+                            completed = Array.from(completedById.values());
+                            const directActiveIds = new Set(directActive.map(task => task.task_id));
+                            pending = pending.filter(task => !completedById.has(task.task_id) && !directActiveIds.has(task.task_id));
+                            active.push(...directActive);
+                        }
+
+                        progressContent.innerHTML = [
+                            ...active.map(task => renderTaskCard(task)),
+                            ...pending.map(task => renderTaskCard(task)),
+                            ...completed.map(task => renderTaskCard(task, true))
+                        ].join('');
+
+                        if (completed.length >= trackedById.size && active.length === 0 && pending.length === 0) {
+                            clearInterval(updateProgressInterval);
+                            updateProgressInterval = null;
+                            setTimeout(() => {
+                                loadGateways();
+                                if (options.clearInput && options.inputId) {
+                                    const input = document.getElementById(options.inputId);
+                                    if (input) input.value = '';
+                                    const countEl = document.getElementById('multipleIpCount');
+                                    if (countEl) countEl.textContent = '';
+                                }
+                                if (typeof options.onComplete === 'function') options.onComplete();
+                                setTimeout(() => document.getElementById('updateProgress').classList.add('hidden'), 5000);
+                            }, 2000);
+                        }
+                        return;
+                    }
 
                     if (data.active.length === 0 && data.total === 0) {
                         clearInterval(updateProgressInterval);
@@ -1648,22 +1921,10 @@ ${(g.os_codename === 'jessie' || g.os_codename === 'stretch') ? `<button onclick
                         return;
                     }
 
-                    let html = '';
-                    data.active.forEach(task => {
-                        html += `<div class="bg-white/10 rounded-lg p-4">
-                            <div class="flex justify-between items-center mb-2"><span class="font-mono font-bold text-sm">${esc(task.ip)}</span><span class="text-sm font-bold">${task.percent}%</span></div>
-                            <div class="w-full bg-white/20 rounded-full h-1.5"><div class="bg-white h-1.5 rounded-full progress-bar" style="width: ${task.percent}%"></div></div>
-                            <p class="text-xs text-white/70 mt-2">${esc(tProgress(task.message))}</p></div>`;
-                    });
-                    data.completed.forEach(task => {
-                        const resultStatus = task.result?.status || task.state;
-                        const isSuccess = task.state === 'SUCCESS' && !['FAILED', 'BLOCKED', 'ERROR'].includes(resultStatus);
-                        const msg = task.result?.msg || task.error || 'OK';
-                        html += `<div class="bg-white/10 rounded-lg p-4">
-                            <div class="flex justify-between items-center"><span class="font-mono font-bold text-sm">${esc(task.ip)}</span><span class="text-lg">${isSuccess ? '✅' : '❌'}</span></div>
-                            <p class="text-sm text-white/90 mt-1">${esc(msg)}</p></div>`;
-                    });
-                    progressContent.innerHTML = html;
+                    progressContent.innerHTML = [
+                        ...data.active.map(task => renderTaskCard(task)),
+                        ...data.completed.map(task => renderTaskCard(task, true))
+                    ].join('');
                 } catch (err) { console.error(err); }
             }, 2000);
         }
@@ -1682,14 +1943,14 @@ ${(g.os_codename === 'jessie' || g.os_codename === 'stretch') ? `<button onclick
                     <div class="flex justify-between items-center p-5 border-b border-slate-200 dark:border-slate-700">
                         <h3 class="text-base font-semibold flex items-center gap-2">
                             <svg class="w-5 h-5 text-blue-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
-                            Historial de <span class="font-mono text-blue-600 dark:text-blue-400">${esc(ip)}</span>
+                            ${esc(t('history_title', { ip: '' })).trim()} <span class="font-mono text-blue-600 dark:text-blue-400">${esc(ip)}</span>
                         </h3>
                         <button onclick="document.getElementById('historyModal').remove()" class="text-slate-400 hover:text-slate-600 dark:hover:text-slate-200 p-1 rounded-lg hover:bg-slate-100 dark:hover:bg-slate-700 transition">
                             <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/></svg>
                         </button>
                     </div>
                     <div class="overflow-y-auto p-5" style="max-height: 60vh;" id="historyContent">
-                        <div class="flex items-center justify-center py-12 text-slate-400"><svg class="w-6 h-6 animate-spin mr-2" fill="none" viewBox="0 0 24 24"><circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle><path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z"></path></svg>Cargando historial...</div>
+                        <div class="flex items-center justify-center py-12 text-slate-400"><svg class="w-6 h-6 animate-spin mr-2" fill="none" viewBox="0 0 24 24"><circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle><path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z"></path></svg>${esc(t('history_loading'))}</div>
                     </div>
                 </div>`;
             modal.classList.remove('hidden');
@@ -1703,11 +1964,8 @@ ${(g.os_codename === 'jessie' || g.os_codename === 'stretch') ? `<button onclick
                     content.innerHTML = `
                         <div class="text-center py-10">
                             <svg class="w-12 h-12 text-slate-300 dark:text-slate-600 mx-auto mb-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M20 13V6a2 2 0 00-2-2H6a2 2 0 00-2 2v7m16 0v5a2 2 0 01-2 2H6a2 2 0 01-2-2v-5m16 0h-2.586a1 1 0 00-.707.293l-2.414 2.414a1 1 0 01-.707.293h-3.172a1 1 0 01-.707-.293l-2.414-2.414A1 1 0 006.586 13H4"/></svg>
-                            <p class="text-slate-600 dark:text-slate-400 font-medium mb-2">Sin historial todavía</p>
-                            <p class="text-sm text-slate-400 dark:text-slate-500 max-w-sm mx-auto">
-                                Este gateway aún no tiene <strong>actualizaciones</strong>, <strong>configuraciones</strong>
-                                ni <strong>instalaciones de Mono</strong> registradas.
-                            </p>
+                            <p class="text-slate-600 dark:text-slate-400 font-medium mb-2">${esc(t('history_empty_title'))}</p>
+                            <p class="text-sm text-slate-400 dark:text-slate-500 max-w-sm mx-auto">${esc(t('history_empty_body'))}</p>
                         </div>`;
                     return;
                 }
@@ -1716,18 +1974,18 @@ ${(g.os_codename === 'jessie' || g.os_codename === 'stretch') ? `<button onclick
                     <table class="data-table">
                         <thead>
                             <tr>
-                                <th>Fecha</th>
-                                <th>Operación</th>
-                                <th>Detalle / Versión</th>
-                                <th>Duración</th>
-                                <th>Resultado</th>
+                                <th>${esc(t('history_date'))}</th>
+                                <th>${esc(t('history_operation'))}</th>
+                                <th>${esc(t('history_detail_version'))}</th>
+                                <th>${esc(t('history_duration'))}</th>
+                                <th>${esc(t('history_result'))}</th>
                             </tr>
                         </thead>
                         <tbody>
                             ${history.map(h => {
                                 const fecha = new Date(h.timestamp).toLocaleString(currentLang === 'pt' ? 'pt-BR' : 'es-ES', {dateStyle:'short', timeStyle:'short'});
                                 const isOp = (h.old_version || '').match(/^[⚙️📦🔍]/);
-                                const op = isOp ? h.old_version : '🚀 ACTUALIZAR';
+                                const op = isOp ? h.old_version : t('history_update_op');
                                 const detalle = isOp ? (h.new_version || '-') : `${esc(h.old_version || '?')} → ${esc(h.new_version || '?')}`;
                                 const ok = h.status === 'SUCCESS';
                                 const badge = ok
@@ -1747,7 +2005,7 @@ ${(g.os_codename === 'jessie' || g.os_codename === 'stretch') ? `<button onclick
             } catch (err) {
                 console.error(err);
                 document.getElementById('historyContent').innerHTML =
-                    `<div class="text-center text-red-500 py-8">Error cargando historial</div>`;
+                    `<div class="text-center text-red-500 py-8">${esc(t('error_loading_history'))}</div>`;
             }
         }
 
@@ -1809,7 +2067,7 @@ ${(g.os_codename === 'jessie' || g.os_codename === 'stretch') ? `<button onclick
                 chartGlobalInstance = new Chart(ctxGlobal, {
                     type: 'doughnut',
                     data: {
-                        labels: ['Actualizados', 'Pendientes', 'Offline/Error'],
+                        labels: [t('stat_updated'), t('stat_pending'), t('map_offline_error')],
                         datasets: [{
                             data: [data.globales.actualizados, data.globales.pendientes, data.globales.offline],
                             backgroundColor: [colors.success, colors.warning, colors.danger],
@@ -1868,15 +2126,15 @@ ${(g.os_codename === 'jessie' || g.os_codename === 'stretch') ? `<button onclick
                 // 2. Crop Chart (Stacked Bar)
                 const ctxCultivos = document.getElementById('chartCultivos').getContext('2d');
                 if (chartCultivosInstance) chartCultivosInstance.destroy();
-                const labelsCultivos = data.cultivos.map(c => (c.tipo || 'Sin Asignar').toUpperCase());
+                const labelsCultivos = data.cultivos.map(c => (c.tipo || t('chart_unassigned')).toUpperCase());
 
                 chartCultivosInstance = new Chart(ctxCultivos, {
                     type: 'bar',
                     data: {
                         labels: labelsCultivos,
                         datasets: [
-                            { label: 'Actualizados', data: data.cultivos.map(c => c.actualizados), backgroundColor: colors.success, borderColor: borderColor, borderWidth: 1, borderRadius: 2 },
-                            { label: 'Pendientes', data: data.cultivos.map(c => c.pendientes), backgroundColor: colors.warning, borderColor: borderColor, borderWidth: 1, borderRadius: 2 },
+                            { label: t('stat_updated'), data: data.cultivos.map(c => c.actualizados), backgroundColor: colors.success, borderColor: borderColor, borderWidth: 1, borderRadius: 2 },
+                            { label: t('stat_pending'), data: data.cultivos.map(c => c.pendientes), backgroundColor: colors.warning, borderColor: borderColor, borderWidth: 1, borderRadius: 2 },
                             { label: 'Offline', data: data.cultivos.map(c => c.offline), backgroundColor: colors.danger, borderColor: borderColor, borderWidth: 1, borderRadius: 2 }
                         ]
                     },
@@ -1946,7 +2204,7 @@ ${(g.os_codename === 'jessie' || g.os_codename === 'stretch') ? `<button onclick
                 const tbody = document.getElementById('recentUpdatesTable');
 
                 if (updates.length === 0) {
-                    tbody.innerHTML = `<tr><td colspan="6" class="px-4 py-8 text-center text-slate-400">No hay actualizaciones recientes</td></tr>`;
+                    tbody.innerHTML = `<tr><td colspan="6" class="px-4 py-8 text-center text-slate-400">${esc(t('recent_updates_empty'))}</td></tr>`;
                     return;
                 }
 
@@ -1985,7 +2243,7 @@ ${(g.os_codename === 'jessie' || g.os_codename === 'stretch') ? `<button onclick
                 chartRelayInstance = new Chart(ctxRelay, {
                     type: 'doughnut',
                     data: {
-                        labels: ['Con Relay LPWAN', 'Sin Relay', 'Sin Información'],
+                        labels: [t('relay_with'), t('relay_without'), t('relay_unknown')],
                         datasets: [{
                             data: [data.relay.con_relay, data.relay.sin_relay, data.relay.sin_info],
                             backgroundColor: [isDark ? '#34d399' : '#059669', isDark ? '#f87171' : '#dc2626', isDark ? '#64748b' : '#94a3b8'],
@@ -2080,15 +2338,15 @@ ${(g.os_codename === 'jessie' || g.os_codename === 'stretch') ? `<button onclick
 
                     const popupContent = `
                         <div style="min-width: 200px; font-family: Inter, sans-serif;">
-                            <h3 style="margin: 0 0 8px 0; font-size: 14px; font-weight: 700;">${icon} ${g.ip}</h3>
-                            <p style="margin: 4px 0; font-size: 12px;"><strong>Cliente:</strong> ${g.cliente || '-'}</p>
-                            <p style="margin: 4px 0; font-size: 12px;"><strong>Unidad:</strong> ${g.unidad || '-'}</p>
-                            <p style="margin: 4px 0; font-size: 12px;"><strong>Descripción:</strong> ${g.description || '-'}</p>
-                            <p style="margin: 4px 0; font-size: 12px;"><strong>Flota:</strong> ${g.fleet_number || '-'}</p>
-                            <p style="margin: 4px 0; font-size: 12px;"><strong>Versión:</strong> ${g.version || '-'}</p>
-                            <p style="margin: 4px 0; font-size: 12px;"><strong>SO:</strong> ${g.os_version || '-'}</p>
-                            <p style="margin: 4px 0; font-size: 12px;"><strong>Estado:</strong> ${g.status}</p>
-                            <p style="margin: 4px 0; font-size: 11px; color: #64748b;">📍 ${g.latitude.toFixed(4)}, ${g.longitude.toFixed(4)}</p>
+                            <h3 style="margin: 0 0 8px 0; font-size: 14px; font-weight: 700;">${icon} ${esc(g.ip)}</h3>
+                            <p style="margin: 4px 0; font-size: 12px;"><strong>${esc(t('map_popup_client'))}:</strong> ${esc(g.cliente || '-')}</p>
+                            <p style="margin: 4px 0; font-size: 12px;"><strong>${esc(t('map_popup_unit'))}:</strong> ${esc(g.unidad || '-')}</p>
+                            <p style="margin: 4px 0; font-size: 12px;"><strong>${esc(t('map_popup_description'))}:</strong> ${esc(g.description || '-')}</p>
+                            <p style="margin: 4px 0; font-size: 12px;"><strong>${esc(t('map_popup_fleet'))}:</strong> ${esc(g.fleet_number || '-')}</p>
+                            <p style="margin: 4px 0; font-size: 12px;"><strong>${esc(t('map_popup_version'))}:</strong> ${esc(g.version || '-')}</p>
+                            <p style="margin: 4px 0; font-size: 12px;"><strong>${esc(t('th_os'))}:</strong> ${esc(g.os_version || '-')}</p>
+                            <p style="margin: 4px 0; font-size: 12px;"><strong>${esc(t('map_popup_status'))}:</strong> ${esc(statusLabel(g.status))}</p>
+                            <p style="margin: 4px 0; font-size: 11px; color: #64748b;">📍 ${esc(t('map_popup_coordinates'))}: ${g.latitude.toFixed(4)}, ${g.longitude.toFixed(4)}</p>
                         </div>`;
                     marker.bindPopup(popupContent);
                     mapMarkers.push(marker);
@@ -2124,7 +2382,7 @@ ${(g.os_codename === 'jessie' || g.os_codename === 'stretch') ? `<button onclick
                         <span class="font-semibold text-sm">${esc(ip)}</span>
                     </div>
                     <div class="ml-8">
-                        <div id="config-step1" class="text-indigo-600 dark:text-indigo-400 text-sm">Aplicando configuración estándar...</div>
+                        <div id="config-step1" class="text-indigo-600 dark:text-indigo-400 text-sm">${esc(t('config_applying'))}</div>
                     </div>
                 </div>`;
 
@@ -2137,14 +2395,14 @@ ${(g.os_codename === 'jessie' || g.os_codename === 'stretch') ? `<button onclick
                         const statusRes = await fetch(`/api/configure/status/${data.task_id}`);
                         const status = await statusRes.json();
 
-                        document.getElementById('config-step1').textContent = `${tProgress(status.message) || 'Procesando...'} (${status.percent}%)`;
+                        document.getElementById('config-step1').textContent = `${tProgress(status.message) || t('processing')} (${status.percent}%)`;
 
                         if (status.state === 'SUCCESS') {
                             clearInterval(interval);
                             const result = status.result;
                             const msg = result.changes && result.changes.length > 0
-                                ? `✅ Configurado: ${result.changes.join(', ')} (${result.duration}s)`
-                                : `✅ Configuración ya estaba correcta (${result.duration}s)`;
+                                ? t('config_success_changed', { changes: result.changes.join(', '), duration: result.duration })
+                                : t('config_success_no_changes', { duration: result.duration });
 
                             document.getElementById(tempId).innerHTML = `
                                 <div class="flex items-center gap-3">
@@ -2163,15 +2421,15 @@ ${(g.os_codename === 'jessie' || g.os_codename === 'stretch') ? `<button onclick
                                 <div class="flex items-center gap-3">
                                     <svg class="w-5 h-5 text-red-500" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M4.293 4.293a1 1 0 011.414 0L10 8.586l4.293-4.293a1 1 0 111.414 1.414L11.414 10l4.293 4.293a1 1 0 01-1.414 1.414L10 11.414l-4.293 4.293a1 1 0 01-1.414-1.414L8.586 10 4.293 5.707a1 1 0 010-1.414z" clip-rule="evenodd"/></svg>
                                     <span class="font-semibold text-sm">${esc(ip)}</span>
-                                    <span class="text-red-700 dark:text-red-400 font-medium text-sm ml-2">Error: ${esc(status.error)}</span>
+                                    <span class="text-red-700 dark:text-red-400 font-medium text-sm ml-2">${esc(t('error_prefix'))}: ${esc(status.error)}</span>
                                 </div>`;
                             document.getElementById(tempId).className = 'card border-l-4 border-red-400 p-4';
-                            showToast(`Error configurando ${ip}`, 'error');
+                            showToast(t('error_configuring_ip', { ip: ip }), 'error');
                         }
                     } catch (err) { console.error(err); }
                 }, 1000);
             } catch (err) {
-                showToast('Error iniciando configuración', 'error');
+                showToast(t('error_starting_config'), 'error');
             }
         }
 
@@ -2183,7 +2441,7 @@ ${(g.os_codename === 'jessie' || g.os_codename === 'stretch') ? `<button onclick
             const confirmed = await showModal(t('confirm_title'), msg, t('btn_confirm'));
             if (!confirmed) return;
 
-            showToast(`📦 Iniciando instalación de Mono en ${ip}...`, 'info');
+            showToast(t('mono_starting_toast', { ip: ip }), 'info');
 
             const resultsDiv = document.getElementById('results');
             const tempId = 'mono-' + Date.now();
@@ -2193,10 +2451,10 @@ ${(g.os_codename === 'jessie' || g.os_codename === 'stretch') ? `<button onclick
                     <div class="flex items-center gap-3 mb-2">
                         <svg class="w-5 h-5 text-red-500 animate-spin" fill="none" viewBox="0 0 24 24"><circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle><path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z"></path></svg>
                         <span class="font-semibold text-sm">${esc(ip)}</span>
-                        <span class="text-xs text-slate-400">(Mono — puede demorar horas)</span>
+                        <span class="text-xs text-slate-400">(${esc(t('mono_can_take_hours'))})</span>
                     </div>
                     <div class="ml-8">
-                        <div id="mono-msg-${tempId}" class="text-sm text-red-600 dark:text-red-400">Iniciando...</div>
+                        <div id="mono-msg-${tempId}" class="text-sm text-red-600 dark:text-red-400">${esc(t('mono_starting'))}</div>
                         <div class="w-full bg-slate-200 dark:bg-slate-700 rounded-full h-1.5 mt-2">
                             <div id="mono-bar-${tempId}" class="bg-red-500 h-1.5 rounded-full transition-all duration-500" style="width: 0%"></div>
                         </div>
@@ -2214,7 +2472,7 @@ ${(g.os_codename === 'jessie' || g.os_codename === 'stretch') ? `<button onclick
 
                         const msgEl = document.getElementById(`mono-msg-${tempId}`);
                         const barEl = document.getElementById(`mono-bar-${tempId}`);
-                        if (msgEl) msgEl.textContent = `${tProgress(status.message) || 'Procesando...'} (${status.percent}%)`;
+                        if (msgEl) msgEl.textContent = `${tProgress(status.message) || t('processing')} (${status.percent}%)`;
                         if (barEl) barEl.style.width = `${status.percent}%`;
 
                         if (status.state === 'SUCCESS') {
@@ -2235,15 +2493,15 @@ ${(g.os_codename === 'jessie' || g.os_codename === 'stretch') ? `<button onclick
                                 <div class="flex items-center gap-3">
                                     <svg class="w-5 h-5 text-red-500" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M4.293 4.293a1 1 0 011.414 0L10 8.586l4.293-4.293a1 1 0 111.414 1.414L11.414 10l4.293 4.293a1 1 0 01-1.414 1.414L10 11.414l-4.293 4.293a1 1 0 01-1.414-1.414L8.586 10 4.293 5.707a1 1 0 010-1.414z" clip-rule="evenodd"/></svg>
                                     <span class="font-semibold text-sm">${esc(ip)}</span>
-                                    <span class="text-red-700 dark:text-red-400 font-medium text-sm ml-2">Error: ${esc(status.error)}</span>
+                                    <span class="text-red-700 dark:text-red-400 font-medium text-sm ml-2">${esc(t('error_prefix'))}: ${esc(status.error)}</span>
                                 </div>`;
                             document.getElementById(tempId).className = 'card border-l-4 border-red-400 p-4';
-                            showToast(`Error instalando Mono en ${ip}`, 'error');
+                            showToast(t('error_installing_mono', { ip: ip }), 'error');
                         }
                     } catch (err) { console.error(err); }
                 }, 5000);
             } catch (err) {
-                showToast('Error iniciando instalación de Mono', 'error');
+                showToast(t('error_starting_mono'), 'error');
             }
         }
 
@@ -2665,12 +2923,12 @@ async function openUnidadDetalle(id, gatewayIp = null) {
         </div>`;
 
         // Mini-mapa: pin propio destacado + hermanos tenues
-        const propio = gw && gw.lat ? {lat: gw.lat, lon: gw.lon, st} : null;
+        const propio = gw && gw.lat && gw.lon ? {lat: gw.lat, lon: gw.lon, st} : null;
         const herm = (d.hermanos || []).filter(h => h.lat && h.lon);
         const all = [propio, ...herm].filter(Boolean);
         const mapEl = document.getElementById('uniMap');
-        if (all.length) {
-            _uniMap = L.map('uniMap', {zoomControl:false, attributionControl:false}).setView([all[0].lat, all[0].lon], 8);
+        if (propio) {
+            _uniMap = L.map('uniMap', {zoomControl:false, attributionControl:false}).setView([propio.lat, propio.lon], 8);
             L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {maxZoom:18}).addTo(_uniMap);
             herm.forEach(h => {
                 const torre = h.description ? `<br><span>${_L('Torre','Torre')}: ${esc(h.description)}</span>` : '';
@@ -2678,12 +2936,10 @@ async function openUnidadDetalle(id, gatewayIp = null) {
                 L.circleMarker([h.lat,h.lon], {radius:5, fillColor:'#94a3b8', color:'#fff', weight:1, fillOpacity:.5})
                     .bindPopup(`<b>${esc(h.nombre)}</b><br>${esc(h.ip||'—')}${torre}${frota}`).addTo(_uniMap);
             });
-            if (propio) {
-                const torre = gw && gw.description ? `<br><span>${_L('Torre','Torre')}: ${esc(gw.description)}</span>` : '';
-                const frota = gw && gw.fleet_number ? `<br><span>${_L('Flota','Frota')}: ${esc(gw.fleet_number)}</span>` : '';
-                L.circleMarker([propio.lat, propio.lon], {radius:9, fillColor:stMap.dot, color:'#fff', weight:2, fillOpacity:1})
-                    .bindPopup(`<b>${esc(d.unidad.nombre)}</b><br>${esc(ip||'')}${torre}${frota}<br>${esc(stMap.t)}`).addTo(_uniMap).openPopup();
-            }
+            const torre = gw && gw.description ? `<br><span>${_L('Torre','Torre')}: ${esc(gw.description)}</span>` : '';
+            const frota = gw && gw.fleet_number ? `<br><span>${_L('Flota','Frota')}: ${esc(gw.fleet_number)}</span>` : '';
+            L.circleMarker([propio.lat, propio.lon], {radius:9, fillColor:stMap.dot, color:'#fff', weight:2, fillOpacity:1})
+                .bindPopup(`<b>${esc(d.unidad.nombre)}</b><br>${esc(ip||'')}${torre}${frota}<br>${esc(stMap.t)}`).addTo(_uniMap).openPopup();
             const bounds = all.map(p => [p.lat, p.lon]);
             _uniMap.fitBounds(bounds, {padding:[24,24], maxZoom:11});
             setTimeout(() => _uniMap && _uniMap.invalidateSize(), 300);
@@ -2785,8 +3041,8 @@ function startKiosk() {
       <div class="kio-top">
         <div class="kio-brand">
           <div class="kio-logo"><img src="/logo.png" alt="logo"></div>
-          <div><div class="kio-tag">Modo Presentación</div>
-          <div style="font-size:.72rem;color:#94a3b8">SolinfNet · Flota en vivo</div></div>
+          <div><div class="kio-tag">${_L('Modo Presentación','Modo Apresentação')}</div>
+          <div style="font-size:.72rem;color:#94a3b8">SolinfNet · ${_L('Flota en vivo','Frota ao vivo')}</div></div>
         </div>
         <div class="kio-clock"><span id="kioClock">--:--:--</span><small id="kioDate"></small></div>
       </div>
@@ -2795,10 +3051,10 @@ function startKiosk() {
         <div class="kio-dots" id="kioDots"></div>
         <div class="kio-bar"><i id="kioBar"></i></div>
         <div class="kio-ctrl">
-          <button id="kioPrev" title="Anterior (←)">◀</button>
-          <button id="kioPause" title="Pausa (Espacio)">⏸</button>
-          <button id="kioNext" title="Siguiente (→)">▶</button>
-          <button id="kioExit" title="Salir (Esc)">✕</button>
+          <button id="kioPrev" title="${_L('Anterior','Anterior')} (←)">◀</button>
+          <button id="kioPause" title="${_L('Pausa','Pausa')} (${_L('Espacio','Espaço')})">⏸</button>
+          <button id="kioNext" title="${_L('Siguiente','Próximo')} (→)">▶</button>
+          <button id="kioExit" title="${_L('Salir','Sair')} (Esc)">✕</button>
         </div>
       </div>
     </div>`;
@@ -2825,7 +3081,7 @@ function startKiosk() {
         if (_kio.map) { _kio.map.remove(); _kio.map = null; }
         body.querySelectorAll('.kio-scene').forEach(s => s.remove());
         const wrap = document.createElement('div'); wrap.className = 'kio-scene'; body.appendChild(wrap);
-        try { await scenes[i](wrap, _kio); } catch (e) { console.error(e); wrap.innerHTML = `<div style="margin:auto;color:#f87171">Escena no disponible</div>`; }
+        try { await scenes[i](wrap, _kio); } catch (e) { console.error(e); wrap.innerHTML = `<div style="margin:auto;color:#f87171">${_L('Escena no disponible','Cena indisponível')}</div>`; }
         requestAnimationFrame(() => wrap.classList.add('on'));
         dots.querySelectorAll('.kio-dot').forEach((d, di) => d.classList.toggle('on', di === i));
         startBar();
@@ -2879,15 +3135,15 @@ async function sceneHero(wrap, K) {
     const col = salud >= 90 ? '#4ade80' : salud >= 70 ? '#fbbf24' : '#f87171';
     wrap.classList.add('kio-hero');
     wrap.innerHTML = `
-      <div class="kio-h" style="font-size:clamp(1rem,2.4vw,1.8rem);color:#94a3b8;letter-spacing:.04em">Salud global de la flota</div>
+      <div class="kio-h" style="font-size:clamp(1rem,2.4vw,1.8rem);color:#94a3b8;letter-spacing:.04em">${_L('Salud global de la flota','Saúde global da frota')}</div>
       <div class="kio-bignum">${salud}<span style="font-size:.4em;color:${col}">%</span></div>
       <div class="kio-health"><i style="width:0%;background:linear-gradient(90deg,#22c55e,${col});box-shadow:0 0 24px ${col}99" id="kioHealthBar"></i></div>
       <div class="kio-kpis">
         <div class="kio-kpi"><b style="color:#e9f3ee" data-c="${total}">0</b><span>Gateways</span></div>
-        <div class="kio-kpi"><b style="color:#4ade80" data-c="${g.actualizados}">0</b><span>Actualizados</span></div>
-        <div class="kio-kpi"><b style="color:#fbbf24" data-c="${g.pendientes}">0</b><span>Pendientes</span></div>
+        <div class="kio-kpi"><b style="color:#4ade80" data-c="${g.actualizados}">0</b><span>${_L('Actualizados','Atualizados')}</span></div>
+        <div class="kio-kpi"><b style="color:#fbbf24" data-c="${g.pendientes}">0</b><span>${_L('Pendientes','Pendentes')}</span></div>
         <div class="kio-kpi"><b style="color:#f87171" data-c="${g.offline}">0</b><span>Offline</span></div>
-        <div class="kio-kpi"><b style="color:#22d3ee" data-c="${d.relay.con_relay}">0</b><span>Con Relay</span></div>
+        <div class="kio-kpi"><b style="color:#22d3ee" data-c="${d.relay.con_relay}">0</b><span>${_L('Con Relay','Com Relay')}</span></div>
       </div>`;
     requestAnimationFrame(() => { const b = document.getElementById('kioHealthBar'); if (b) b.style.width = salud + '%'; });
     wrap.querySelectorAll('[data-c]').forEach(el => _kioCount(el, +el.dataset.c));
@@ -2898,21 +3154,21 @@ async function sceneMap(wrap, K) {
     const gws = await (await fetch('/api/gateways?t=' + Date.now())).json();
     const gps = gws.filter(g => g.latitude && g.longitude);
     wrap.innerHTML = `
-      <div class="kio-h" style="font-size:clamp(1.2rem,2.6vw,2rem);margin-bottom:.6rem">Cobertura geográfica · ${gps.length} puntos</div>
+      <div class="kio-h" style="font-size:clamp(1.2rem,2.6vw,2rem);margin-bottom:.6rem">${_L('Cobertura geográfica','Cobertura geográfica')} · ${gps.length} ${_L('puntos','pontos')}</div>
       <div class="kio-mapwrap" id="kioMap"></div>
       <div class="kio-maplegend">
-        <span><i style="background:#4ade80"></i>Actualizado</span>
-        <span><i style="background:#fbbf24"></i>Pendiente</span>
+        <span><i style="background:#4ade80"></i>${_L('Actualizado','Atualizado')}</span>
+        <span><i style="background:#fbbf24"></i>${_L('Pendiente','Pendente')}</span>
         <span><i style="background:#f87171"></i>Offline / Error</span>
       </div>`;
-    if (!gps.length) { document.getElementById('kioMap').innerHTML = '<div style="display:flex;align-items:center;justify-content:center;height:100%;color:#64748b">Sin coordenadas GPS</div>'; return; }
+    if (!gps.length) { document.getElementById('kioMap').innerHTML = `<div style="display:flex;align-items:center;justify-content:center;height:100%;color:#64748b">${_L('Sin coordenadas GPS','Sem coordenadas GPS')}</div>`; return; }
     K.map = L.map('kioMap', {zoomControl:false, attributionControl:false}).setView([-15.7,-47.9], 4);
     L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {maxZoom:18, className:'kio-tile'}).addTo(K.map);
     const b = [];
     gps.forEach(g => {
         const c = g.status==='UPDATED'?'#4ade80':g.status==='PENDING'?'#fbbf24':'#f87171';
         L.circleMarker([g.latitude,g.longitude], {radius:6, fillColor:c, color:'#04100b', weight:1.5, fillOpacity:.92})
-            .bindPopup(`<b>${g.ip}</b><br>${g.cliente||''}<br>${g.unidad||''}`).addTo(K.map);
+            .bindPopup(`<b>${esc(g.ip)}</b><br>${esc(g.cliente||'')}<br>${esc(g.unidad||'')}<br>${esc(statusLabel(g.status))}`).addTo(K.map);
         b.push([g.latitude, g.longitude]);
     });
     K.map.fitBounds(b, {padding:[40,40]});
@@ -2925,15 +3181,15 @@ async function sceneWall(wrap, K) {
     const map = {};
     gws.forEach(g => { if (!g.cliente) return; (map[g.cliente] = map[g.cliente] || {n:g.cliente,t:0,ok:0,off:0}); map[g.cliente].t++; if (g.status==='UPDATED') map[g.cliente].ok++; if (g.status==='OFFLINE'||g.status==='ERROR') map[g.cliente].off++; });
     const list = Object.values(map).map(c => ({...c, s: c.t?Math.round(c.ok/c.t*100):0})).sort((a,b)=>a.s-b.s||b.off-a.off);
-    wrap.innerHTML = `<div class="kio-h" style="font-size:clamp(1.2rem,2.6vw,2rem);margin-bottom:.8rem">Semáforo por cliente · del más crítico al más sano</div><div class="kio-wall" id="kioWall"></div>`;
+    wrap.innerHTML = `<div class="kio-h" style="font-size:clamp(1.2rem,2.6vw,2rem);margin-bottom:.8rem">${_L('Semáforo por cliente · del más crítico al más sano','Semáforo por cliente · do mais crítico ao mais saudável')}</div><div class="kio-wall" id="kioWall"></div>`;
     document.getElementById('kioWall').innerHTML = list.map((c,i) => {
         const col = c.s>=90?'#4ade80':c.s>=70?'#fbbf24':'#f87171';
         return `<div class="kio-ficha" style="--mc:${col};animation-delay:${Math.min(i*45,700)}ms">
           <div style="display:flex;justify-content:space-between;align-items:baseline;gap:.5rem"><span class="kn">${c.n}</span><span class="kp">${c.s}%</span></div>
           <div class="kb"><i style="width:${c.s}%"></i></div>
-          <div style="font-size:.72rem;color:#94a3b8">${c.ok}/${c.t} sanos${c.off?` · <span style="color:#f87171">${c.off} offline</span>`:''}</div>
+          <div style="font-size:.72rem;color:#94a3b8">${c.ok}/${c.t} ${_L('sanos','saudáveis')}${c.off?` · <span style="color:#f87171">${c.off} offline</span>`:''}</div>
         </div>`;
-    }).join('') || '<div style="color:#64748b;margin:auto">Sin datos</div>';
+    }).join('') || `<div style="color:#64748b;margin:auto">${_L('Sin datos','Sem dados')}</div>`;
 }
 
 // ---- Escena 4: foco por cultivo + top fallos ----
@@ -2941,17 +3197,17 @@ async function sceneFocus(wrap, K) {
     const d = await (await fetch('/api/reportes/dashboard')).json();
     const isDark = true, txt = '#cbd5e1', bd = '#0b1f17';
     wrap.innerHTML = `
-      <div class="kio-h" style="font-size:clamp(1.2rem,2.6vw,2rem);margin-bottom:.8rem">Foco: cultivos y clientes que necesitan atención</div>
+      <div class="kio-h" style="font-size:clamp(1.2rem,2.6vw,2rem);margin-bottom:.8rem">${_L('Foco: cultivos y clientes que necesitan atención','Foco: cultivos e clientes que precisam de atenção')}</div>
       <div class="kio-focus">
-        <div class="kio-panel"><h4>Progreso por tipo de cultivo</h4><div style="flex:1;position:relative"><canvas id="kioCrop"></canvas></div></div>
-        <div class="kio-panel"><h4>Top clientes con fallos</h4><div style="flex:1;overflow:auto" id="kioTop"></div></div>
+        <div class="kio-panel"><h4>${_L('Progreso por tipo de cultivo','Progresso por tipo de cultivo')}</h4><div style="flex:1;position:relative"><canvas id="kioCrop"></canvas></div></div>
+        <div class="kio-panel"><h4>${_L('Top clientes con fallos','Top clientes com falhas')}</h4><div style="flex:1;overflow:auto" id="kioTop"></div></div>
       </div>`;
     const cols = {ok:'#4ade80', pend:'#fbbf24', off:'#f87171'};
     K.charts.push(new Chart(document.getElementById('kioCrop'), {
         type:'bar', data:{ labels:d.cultivos.map(c=>(c.tipo||'—').toUpperCase()),
           datasets:[
-            {label:'Actualizados',data:d.cultivos.map(c=>c.actualizados),backgroundColor:cols.ok,borderRadius:3},
-            {label:'Pendientes',data:d.cultivos.map(c=>c.pendientes),backgroundColor:cols.pend,borderRadius:3},
+            {label:_L('Actualizados','Atualizados'),data:d.cultivos.map(c=>c.actualizados),backgroundColor:cols.ok,borderRadius:3},
+            {label:_L('Pendientes','Pendentes'),data:d.cultivos.map(c=>c.pendientes),backgroundColor:cols.pend,borderRadius:3},
             {label:'Offline',data:d.cultivos.map(c=>c.offline),backgroundColor:cols.off,borderRadius:3}]},
         options:{responsive:true,maintainAspectRatio:false,
           scales:{x:{stacked:true,ticks:{color:txt},grid:{display:false}},y:{stacked:true,beginAtZero:true,ticks:{color:'#64748b',precision:0},grid:{color:'rgba(255,255,255,.06)'}}},
@@ -2964,7 +3220,7 @@ async function sceneFocus(wrap, K) {
           <span style="flex:1;font-weight:600">${f.nombre}</span>
           <span style="width:120px;height:6px;border-radius:6px;background:rgba(255,255,255,.1);overflow:hidden"><i style="display:block;height:100%;width:${p}%;background:#f87171"></i></span>
           <span style="font-family:'JetBrains Mono',monospace;color:#f87171;width:42px;text-align:right">${f.fallos}</span></div>`;
-    }).join('') : '<div style="color:#64748b;margin:auto;text-align:center">¡Sin fallos graves!</div>';
+    }).join('') : `<div style="color:#64748b;margin:auto;text-align:center">${_L('¡Sin fallos graves!','Sem falhas graves!')}</div>`;
 }
 
 function _kioCount(el, target) {

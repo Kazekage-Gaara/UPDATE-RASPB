@@ -21,6 +21,9 @@ services:
       # Solo exponemos datos y binarios que sí deben venir del host.
       - ./data:/app/data
       - ./updates:/app/updates:ro
+      - ./backend/Preset Perenes IPs VPNs Solinftec.txt:/app/Preset Perenes IPs VPNs Solinftec.txt:ro
+      - ./backend/Preset Grãos IPs VPNs Solinftec.txt:/app/Preset Grãos IPs VPNs Solinftec.txt:ro
+      - ./backend/Preset Cana IPs VPNs Solinftec.txt:/app/Preset Cana IPs VPNs Solinftec.txt:ro
     # network_mode: host
 
   worker:
@@ -42,6 +45,9 @@ services:
     volumes:
       - ./data:/app/data
       - ./updates:/app/updates:ro
+      - ./backend/Preset Perenes IPs VPNs Solinftec.txt:/app/Preset Perenes IPs VPNs Solinftec.txt:ro
+      - ./backend/Preset Grãos IPs VPNs Solinftec.txt:/app/Preset Grãos IPs VPNs Solinftec.txt:ro
+      - ./backend/Preset Cana IPs VPNs Solinftec.txt:/app/Preset Cana IPs VPNs Solinftec.txt:ro
     # network_mode: host
 
   redis:

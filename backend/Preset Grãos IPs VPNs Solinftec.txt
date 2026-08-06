@@ -150,7 +150,7 @@ Rotas IPs VPNs Solinftec
 			1.5		Faz. Lajeada						user : solinfnet.bortoluzzi.fz_lajeada
 
 	220.28.0.0/24	Amaggi
-			1.5		Faz. Tanguro						user : solinfnet.amaggi.fz_tanguru
+			1.5		Faz. Tanguro						user : solinfnet.amaggi.fz_tanguro
 			 .245    Gateway Anta 						user : solinfnet.amaggi.fz_tanguro.f_2007
 			2.5		Faz. Sta Maria 						user : solinfnet.amaggi.fz_sm1
 			3.5		Faz. Pirapó							user : solinfnet.amaggi.fz_pirapo		
@@ -229,6 +229,7 @@ Rotas IPs VPNs Solinftec
 	220.32.0.0/24	Grupo Gatto
 			1.5		Faz. Carmen							user : solinfnet.grupogatto.fz_sta_carmem
 			2.5		Faz. Argemira						user : solinfnet.gatto.fz_argemira
+			2.245 	 gateway Móvel 10500 				user : solinfnet.gatto.fz_argemira.f_10500
 			3.105	Faz. Argemira GPRS					user : solinfnet.gatto.fz_argemira.f_12000
 			101.5	Faz. Argemira EnodB					user : solinfnet.gatto.fz_argemira.enodeb
 
@@ -330,8 +331,10 @@ Rotas IPs VPNs Solinftec
 			6.5		Faz. Sta Maria 						user : solinfnet.openagfarm.fz_stamaria
 			7.5		Faz. Nossa Senhora Aparecida		user : solinfnet.openagfarm.fz_aparecida
 
-	220.48.0.0/24	Progresso
+	220.48.0.0/24	Fazenda Progresso
 			1.5		Faz. Progresso
+              105   Gateway Movel - GPRS F1000          user : solinfnet.progresso.fz_progresso.f10000
+              115   Gateway Movel - GPRS F1001          user : solinfnet.progresso.fz_progresso.f10001
 
 	220.49.0.0/24	Reunidas	
 			1.5		Faz. fz_reunidas					user : solinfnet.reunidas.baugart
@@ -352,7 +355,7 @@ Rotas IPs VPNs Solinftec
 			2.5		Faz. San José I 					user: solinfnet.bartira.fz_sanjose1
 			3.5		Faz. San José II					user: solinfnet.bartira.fz_sanjose2
 			4.5		Faz. San Antonio					user: solinfnet.bartira.fz_san_antonio
-            5.5		Faz. San Antonio F20001		 		user: solinfnet.bartira.fz_san_antonio.f20001
+            5.5		Faz. San Antonio F20001		 		user: solinfnet.bartira.fz_san_antonio.f20001 (é RB)
 			
 	220.54.0.0/24	Bom Futuro	
 			1.5		Faz. Sta Terezinha
@@ -534,9 +537,10 @@ Rotas IPs VPNs Solinftec
 
 	220.94.0.0/24	La Fazenda
 			1.5 	 La Fazenda
-			105 	 Faz. 400953 						user : solinfnet.la_fazenda.fz_400953.f_10000
-			115		 Faz. 400967						user : solinfnet.la_fazenda.fz_400967.f_10002
-			125      Faz. 10000							user : solinfnet.la_fazenda.f_10001
+			  105 	 Faz. 400953 						user : solinfnet.la_fazenda.fz_400953.f_10000
+			  115    Faz. 400967						user : solinfnet.la_fazenda.fz_400967.f_10002
+			  125    Faz. 10001							user : solinfnet.la_fazenda.f_10001
+			  135    Faz. 10003							user : solinfnet.la_fazenda.f_10003
 
 	220.95.0.0/24	Crimeia
 			1.5 	Faz. Crimeia						user : solinfnet.crimeia.fz_crimeia
@@ -685,7 +689,7 @@ Rotas IPs VPNs Solinftec
 			1.5 	 Faz. Vale Verde f4000 				user : solinfnet.manica.fz_vale_verde
 			2.5 	 Faz. Vivendas (Santo Antonio)  	user : solinfnet.manica.fz_sto_antonio (Ajustar depois, passaram o nome da unidade errado)
 			3.5		 Faz. Paraiso						user : solinfnet.manica.fz_paraiso
-			4.5		 Faz. Lote 31						user : solinfnet.manica.fz_lote31
+			4.5		 Faz. Lote 31 f7000					user : solinfnet.manica.fz_lote31
 			4.135    Faz. Poste x3						user : solinfnet.manica.faz_lote31.f_7003
 			5.5 	 Faz. Lote 2 f6000					user : solinfnet.manica.fz_lote2
 			
@@ -709,8 +713,7 @@ Rotas IPs VPNs Solinftec
   			2.5 	Faz. Mizote Roda Velha 2			user:  solinfnet.mizote.sede1 (FROTAS 31000, 31002 e 31003)
   			3.5 	Faz. Mizote3						user:  solinfnet.mizote.fz_mizote3 (FROTA 30002)
 			4.5		Faz. Sta Paula						user:  solinfnet.mizote.sta_paula
-			5.5     Santa Rosa (31001 SEDE1)			user:  solinfnet.mizote.sta_rosa (FROTA 32000)
-  			6.5 	Faz. Mizote Roda Velha 1 			user:  solinfnet.mizote.fz_mizote1
+  			6.5 	Faz. Mizote Roda Velha 1 			user:  solinfnet.mizote.fz_mizote1 (31001)
 
   	220.132.0.0/24  Santa Cristina
   			1.5 	Faz. Santa Cristina 				user : solinfnet.sta_cristina.fz_sta_cristina
@@ -741,6 +744,7 @@ Rotas IPs VPNs Solinftec
 			5.5 	 Faz. Colibri	 					user : solinfnet.natter.fz_colibri
 			6.5 	 Faz. Vô Zeca	 					user : solinfnet.natter.fz_vo_zeca
 			7.105    Concentrador móvel Vaca Branca		user : solinfnet.natter.fz_vacabranca.f_16000
+			8.5 	 Faz. Vô Zeca2	 					user : solinfnet.natter.fz_vo_zeca2
 
 	220.137.0.0/24  Faz. São José
 			1.5 	 Faz. São José 						user: solinfnet.faz_saojose.fz_saojose
@@ -1104,7 +1108,8 @@ Rotas IPs VPNs Solinftec
     220.208.0.0/24  Irmãos Lago
             1.105	 Faz.irmaos Lago F10000				user : solinfnet.irmaos_lago.faz_irmaos_lago.f10000
 
-
+    220.209.0.0/24  POLTRONIERI
+            1.105	 Faz.Guanandi F10000				user : solinfnet.poltronieri.faz_guanandi.f10000
 
     220.210.0.0/24  Fava Sementes
             1.5		Faz. São Luiz (10000)			    user : solinfnet.fava_sementes.faz_sao_luiz
@@ -1120,6 +1125,9 @@ Rotas IPs VPNs Solinftec
            12.5		Faz. Santa Úrsula - Poste X01	    user : solinfnet.fava_sementes.faz_santa_ursula_x01
            13.5     Faz. Santa Vitoria				    user : solinfnet.fava_sementes.faz_sta_vitoria
            14.5     Faz. Santa Vitoria-Torre Vitoria 2  user : solinfnet.fava_sementes.faz_sta_vitoria_f37001
+
+    220.211.0.0/24  Fazendas Modelo
+            1.5	    Faz.Modelo II				        user : solinfnet.fazendasmodelo.faz_modeloII
 
 	220.220.0.0/24  Jequitiba
 			1.5 	Faz. Panteão 						user : solinfnet.jequitiba.fz_panteao
@@ -1166,3 +1174,6 @@ Rotas IPs VPNs Solinftec
               7.5 Faz. Belo Horizonte_X11 Poste PR   	user : solinfnet.agteixeira.fz_belo_horizonte_x11_poste.pr
               8.5 Faz. Belo Horizonte_X08 Poste PR   	user : solinfnet.agteixeira.fz_belo_horizonte_x08_poste.pr
               9.5 Faz. Belo Horizonte_X13 Poste PR   	user : solinfnet.agteixeira.fz_belo_horizonte_x13_poste.pr
+
+    220.228.0.0/24 	Royal Grape
+    		  1.5 Faz. Royal Grape   			        user : solinfnet.royal_grape.fz_royal

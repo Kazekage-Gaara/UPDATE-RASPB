@@ -176,6 +176,7 @@ Rotas IPs VPNs Solinftec
 
 	210.10.0.0/24 	Branco Peres Cana
 			1.5 	Branco Peres Cana	 						user : solinfnet.branco_peres_cana.usi_branco_peres
+			 .175 	 TORRE X7 4G 					 			user : solinfnet.branco_peres_cana.usi_branco_peres.f_1018_1019
 			 .205 	 Branco Peres Cana	 						user : solinfnet.branco_peres_cana.usi_branco_peres.f_1021
 			 .215 	 Branco Peres Cana (F_68019)	 			user : solinfnet.branco_peres_cana.usi_branco_peres.f_680182_680183
 			 .225 	 Branco Peres Cana (F_68020) 				user : solinfnet.branco_peres_cana.usi_branco_peres.f_680184_680185
@@ -183,6 +184,8 @@ Rotas IPs VPNs Solinftec
 			 .245 	 Branco Peres Cana (f_68017)				user : solinfnet.branco_peres_cana.usi_branco_peres.f_68017
 			2.245    Branco Peres Cana (F_68019) 				user : solinfnet.branco_peres_cana.usi_branco_peres.f_68019
 			2.235    Branco Peres Cana (F_68016) 				user : solinfnet.branco_peres_cana.usi_branco_peres.f_68016
+			2.225    Branco Peres Cana (F_15103) 				user : solinfnet.branco_peres_cana.usi_branco_peres.f_15103
+			2.215    Branco Peres Cana (F_15101) 				user : solinfnet.branco_peres_cana.usi_branco_peres.f_15101			
 
 	210.11.0.0/24 	Cooperval
 			1.5 	 Usina Cooperval			 	
@@ -227,6 +230,7 @@ Rotas IPs VPNs Solinftec
              .105 	Concentrador 1026							user : solinfnet.viterra.fz_novaunialco.f_1026
              .115 	Concentrador 1006							user : solinfnet.viterra.fz_novaunialco.f_1006
              .125 	Concentrador 1008							user : solinfnet.viterra.fz_novaunialco.f_1008
+			 .135   CONCENTRADOR MÓVEL VINHAÇA					user : solinfnet.viterra.fz_novaunialco.f_14481
 
 	210.14.0.0/24	SJA
 			1.105	 Con. Manutenção oficina				
@@ -263,47 +267,49 @@ Rotas IPs VPNs Solinftec
 			2.135 	 Movel Paraguaçu Paulista 4					user : solinfnet.cocal.fz_paraguacu_paulista.f_2003
 			2.145	 Movel Paraguaçu Paulista 5 				user : solinfnet.cocal.fz_paraguacu_paulista.f_2004
             3.       Passatempo 
-            3.15	 Torre Passa Tempo F4017             		user : solinfnet.cocal.fz_passatempo.f_4017 - ok
-            3.25	 TORRE FAZENDA CERVO            	   		user : solinfnet.cocal.fz_passatempo.f_4018 - ok
+            3.15	 Torre Passa Tempo F4017             		user : solinfnet.cocal.fz_passatempo.f_4017 
+            3.25	 TORRE FAZENDA CERVO            	   		user : solinfnet.cocal.fz_passatempo.f_4018 
             3.35	 Torre Assentamento Estrela F4019      		user : solinfnet.cocal.fz_passatempo.f_4019
-            3.45	 Torre Faz Dallas F4020              		user : solinfnet.cocal.fz_passatempo.f_4020 - ok
-            3.55	 Torre Assentamento São Pedro F4021    		user : solinfnet.cocal.fz_passatempo.f_4021 - ok
-            3.65	 Torre Assentamento Bebedouro F4022    		user : solinfnet.cocal.fz_passatempo.f_4022 - ok
-            3.75	 Torre Faz. Alvorada - RF F4023     		user : solinfnet.cocal.fz_passatempo.f_4023 - ok
-            3.85	 TORRE CAPAO SECO                 			user : solinfnet.cocal.fz_passatempo.f_4024 - ok
-			3.95	 TORRE BOM SUCESSO							user : solinfnet.cocal.fz_passatempo.f_4025 - ok
+            3.45	 Torre Faz Dallas F4020              		user : solinfnet.cocal.fz_passatempo.f_4020 
+            3.55	 Torre Assentamento São Pedro F4021    		user : solinfnet.cocal.fz_passatempo.f_4021 
+            3.65	 Torre Assentamento Bebedouro F4022    		user : solinfnet.cocal.fz_passatempo.f_4022 
+            3.75	 Torre Faz. Alvorada - RF F4023     		user : solinfnet.cocal.fz_passatempo.f_4023 
+            3.85	 TORRE CAPAO SECO                 			user : solinfnet.cocal.fz_passatempo.f_4024 
+			3.95	 TORRE BOM SUCESSO							user : solinfnet.cocal.fz_passatempo.f_4025 
 			3.105	 Balança Passatempo P0-300 e P7-310			user : solinfnet.cocal.fz_passatempo.f_300_310
-			3.115	 Movel Passatempo 301						user : solinfnet.cocal.fz_passatempo.f_301 - ok
-			3.125	 Movel Passatempo 302						user : solinfnet.cocal.fz_passatempo.f_302 - ok
-			3.135	 Movel Passatempo 303						user : solinfnet.cocal.fz_passatempo.f_303 - ok
-			3.145	 Movel Passatempo 304						user : solinfnet.cocal.fz_passatempo.f_304 - ok
-			3.155 	 Movel Passatempo 411 						user : solinfnet.cocal.fz_passatempo.f_411
-			3.165	 TORRE GUARANI								user : solinfnet.cocal.fz_passatempo.f_4026 - ok
-			3.175	 TORRE DALLAS								user : solinfnet.cocal.fz_passatempo.f_4027 - ok
-			3.185	 TORRE BEBEDOURO 							user : solinfnet.cocal.fz_passatempo.f_4028 - ok
-			3.195	 TORRE SOLAR DOS DEUSES						user : solinfnet.cocal.fz_passatempo.f_4029 - ok
-			3.205	 TORRE MARGARIDA ALVES 						user : solinfnet.cocal.fz_passatempo.f_4032 - ok
+			3.115	 Movel Passatempo 301						user : solinfnet.cocal.fz_passatempo.f_301 
+			3.125	 Movel Passatempo 302						user : solinfnet.cocal.fz_passatempo.f_302 
+			3.135	 Movel Passatempo 303						user : solinfnet.cocal.fz_passatempo.f_303 
+			3.145	 Movel Passatempo 304						user : solinfnet.cocal.fz_passatempo.f_304 
+			3.155 	 
+			3.165	 TORRE GUARANI								user : solinfnet.cocal.fz_passatempo.f_4026 
+			3.175	 TORRE DALLAS								user : solinfnet.cocal.fz_passatempo.f_4027 
+			3.185	 TORRE BEBEDOURO 							user : solinfnet.cocal.fz_passatempo.f_4028 
+			3.195	 TORRE SOLAR DOS DEUSES						user : solinfnet.cocal.fz_passatempo.f_4029 
+			3.205	 TORRE MARGARIDA ALVES 						user : solinfnet.cocal.fz_passatempo.f_4032 
 			3.215	 Movel Passatempo 421 					    user : solinfnet.cocal.fz_passatempo.f_421
 			3.225	 Movel Passatempo 422 					    user : solinfnet.cocal.fz_passatempo.f_422
             4.       Rio Brilhante
-            4.15	 Torre Faz. Proteção F4011               	user : solinfnet.cocal.fz_rio_brilhante.Torre_Protecao - ok
-            4.25	 Torre Assentamento São Judas-Escola F4012  user : solinfnet.cocal.fz_rio_brilhante.saojudas_escola - ok
-            4.35	 Torre Assentamento Triangulo F4013  		user : solinfnet.cocal.fz_rio_brilhante.f_4013 - ok
-            4.45	 Torre Faz. Tita F4014               		user : solinfnet.cocal.fz_rio_brilhante.faz.tita.F4014
-            4.55	 Torre Distrito Prudencio Thomas F4015 		user : solinfnet.cocal.fz_rio_brilhante.f_4015
+            4.15	 Torre Faz. Proteção F 4011               	user : solinfnet.cocal.fz_rio_brilhante.Torre_Protecao 
+            4.25	 Torre Assentamento São Judas-Escola F 4012 user : solinfnet.cocal.fz_rio_brilhante.saojudas_escola 
+            4.35	 Torre Assentamento Triangulo  F4013  		user : solinfnet.cocal.fz_rio_brilhante.f_4013 
+            4.45	 Torre Faz. Tita F 4014               		user : solinfnet.cocal.fz_rio_brilhante.faz.tita.F4014
+            4.55	 Torre Distrito Prudencio Thomas F 4015 	user : solinfnet.cocal.fz_rio_brilhante.f_4015
             4.65	 Torre Faz Mimoso F4016             		user : solinfnet.cocal.fz_rio_brilhante.f_4016
-            4.105	 Balança Rio Brilhante P0-400 e P7-410		user : solinfnet.cocal.fz_rio_brilhante.f_400_410 - ok
-			4.115	 Movel Rio Brilhante 411 					user : solinfnet.cocal.fz_rio_brilhante.f_411 - ok
-			4.125	 Movel Rio Brilhante 412 					user : solinfnet.cocal.fz_rio_brilhante.f_412 - ok
-			4.135	 Movel Rio Brilhante 413 					user : solinfnet.cocal.fz_rio_brilhante.f_413 - ok
-			4.145	 Movel Rio Brilhante 414 					user : solinfnet.cocal.fz_rio_brilhante.f_414 - ok
-            4.155	 Movel Vinhaça Localizada Rio Brilhante 419 user : solinfnet.cocal.fz_rio_brilhante.f_419 - ok
-            4.165	 Movel Frente AMV Rio Brilhante F611        user : solinfnet.cocal.fz_rio_brilhante.f_611 - ok
-			5.105	 Torre 501 				 					user : solinfnet.cocal.f_501 - ok
-			5.115	 Torre 502 				 					user : solinfnet.cocal.f_502 - ok
-			5.125	 Torre 503 				 					user : solinfnet.cocal.f_503 - ok
-            5.135	 GATEWAY MOVEL FRENTE AMV TERCEIRO			user : solinfnet.cocal.fz_rio_brilhante.f_511 - ok
-
+            4.105	 Balança Rio Brilhante P0-400 e P7-410		user : solinfnet.cocal.fz_rio_brilhante.f_400_410 
+			4.115	 Movel Rio Brilhante 411 					user : solinfnet.cocal.fz_rio_brilhante.f_411 
+			4.125	 Movel Rio Brilhante 412 					user : solinfnet.cocal.fz_rio_brilhante.f_412 
+			4.135	 Movel Rio Brilhante 413 					user : solinfnet.cocal.fz_rio_brilhante.f_413 
+			4.145	 Movel Rio Brilhante 414 					user : solinfnet.cocal.fz_rio_brilhante.f_414
+            4.155	 Movel Vinhaça Localizada Rio Brilhante 419 user : solinfnet.cocal.fz_rio_brilhante.f_419 
+            4.165	 Movel Frente AMV Rio Brilhante F611        user : solinfnet.cocal.fz_rio_brilhante.f_611 
+            4.175	 Movel Rio Brilhante 82 			        user : solinfnet.cocal.fz_rio_brilhante.f_82
+            5.
+			5.105	 Torre 501 				 					user : solinfnet.cocal.f_501 
+			5.115	 Torre 502 				 					user : solinfnet.cocal.f_502 
+			5.125	 Torre 503 				 					user : solinfnet.cocal.f_503 
+            5.135	 GATEWAY MOVEL FRENTE AMV TERCEIRO			user : solinfnet.cocal.fz_rio_brilhante.f_511
+            5.145    Movel Rio Brilhante 415 					user : solinfnet.cocal.fz_rio_brilhante.f_415
 
 	210.16.0.0/24 	Goiasa
 			1.115 	 Movel 1001 								user : solinfnet.goiasa.f_1001
@@ -476,6 +482,8 @@ Rotas IPs VPNs Solinftec
 			1.75     Concentrador Móvel - 1030		user : solinfnet.viralcool_castilho.usi_castilho.f_1030			
 				
 	210.31.0.0/24	US Sugar
+			1.115 	 HUB 101 Móvel 					user : solinfnet.ussugar.f_101
+			1.125 	 HUB 102 Móvel 					user : solinfnet.ussugar.f_102
 			1.135 	 HUB 103 Móvel 					user : solinfnet.ussugar.f_103
 			1.145 	 HUB 104 Móvel 					user : solinfnet.ussugar.f_104
 			1.155 	 HUB 105 Móvel 					user : solinfnet.ussugar.f_105
@@ -581,6 +589,7 @@ Rotas IPs VPNs Solinftec
 			1.195	 Concentrador 1014				user : solinfnet.jalles_machado.f_1014
 			1.205	 Concentrador 1015				user : solinfnet.jalles_machado.f_1015
 			1.215	 Concentrador 3007 e 3008		user : solinfnet.jalles_machado.f_3007_3008
+			1.225    Gateway da Garganta			user : solinfnet.jalles_machado.f_1017
 			2.5		 Santa Vitoria
 			2.105 	 Concentrador 3000 				user : solinfnet.jalles_machado.usi_santa_vitoria.f_3000
 			2.115 	 Concentrador 3001 				user : solinfnet.jalles_machado.usi_santa_vitoria.f_3001
@@ -887,6 +896,8 @@ Rotas IPs VPNs Solinftec
 			1.105 	 Frota 10000 					user : solinfnet.nova_produtiva.f_10000
 
 	210.62.0.0/24 	 Usina Guaíra
+			1.105 	  Concentrador 10000 e 100007   user : solinfnet.usi_guaira.f_10000_10007
+			1.125 	  Concentrador 10002 			user : solinfnet.usi_guaira.f_10002
 			1.165 	  Concentrador 10006 			user : solinfnet.usi_guaira.f_10006
 
 	210.63.0.0/24 	 Usina Alta Mogiana
@@ -962,6 +973,7 @@ Rotas IPs VPNs Solinftec
 			1.245    Gateway 1201                   user : solinfnet.grupo_farias.f_1201
 			1.95     Gateway 1202                   user : solinfnet.grupo_farias.f_1202
 			1.85	 Gateway 1203					user : solinfnet.grupo_farias.f_1203
+            1.75	 Gateway UBF Torre 4  1104		user : solinfnet.grupo_farias.f_1104
 
 	210.75.0.0/24   Pantaleon 
 	       1.105    GATEWAY 100011 					user : solinfnet.pantaleon.f_100011
@@ -1100,6 +1112,8 @@ Rotas IPs VPNs Solinftec
 		   2.55 	C. Movel 1026 (P0) e 10012 (P7)	user : solinfnet.cerradao.f_1026
 		   2.65 	Concentrador Móvel 1027 		user : solinfnet.cerradao.f_1027
 		   2.75 	Concentrador Móvel 1028 		user : solinfnet.cerradao.f_1028
+		   2.85		Concentrador Móvel 1029			user : solinfnet.cerradao.f_1029
+		   2.95		Concentrador Móvel 1030			user : solinfnet.cerradao.f_1030
 
 	210.89.0.0/24 Usina Caete
 		   1.5    Matriz				
@@ -1224,6 +1238,7 @@ Rotas IPs VPNs Solinftec
 			1.195	 Usina 114 						user : solinfnet.umoe.f_114
 			2.105 	 Móvel 112 						user : solinfnet.umoe.f_112
 			2.115    Móvel 209                      user : solinfnet.umoe.f_209
+			2.125    Móvel 207                      user : solinfnet.umoe.f_207
 
     210.105.0.0/24	 São Luiz						
 			1.105	 Concentrador Móvel F1000		user : solinfnet.saoluiz.f_1000
@@ -1234,10 +1249,12 @@ Rotas IPs VPNs Solinftec
     210.107.0.0/24	 Iaco
             1.105	 Gateway Movel 150 GPRS   		user : solinfnet.iaco.f_150
             1.115	 Gateway Movel 151 GPRS   		user : solinfnet.iaco.f_151
+            1.125	 Gateway Movel 152 GPRS   		user : solinfnet.iaco.f_152
 
     210.108.0.0/24	 AgroVale
             1.105	 Gateway Movel 1000 		   	user : solinfnet.agrovale.f_1000
 			1.115	 Gateway Movel 1002				user : solinfnet.agrovale.f_1002
+			1.125	 Gateway Movel 1003				user : solinfnet.agrovale.f_1003
 
     210.109.0.0/24	 Delta
             1.105	 Gateway Movel 105109 		   	user : solinfnet.delta.f_105109
@@ -1262,3 +1279,6 @@ Rotas IPs VPNs Solinftec
 
 	210.113.0.0/24   Utinga					    
 	      1.105		 Gateway Movel F1007	   user : solinfnet.utinga.f_1007
+
+	210.114.0.0/24   São Martinho					    
+	      1.105		 Gateway Movel F1000	   user : solinfnet.martinho.f_1000

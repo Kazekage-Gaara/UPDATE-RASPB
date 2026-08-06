@@ -99,6 +99,7 @@ Rotas IPs VPNs Solinftec
 			3.105	Faz. Ipês							user : solinfnet.jcgrossi.fz_ipes.f_1009
 			3.115	Faz. Ipês							user : solinfnet.jcgrossi.fz_ipes.f_1017
 			4.105	Faz. São Matheus					user : solinfnet.jcgrossi.fz_saomatheus.f_1010
+             .100        Controladora    
 			4.115	Faz. São Matheus					user : solinfnet.jcgrossi.fz_saomatheus.f_1018
 			5.5 	Faz. Cristo							user : solinfnet.jcgrossi.fz_cristo
 			6.5		Faz. São José						user : solinfnet.jcgrossi.fz_saojose
@@ -452,7 +453,7 @@ PROVISORIO	11.105	Faz. Cristo							user : solinfnet.jcgrossi.fz_belavista.f_100
 			
 	215.50.0.0/24 	Andrade Bros
 			1.5		Faz. Lagoa Seca (10000)				user : solinfnet.andrade_bros.fz_andrade_bros
-			2.105   fz_postex03							user : solinfnet.andrade_bros.postex3	
+			2.105   z_postex03							user : solinfnet.andrade_bros.postex3	
 			2.115   Poste X01							user : solinfnet.andrade_bros.f_10002
 			3.5     Faz. São Silvestre (10003)			user : solinfnet.andrade_bros.fz_sao_silvestre
 			4.5     Faz. Paiolinho (10002)				user : solinfnet.andrade_bros.fz_paiolinho
@@ -495,8 +496,8 @@ PROVISORIO	11.105	Faz. Cristo							user : solinfnet.jcgrossi.fz_belavista.f_100
 			2.105	 Faz. Bela Vista					user : solinfnet.okuma_citrus.fz_bela_vista
 			3.105	 Faz. Santo Antonio					user : solinfnet.okuma_citrus.fz_santo_antonio
 
-	215.60.0.0/24 	Santa Ana do Guareí
-			1.5 	  Faz. Santa Ana					user : solinfnet.santa_ana_do_guarei
+	215.60.0.0/24 	
+			1.5 	  
 
 	215.61.0.0/24 	Grupo Colorado
            1.5       Faz Colorado                       user : solinfnet.grupo_colorado.fz_colorado
@@ -533,7 +534,8 @@ PROVISORIO	11.105	Faz. Cristo							user : solinfnet.jcgrossi.fz_belavista.f_100
              1.105 Gateway São Luiz do Pinhal			user : solinfnet.agricola_sao_luiz_do_pinhal.f10000
              2.105 Gateway Boa Esperança			    user : solinfnet.agricola_sao_luiz_do_pinhal.boa_esperanca.f20000
              3.105 Gateway São Luiz do Pinhal - 4G	    user : solinfnet.agricola_sao_luiz_do_pinhal.f_11000
-
+           4.5     Santa Ana                            user : solinfnet.agricola_sao_luiz_do_pinhal.santa_ana
+        
     215.67.0.0/24 Fischer Frutas
     	   1.105 	Gateway Liberata (10000) 			user : solinfnet.fischer.fz_liberata.f_10000
     	   2.105 	Gateway Natureza (11000) 			user : solinfnet.fischer.fz_natureza.f_11000
@@ -542,7 +544,18 @@ PROVISORIO	11.105	Faz. Cristo							user : solinfnet.jcgrossi.fz_belavista.f_100
             1.5 	Boa Vista                			user : solinfnet.vivir_cafe.fz_boa_vista
             2.105 	Faz. Vivir Café 4G           		user : solinfnet.vivir_cafe.faz_vivir_cafe.F_20000
             3.5 	Faz. Carmo (Cachoeira)				user : solinfnet.vivir_cafe.faz_vivir_cafe
+			
+	215.69.0.0/24 Santo Aleixo
+		   1.5    Araxá/MG								user : solinfnet.santo_aleixo_araxa
+		   2.5	  Faz. Santa Fé                         user : solinfnet.santo_aleixo_santa_fe
 
+	215.70.0.0/24 JF Citrus
+			1.5    Pingo D'Água
+			 .105   Gateway Provisório 100000 			user : solinfnet.jf_citrus.fz_pingo_dagua.f_100000
+
+
+
+	
 	215.253.0.0/24 LDC BACURI
 			1.105  POSTE X01 GPRS						user : solinfnet.ldc.fz_bacuri_f48000
 			1.100  Controladora de carga

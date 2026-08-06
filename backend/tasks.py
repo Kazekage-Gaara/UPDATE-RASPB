@@ -103,6 +103,60 @@ def scan_and_check_version(self, ip: str):
         save_gateway_status(ip, current_version, "PENDING", conf_data, os_data)
         return {"ip": ip, "status": "PENDING", "msg": f"🔄 Versión actual: {current_version} (necesita {TARGET_VERSION})", "current_version": current_version}
 
+def _nmea_to_decimal(raw: str, direction: str):
+    try:
+        value = float(raw)
+        if value == 0:
+            return None
+
+        degrees = int(value / 100)
+        minutes = value - (degrees * 100)
+        decimal = degrees + (minutes / 60)
+        if direction.strip().upper() in ('S', 'W'):
+            decimal = -decimal
+        return decimal
+    except (TypeError, ValueError):
+        return None
+
+def _parse_ttygps_coordinates(output: str):
+    for raw_line in output.splitlines():
+        line = raw_line.strip()
+        if not line.startswith('$'):
+            continue
+
+        body = line.split('*', 1)[0]
+        fields = body.split(',')
+        sentence = fields[0]
+
+        if sentence in ('$GPRMC', '$GNRMC') and len(fields) >= 7 and fields[2] == 'A':
+            lat = _nmea_to_decimal(fields[3], fields[4])
+            lon = _nmea_to_decimal(fields[5], fields[6])
+        elif sentence in ('$GPGGA', '$GNGGA') and len(fields) >= 7 and fields[6] not in ('', '0'):
+            lat = _nmea_to_decimal(fields[2], fields[3])
+            lon = _nmea_to_decimal(fields[4], fields[5])
+        elif sentence in ('$GPGLL', '$GNGLL') and len(fields) >= 7 and fields[6] == 'A':
+            lat = _nmea_to_decimal(fields[1], fields[2])
+            lon = _nmea_to_decimal(fields[3], fields[4])
+        else:
+            continue
+
+        if lat is not None and lon is not None:
+            return {'latitude': lat, 'longitude': lon}
+
+    return {}
+
+def extract_ttygps_data(ip: str):
+    """Lee una muestra corta de /dev/ttyGPS y extrae coordenadas NMEA con fix valido."""
+    # El puerto serie no llega nunca a EOF. Salir al recibir el primer fix
+    # valido evita que SSH quede esperando aunque timeout mate a cat.
+    cmd = ("timeout 8 sh -c 'cat /dev/ttyGPS 2>/dev/null' | "
+           "awk -F, '$1 == \"$GPRMC\" && $3 == \"A\" {print; exit} "
+           "$1 == \"$GPGGA\" && $7 != \"0\" && $7 != \"\" {print; exit}'")
+    res = run_ssh_command(ip, cmd, timeout=12)
+    if not res["success"]:
+        return {}
+    return _parse_ttygps_coordinates(res.get("output", ""))
+
 def extract_conf_data(ip: str):
     """Extrae datos del PRIMER BLOQUE del archivo SolinfNet.conf + detecta Relay LPWAN"""
     try:
@@ -148,31 +202,15 @@ def extract_conf_data(ip: str):
                 data['use_gps'] = value == '1'
         
         # Convertir coordenadas
-        if raw_lat:
-            try:
-                lat_val = float(raw_lat)
-                if lat_val != 0:
-                    degrees = int(lat_val / 100)
-                    minutes = lat_val - (degrees * 100)
-                    decimal = degrees + (minutes / 60)
-                    if lat_dir == 'S':
-                        decimal = -decimal
-                    data['latitude'] = decimal
-            except:
-                pass
-        
-        if raw_lon:
-            try:
-                lon_val = float(raw_lon)
-                if lon_val != 0:
-                    degrees = int(lon_val / 100)
-                    minutes = lon_val - (degrees * 100)
-                    decimal = degrees + (minutes / 60)
-                    if lon_dir == 'W':
-                        decimal = -decimal
-                    data['longitude'] = decimal
-            except:
-                pass
+        lat_decimal = _nmea_to_decimal(raw_lat, lat_dir)
+        lon_decimal = _nmea_to_decimal(raw_lon, lon_dir)
+        if lat_decimal is not None:
+            data['latitude'] = lat_decimal
+        if lon_decimal is not None:
+            data['longitude'] = lon_decimal
+
+        if data.get('use_gps') and ('latitude' not in data or 'longitude' not in data):
+            data.update(extract_ttygps_data(ip))
         
         # 🆕 DETECTAR SI TIENE RELAY LPWAN
         cmd_relay = "grep -c 'Hardware = Relay' /home/solinfnet/SolinfNet.conf 2>/dev/null || echo '0'"
