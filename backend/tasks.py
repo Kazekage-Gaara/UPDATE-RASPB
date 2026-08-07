@@ -70,20 +70,22 @@ def asociar_gateway_a_unidad(ip, cliente_id, db):
     return None
 
 @app.task(bind=True)
-def scan_and_check_version(self, ip: str):
-    """Tarea asíncrona para verificar versión y extraer datos del conf"""
+def scan_and_check_version(self, ip: str, persist_failures: bool = True):
+    """Verifica el gateway; en descubrimiento no registra candidatos fallidos."""
     TARGET_VERSION = Config.TARGET_VERSION
     TARGET_NORMALIZED = normalize_version(TARGET_VERSION)
     
     if not ping_host(ip):
-        save_gateway_status(ip, None, "OFFLINE")
+        if persist_failures:
+            save_gateway_status(ip, None, "OFFLINE")
         return {"ip": ip, "status": "OFFLINE", "msg": "No responde a Ping"}
 
     # 1. Obtener versión de SolinfNet (con reintentos)
     current_version = read_solinfnet_version(ip)
     if not current_version:
         ssh_ok = run_ssh_command(ip, "echo OK", timeout=Config.SSH_TIMEOUT).get("success", False)
-        save_gateway_status(ip, None, "ERROR")
+        if persist_failures:
+            save_gateway_status(ip, None, "ERROR")
         if not ssh_ok:
             return {"ip": ip, "status": "ERROR", "msg": "SSH Falló (sin conexión al gateway)"}
         return {"ip": ip, "status": "ERROR", "msg": "El servicio SolinfNet no respondió tras 3 intentos (¿reiniciándose?)"}

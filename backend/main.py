@@ -98,10 +98,11 @@ async def get_favicon():
     raise HTTPException(status_code=404, detail="Favicon no encontrado")
 
 @app.post("/api/scan/{ip}")
-async def scan_ip(ip: str, _auth: bool = Depends(verify_api_key)):
-    # C-2: requiere X-API-Key (ver verify_api_key arriba)
+async def scan_ip(ip: str, discovery: bool = False, _auth: bool = Depends(verify_api_key)):
+    # En descubrimiento, los candidatos que no sean gateways válidos no se guardan.
     ip = validate_ipv4(ip)
-    t = scan_and_check_version.delay(ip); return {"task_id": t.id, "ip": ip}
+    t = scan_and_check_version.delay(ip, not discovery)
+    return {"task_id": t.id, "ip": ip, "discovery": discovery}
 
 @app.get("/api/status/{task_id}")
 async def get_status(task_id: str, _auth: bool = Depends(verify_api_key)):
