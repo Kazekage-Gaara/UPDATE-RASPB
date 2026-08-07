@@ -9,7 +9,7 @@ from database import get_db, init_db
 from models import Gateway, UpdateHistory, Cliente, Unidad
 from config import Config
 from datetime import datetime
-import os, io, xlsxwriter, secrets, ipaddress, threading, time
+import os, io, xlsxwriter, secrets, ipaddress, threading, time, sqlite3
 
 app = FastAPI(title="SolinfNet Control Center")
 templates = Jinja2Templates(directory=".")
@@ -43,6 +43,7 @@ def validate_ipv4(ip: str) -> str:
         raise HTTPException(status_code=400, detail=f"IPv4 inválida: {ip}")
 
 _client_import_scheduler_started = False
+_database_backup_scheduler_started = False
 
 def import_clients_from_presets():
     try:
@@ -65,11 +66,77 @@ def start_client_import_scheduler():
 
     threading.Thread(target=loop, daemon=True, name="client-preset-importer").start()
 
+
+def cleanup_old_database_backups():
+    retention_days = max(int(Config.DB_BACKUP_RETENTION_DAYS), 1)
+    cutoff = time.time() - (retention_days * 24 * 60 * 60)
+    try:
+        for name in os.listdir(Config.DB_BACKUP_DIR):
+            if not (name.startswith("solinfnet-") and name.endswith(".db")):
+                continue
+            path = os.path.join(Config.DB_BACKUP_DIR, name)
+            if os.path.isfile(path) and os.path.getmtime(path) < cutoff:
+                os.remove(path)
+                print(f"[BACKUP] Backup antiguo eliminado: {path}")
+    except FileNotFoundError:
+        return
+    except Exception as e:
+        print(f"[BACKUP] Error limpiando backups antiguos: {e}")
+
+def backup_database_if_needed(force: bool = False):
+    source = os.path.abspath("data/solinfnet.db")
+    if not os.path.exists(source):
+        print(f"[BACKUP] BD no encontrada, se omite backup: {source}")
+        return None
+
+    os.makedirs(Config.DB_BACKUP_DIR, exist_ok=True)
+    today = datetime.now().strftime("%Y%m%d")
+    if not force:
+        existing_today = [
+            name for name in os.listdir(Config.DB_BACKUP_DIR)
+            if name.startswith(f"solinfnet-{today}-") and name.endswith(".db")
+        ]
+        if existing_today:
+            cleanup_old_database_backups()
+            return os.path.join(Config.DB_BACKUP_DIR, sorted(existing_today)[-1])
+
+    stamp = datetime.now().strftime("%Y%m%d-%H%M%S")
+    target = os.path.join(Config.DB_BACKUP_DIR, f"solinfnet-{stamp}.db")
+    try:
+        with sqlite3.connect(source) as src, sqlite3.connect(target) as dst:
+            src.backup(dst)
+        cleanup_old_database_backups()
+        print(f"[BACKUP] Backup de BD creado: {target}")
+        return target
+    except Exception as e:
+        print(f"[BACKUP] Error creando backup de BD: {e}")
+        try:
+            if os.path.exists(target):
+                os.remove(target)
+        except Exception:
+            pass
+        return None
+
+def start_database_backup_scheduler():
+    global _database_backup_scheduler_started
+    if _database_backup_scheduler_started:
+        return
+    _database_backup_scheduler_started = True
+
+    def loop():
+        backup_database_if_needed()
+        while True:
+            time.sleep(24 * 60 * 60)
+            backup_database_if_needed()
+
+    threading.Thread(target=loop, daemon=True, name="database-backup-scheduler").start()
+
 @app.on_event("startup")
 def startup():
     init_db()
     import_clients_from_presets()
     start_client_import_scheduler()
+    start_database_backup_scheduler()
 
 @app.get("/", response_class=HTMLResponse)
 async def read_root(request: Request):

@@ -100,7 +100,7 @@ def scan_and_check_version(self, ip: str, persist_failures: bool = True):
     # 4. Determinar estado
     if current_normalized == TARGET_NORMALIZED:
         save_gateway_status(ip, current_version, "UPDATED", conf_data, os_data)
-        return {"ip": ip, "status": "UPDATED", "msg": f"✅ Ya está en versión {current_version}"}
+        return {"ip": ip, "status": "UPDATED", "msg": f"OK - sin acción necesaria (versión {current_version})", "current_version": current_version}
     else:
         save_gateway_status(ip, current_version, "PENDING", conf_data, os_data)
         return {"ip": ip, "status": "PENDING", "msg": f"🔄 Versión actual: {current_version} (necesita {TARGET_VERSION})", "current_version": current_version}

@@ -66,3 +66,4 @@ Thumbs.db
 # ============================================================
 data/updates/*.tmp
 data/cache/
+data/backups/

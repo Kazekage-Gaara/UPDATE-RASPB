@@ -806,6 +806,8 @@ body::after{
                 subnet_discovery_summary: "{found} gateway(s) detectado(s). {skipped} candidato(s) descartado(s).",
                 subnet_discovery_empty_summary: "No se detectaron gateways reales. Los candidatos no accesibles fueron descartados del panel.",
                 toast_discover_first: "Primero pulsa Escanear Todos para descubrir cuáles candidatos son gateways reales.",
+                toast_skipping_updated_gateways: "Se omiten {count} gateway(s) que ya están OK - sin acción necesaria.",
+                toast_no_pending_updates: "Todos los gateways detectados ya están OK - sin acción necesaria.",
                 batch_waiting: "Esperando su lote...",
                 batch_starting: "Iniciando lote {current} de {total}...",
                 batch_complete: "Lote completado. Preparando el siguiente...",
@@ -825,7 +827,7 @@ body::after{
                 loading_inventory: "Cargando inventario...",
                 no_gateways: "No hay gateways. Escanea una IP.",
                 btn_history: "Historial",
-                status_updated: "Actualizado", status_pending: "Pendiente",
+                status_updated: "OK - sin acción necesaria", status_pending: "Pendiente",
                 status_offline: "Offline", status_error: "Error",
                 confirm_update_single: "¿Actualizar {ip} a la versión {version}?\n\nSe verificará la versión actual y se procederá con la actualización si es necesario.",
                 confirm_update_multiple: "⚠️ Confirmar actualización\n\n¿Actualizar {count} gateway(s) seleccionados a la versión {version}?\n\nEsto puede tomar varios minutos.",
@@ -834,7 +836,7 @@ body::after{
                 toast_ip_required: "Ingresa una IP válida",
                 toast_scanning: "Escaneando {count} dispositivos...",
                 toast_scan_error: "Error de red al escanear",
-                toast_already_updated: "{ip} ya está en la versión más reciente",
+                toast_already_updated: "{ip}: OK - sin acción necesaria",
                 toast_update_success: "✅ {ip} actualizado correctamente",
                 toast_update_error: "Error en la actualización",
                 toast_starting_update: "Iniciando actualización de {count} dispositivos...",
@@ -849,8 +851,8 @@ body::after{
                 footer_text: "SolinfNet Control Center © 2026 • Departamento SolinfNet",
                 step_scanning: "Escaneando versión...",
                 step_pending: "Pendiente...",
-                step_already_updated: "Ya está actualizado",
-                step_no_action: "No requiere acción",
+                step_already_updated: "OK - versión correcta",
+                step_no_action: "Sin acción necesaria",
                 step_starting: "Iniciando actualización...",
                 step_updating: "Actualizando... (ver barra de progreso arriba)",
                 step_waiting: "Esperando finalización...",
@@ -973,6 +975,8 @@ body::after{
                 subnet_discovery_summary: "{found} gateway(s) detectado(s). {skipped} candidato(s) descartado(s).",
                 subnet_discovery_empty_summary: "Nenhum gateway real foi detectado. Os candidatos inacessíveis foram removidos do painel.",
                 toast_discover_first: "Primeiro clique em Escanear Todos para descobrir quais candidatos são gateways reais.",
+                toast_skipping_updated_gateways: "Serão ignorados {count} gateway(s) que já estão OK - sem ação necessária.",
+                toast_no_pending_updates: "Todos os gateways detectados já estão OK - sem ação necessária.",
                 batch_waiting: "Aguardando seu lote...",
                 batch_starting: "Iniciando lote {current} de {total}...",
                 batch_complete: "Lote concluído. Preparando o próximo...",
@@ -992,7 +996,7 @@ body::after{
                 loading_inventory: "Carregando inventário...",
                 no_gateways: "Não há gateways. Escaneie um IP.",
                 btn_history: "Histórico",
-                status_updated: "Atualizado", status_pending: "Pendente",
+                status_updated: "OK - sem ação necessária", status_pending: "Pendente",
                 status_offline: "Offline", status_error: "Erro",
                 confirm_update_single: "Atualizar {ip} para a versão {version}?\n\nA versão atual será verificada e a atualização prosseguirá se necessário.",
                 confirm_update_multiple: "⚠️ Confirmar atualização\n\nAtualizar {count} gateway(s) selecionados para a versão {version}?\n\nIsso pode levar vários minutos.",
@@ -1001,7 +1005,7 @@ body::after{
                 toast_ip_required: "Insira um IP válido",
                 toast_scanning: "Escaneando {count} dispositivos...",
                 toast_scan_error: "Erro de rede ao escanear",
-                toast_already_updated: "{ip} já está na versão mais recente",
+                toast_already_updated: "{ip}: OK - sem ação necessária",
                 toast_update_success: "✅ {ip} atualizado corretamente",
                 toast_update_error: "Erro na atualização",
                 toast_starting_update: "Iniciando atualização de {count} dispositivos...",
@@ -1016,8 +1020,8 @@ body::after{
                 footer_text: "SolinfNet Control Center © 2026 • Departamento SolinfNet",
                 step_scanning: "Escaneando versão...",
                 step_pending: "Pendente...",
-                step_already_updated: "Já está atualizado",
-                step_no_action: "Não requer ação",
+                step_already_updated: "OK - versão correta",
+                step_no_action: "Sem ação necessária",
                 step_starting: "Iniciando atualização...",
                 step_updating: "Atualizando... (ver barra de progresso acima)",
                 step_waiting: "Aguardando finalização...",
@@ -1279,6 +1283,7 @@ body::after{
         // ============ GLOBAL VARIABLES ============
         let selectedGateways = new Set();
         let subnetCandidateIPs = new Set();
+        let lastDiscoveredGatewayStatus = new Map();
         let updateProgressInterval = null;
         let isUpdating = false;
         let currentPage = 1;
@@ -1322,6 +1327,7 @@ body::after{
         document.getElementById('multipleIpsInput').addEventListener('input', function () {
             const ips = parseIPs(this.value);
             subnetCandidateIPs.clear();
+            lastDiscoveredGatewayStatus.clear();
             document.getElementById('multipleIpCount').textContent = ips.length > 0 ? `${ips.length} IP(s)` : '';
         });
 
@@ -1367,6 +1373,7 @@ body::after{
             const input = document.getElementById('multipleIpsInput');
             input.value = ips.join('\n');
             input.dispatchEvent(new Event('input'));
+            lastDiscoveredGatewayStatus.clear();
             subnetCandidateIPs = new Set(ips);
             showToast(t('toast_subnet_generated', { count: ips.length }), 'success');
         }
@@ -1604,7 +1611,7 @@ body::after{
 
                             if (found) {
                                 const version = result.current_version ? ` - ${result.current_version}` : '';
-                                foundDetails.set(ip, { version });
+                                foundDetails.set(ip, { version, status: result.status });
                                 card.className = 'card border-l-4 border-emerald-400 p-3 flex justify-between items-center gap-3';
                                 card.innerHTML = `<span class="font-mono font-semibold text-sm">${esc(ip)}</span><span class="text-emerald-700 dark:text-emerald-400 font-medium text-sm">✅ ${esc(t('subnet_found'))}${esc(version)}</span>`;
                             } else {
@@ -1625,6 +1632,7 @@ body::after{
                 input.value = found.join('\n');
                 input.dispatchEvent(new Event('input'));
                 subnetCandidateIPs.clear();
+                lastDiscoveredGatewayStatus = new Map(found.map(ip => [ip, foundDetails.get(ip)?.status || '']));
 
                 if (found.length > 0) {
                     resultsDiv.innerHTML = `
@@ -1772,11 +1780,27 @@ body::after{
             }
 
             const input = document.getElementById('multipleIpsInput').value;
-            const ips = parseIPs(input);
+            let ips = parseIPs(input);
             if (ips.length === 0) { showToast(t('toast_ip_required'), 'warning'); return; }
             if (isSubnetCandidateList(ips)) {
                 showToast(t('toast_discover_first'), 'warning');
                 return;
+            }
+
+            const canUseDiscoveryStatus = ips.length > 0
+                && lastDiscoveredGatewayStatus.size === ips.length
+                && ips.every(ip => lastDiscoveredGatewayStatus.has(ip));
+            if (canUseDiscoveryStatus) {
+                const pendingIps = ips.filter(ip => lastDiscoveredGatewayStatus.get(ip) !== 'UPDATED');
+                const skippedCount = ips.length - pendingIps.length;
+                if (skippedCount > 0) {
+                    showToast(t('toast_skipping_updated_gateways', { count: skippedCount }), 'info');
+                }
+                ips = pendingIps;
+                if (ips.length === 0) {
+                    showToast(t('toast_no_pending_updates'), 'success');
+                    return;
+                }
             }
 
             const confirmed = await showModal(

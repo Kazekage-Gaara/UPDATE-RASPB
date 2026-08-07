@@ -25,3 +25,5 @@ class Config:
     SSH_TIMEOUT = 20
     PING_TIMEOUT = 2
     CURL_TIMEOUT = 5
+    DB_BACKUP_DIR = os.getenv("DB_BACKUP_DIR", "data/backups").strip()
+    DB_BACKUP_RETENTION_DAYS = int(os.getenv("DB_BACKUP_RETENTION_DAYS", "14"))
