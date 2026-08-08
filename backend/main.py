@@ -546,7 +546,7 @@ async def get_cliente_detalle(cliente_id: int, db: Session = Depends(get_db), _a
     for u in unidades:
         g = gw_por_unidad.get(u.id)
         detalle_unidades.append({
-            "unidad": u.nombre, "ip": g.ip if g else None, "version": g.version if g else None,
+            "id": u.id, "unidad": u.nombre, "ip": g.ip if g else None, "version": g.version if g else None,
             "status": g.status if g else "SIN_GATEWAY", "has_relay": g.has_relay if g else None,
             "os_version": g.os_version if g else None, "os_codename": g.os_codename if g else None,
             "description": g.description if g else None, "lat": g.latitude if g else None, "lon": g.longitude if g else None,
@@ -577,21 +577,20 @@ async def get_unidad_detalle(unidad_id: int, gateway_ip: str = None, db: Session
     if not u:
         raise HTTPException(404, "Unidad no encontrada")
     cliente = db.query(Cliente).filter(Cliente.id == u.cliente_id).first()
-    gw_query = db.query(Gateway).filter(Gateway.unidad_id == unidad_id)
+    unit_gateways = db.query(Gateway).filter(Gateway.unidad_id == unidad_id)\
+        .order_by(desc(Gateway.last_scan), Gateway.ip).all()
+    gw = None
     if gateway_ip:
-        gw_query = gw_query.filter(Gateway.ip == gateway_ip)
-    gw = gw_query.order_by(desc(Gateway.last_scan)).first()
+        gw = next((item for item in unit_gateways if item.ip == gateway_ip), None)
+    if not gw and unit_gateways:
+        gw = unit_gateways[0]
 
-    # Unidades hermanos (mismo cliente) para dar contexto geográfico en el mini-mapa
-    hermanos = db.query(Unidad).filter(Unidad.cliente_id == u.cliente_id, Unidad.id != unidad_id).all()
-    herm = []
-    for h in hermanos:
-        hg = db.query(Gateway).filter(Gateway.unidad_id == h.id).first()
-        herm.append({
-            "nombre": h.nombre, "ip": hg.ip if hg else None, "status": hg.status if hg else None,
-            "description": hg.description if hg else None, "fleet_number": hg.fleet_number if hg else None,
-            "lat": hg.latitude if hg else None, "lon": hg.longitude if hg else None,
-        })
+    gateways_unidad = [{
+        "ip": item.ip, "version": item.version, "status": item.status,
+        "description": item.description, "fleet_number": item.fleet_number,
+        "lat": item.latitude, "lon": item.longitude,
+        "is_primary": bool(gw and item.ip == gw.ip),
+    } for item in unit_gateways]
 
     hist = []
     if gw:
@@ -614,5 +613,5 @@ async def get_unidad_detalle(unidad_id: int, gateway_ip: str = None, db: Session
             "lat": gw.latitude, "lon": gw.longitude,
             "last_scan": gw.last_scan.isoformat() if gw.last_scan else None,
         },
-        "hermanos": herm, "historial": hist,
+        "gateways": gateways_unidad, "hermanos": [], "historial": hist,
     }

@@ -138,6 +138,19 @@
         .dark .badge-info { background: rgba(59,130,246,0.15); color: #60a5fa; }
         .badge-neutral { background: #f1f5f9; color: #475569; }
         .dark .badge-neutral { background: rgba(100,116,139,0.15); color: #94a3b8; }
+        .inventory-table th:nth-child(9), .inventory-table td:nth-child(9),
+        .inventory-table th:nth-child(10), .inventory-table td:nth-child(10) { text-align: center; }
+        .inventory-table .os-pill, .inventory-table .status-pill {
+            min-width: 4.5rem; justify-content: center; text-align: center; padding: 0.32rem 0.72rem;
+            line-height: 1.05; font-size: 0.68rem; letter-spacing: 0.01em; white-space: nowrap;
+            box-shadow: inset 0 0 0 1px rgba(255,255,255,0.06);
+        }
+        .inventory-table .status-pill { min-width: 6rem; flex-direction: column; gap: 0.12rem; border-radius: 1rem; }
+        .inventory-table .status-pill .badge-main { font-size: 0.72rem; font-weight: 800; letter-spacing: 0; }
+        .inventory-table .status-pill .badge-sub { font-size: 0.62rem; font-weight: 650; opacity: 0.82; }
+        .inventory-table .os-pill { border-radius: 0.95rem; flex-direction: column; gap: 0.1rem; }
+        .inventory-table .os-pill .badge-main { font-size: 0.7rem; font-weight: 800; }
+        .inventory-table .os-pill .badge-sub { font-family: 'JetBrains Mono', monospace; font-size: 0.66rem; opacity: 0.86; }
 
         /* Action buttons */
         .action-btn { width: 32px; height: 32px; border-radius: 8px; display: inline-flex; align-items: center; justify-content: center; transition: all 0.15s; cursor: pointer; border: none; background: transparent; }
@@ -623,7 +636,7 @@ body::after{
 
                 <!-- Table -->
                 <div class="overflow-x-auto rounded-lg border border-slate-200 dark:border-slate-700 custom-scroll" style="max-height: 600px; overflow-y: auto;">
-                    <table class="data-table">
+                    <table class="data-table inventory-table">
 <thead>
 <tr>
 <th style="width: 40px;"><input type="checkbox" id="selectAll" onchange="toggleSelectAll()" class="rounded w-4 h-4 accent-brand-600"></th>
@@ -842,6 +855,10 @@ body::after{
                 btn_history: "Historial",
                 status_updated: "OK - sin acción necesaria", status_pending: "Pendiente",
                 status_offline: "Offline", status_error: "Error",
+                status_updated_main: "OK", status_updated_sub: "Sin acción",
+                status_pending_main: "Pendiente", status_pending_sub: "Actualizar",
+                status_offline_main: "Offline", status_offline_sub: "Sin acceso",
+                status_error_main: "Error", status_error_sub: "Revisar",
                 confirm_update_single: "¿Actualizar {ip} a la versión {version}?\n\nSe verificará la versión actual y se procederá con la actualización si es necesario.",
                 confirm_force_update_single: "¿Reinstalar {ip} aunque ya esté en la versión {version}?\n\nEsto vuelve a copiar archivos, rehace crontab/configuración, limpia mono_crash y reintenta Relay LPWAN.",
                 confirm_update_multiple: "⚠️ Confirmar actualización\n\n¿Actualizar {count} gateway(s) seleccionados a la versión {version}?\n\nEsto puede tomar varios minutos.",
@@ -880,7 +897,7 @@ body::after{
                 tab_mapa: "Mapa de Gateways", map_title: "Mapa de Gateways",
                 map_total_gps: "Total con GPS", map_offline: "Offline", map_offline_error: "Offline/Error",
                 report_title: "Dashboard Ejecutivo", global_status: "Estado Global de la Flota",
-                diag_mono: "Problemas Mono / espacio", diag_low_space: "Poco espacio detectado", diag_frozen: "Cartões congelados", diag_persistence: "Pruebas persistentes",
+                diag_mono: "Problemas Mono / espacio", diag_low_space: "Poco espacio detectado", diag_frozen: "Tarjetas congeladas", diag_persistence: "Pruebas persistentes",
                 by_crop: "Progreso por Tipo de Cultivo", top_failures: "Top 10 Clientes con más Fallos",
                 btn_export_excel: "Exportar a Excel", btn_export_pdf: "Imprimir / PDF",
                 th_client: "Cliente", th_unity: "Unidad", th_crop: "Cultivo", th_total: "Total", th_offline: "Offline/Error",
@@ -889,8 +906,8 @@ body::after{
                 th_os: "SO",
                 th_relay: "Relay",
                 btn_history_tooltip: "Ver historial de actualizaciones",
-                btn_configure_tooltip: "Aplicar configuración estándar (carpetas + LPWAN Relay)",
-                toast_configure_start: "⚙️ Aplicando configuración a {ip}...",
+                btn_configure_tooltip: "Aplicar configuración meteorológica LPWAN",
+                toast_configure_start: "Aplicando configuración LPWAN a {ip}...",
                 recent_updates: "Actualizaciones Recientes",
                 relay_coverage: "Cobertura Relay LPWAN",
                 toast_lang_changed: "Idioma cambiado a {lang}",
@@ -1016,6 +1033,10 @@ body::after{
                 btn_history: "Histórico",
                 status_updated: "OK - sem ação necessária", status_pending: "Pendente",
                 status_offline: "Offline", status_error: "Erro",
+                status_updated_main: "OK", status_updated_sub: "Sem ação",
+                status_pending_main: "Pendente", status_pending_sub: "Atualizar",
+                status_offline_main: "Offline", status_offline_sub: "Sem acesso",
+                status_error_main: "Erro", status_error_sub: "Revisar",
                 confirm_update_single: "Atualizar {ip} para a versão {version}?\n\nA versão atual será verificada e a atualização prosseguirá se necessário.",
                 confirm_force_update_single: "Reinstalar {ip} mesmo que já esteja na versão {version}?\n\nIsso copia os arquivos novamente, refaz crontab/configuração, limpa mono_crash e tenta Relay LPWAN de novo.",
                 confirm_update_multiple: "⚠️ Confirmar atualização\n\nAtualizar {count} gateway(s) selecionados para a versão {version}?\n\nIsso pode levar vários minutos.",
@@ -1063,8 +1084,8 @@ body::after{
                 th_os: "SO",
                 th_relay: "Relay",
                 btn_history_tooltip: "Ver histórico de atualizações",
-                btn_configure_tooltip: "Aplicar configuração padrão (pastas + LPWAN Relay)",
-                toast_configure_start: "⚙️ Aplicando configuração em {ip}...",
+                btn_configure_tooltip: "Aplicar configuração meteorológica LPWAN",
+                toast_configure_start: "Aplicando configuração LPWAN em {ip}...",
                 recent_updates: "Atualizações Recentes",
                 relay_coverage: "Cobertura Relay LPWAN",
                 toast_lang_changed: "Idioma alterado para {lang}",
@@ -1155,6 +1176,26 @@ body::after{
                 ERROR: t('status_error')
             };
             return map[status] || status || '-';
+        }
+
+        function renderInventoryStatusBadge(status) {
+            const config = {
+                UPDATED: ['badge-success', 'status_updated_main', 'status_updated_sub'],
+                PENDING: ['badge-warning', 'status_pending_main', 'status_pending_sub'],
+                OFFLINE: ['badge-danger', 'status_offline_main', 'status_offline_sub'],
+                ERROR: ['badge-danger', 'status_error_main', 'status_error_sub']
+            }[status] || ['badge-neutral', 'status_error_main', 'status_error_sub'];
+            const [tone, mainKey, subKey] = config;
+            return `<span class="badge ${tone} status-pill" title="${esc(statusLabel(status))}"><span class="badge-main">${esc(t(mainKey))}</span><span class="badge-sub">${esc(t(subKey))}</span></span>`;
+        }
+
+        function renderInventoryOsBadge(g) {
+            if (!g.os_version) return '<span class="text-slate-400">-</span>';
+            const isOldOS = g.os_codename === 'jessie' || g.os_codename === 'stretch';
+            const parts = String(g.os_version).trim().split(/\s+/);
+            const sub = parts.length > 1 ? parts.pop() : '';
+            const main = parts.join(' ') || g.os_version;
+            return `<span class="badge ${isOldOS ? 'badge-danger' : 'badge-info'} os-pill" title="${esc(g.os_version)}"><span class="badge-main">${esc(main)}</span>${sub ? `<span class="badge-sub">${esc(sub)}</span>` : ''}</span>`;
         }
 
         function applyTranslations() {
@@ -2073,6 +2114,7 @@ body::after{
             });
 
             filteredGatewaysList = filtered;
+            pruneSelectedGateways();
             currentPage = 1;
             renderPaginatedGateways();
             document.getElementById('filteredCount').textContent = filtered.length;
@@ -2145,20 +2187,14 @@ body::after{
             }
             tbody.innerHTML = gateways.map(g => {
                 let statusBadge = '', canUpdate = false;
-                if (g.status === 'UPDATED') { statusBadge = `<span class="badge badge-success"><svg class="w-3 h-3" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"/></svg>${t('status_updated')}</span>`; }
-                else if (g.status === 'PENDING') { statusBadge = `<span class="badge badge-warning"><svg class="w-3 h-3" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm1-12a1 1 0 10-2 0v4a1 1 0 00.293.707l2.828 2.829a1 1 0 101.415-1.415L11 9.586V6z" clip-rule="evenodd"/></svg>${t('status_pending')}</span>`; canUpdate = true; }
-                else if (g.status === 'OFFLINE') { statusBadge = `<span class="badge badge-danger"><svg class="w-3 h-3" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M4.293 4.293a1 1 0 011.414 0L10 8.586l4.293-4.293a1 1 0 111.414 1.414L11.414 10l4.293 4.293a1 1 0 01-1.414 1.414L10 11.414l-4.293 4.293a1 1 0 01-1.414-1.414L8.586 10 4.293 5.707a1 1 0 010-1.414z" clip-rule="evenodd"/></svg>${t('status_offline')}</span>`; }
-                else { statusBadge = `<span class="badge badge-danger"><svg class="w-3 h-3" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M8.257 3.099c.765-1.36 2.722-1.36 3.486 0l5.58 9.92c.75 1.334-.213 2.98-1.742 2.98H4.42c-1.53 0-2.493-1.646-1.743-2.98l5.58-9.92zM11 13a1 1 0 11-2 0 1 1 0 012 0zm-1-8a1 1 0 00-1 1v3a1 1 0 002 0V6a1 1 0 00-1-1z" clip-rule="evenodd"/></svg>${t('status_error')}</span>`; }
+                if (g.status === 'PENDING') canUpdate = true;
+                statusBadge = renderInventoryStatusBadge(g.status);
                 const lastScan = g.last_scan ? new Date(g.last_scan).toLocaleString(currentLang === 'pt' ? 'pt-BR' : 'es-ES', {dateStyle: 'short', timeStyle: 'short'}) : '-';
                 const isChecked = selectedGateways.has(g.ip) ? 'checked' : '';
                 let relayBadge = '<span class="badge badge-neutral">?</span>';
                 if (g.has_relay === true) relayBadge = '<span class="badge badge-success">✓</span>';
                 else if (g.has_relay === false) relayBadge = '<span class="badge badge-danger">✗</span>';
-                let osBadge = '-';
-                if (g.os_version) {
-                    const isOldOS = g.os_codename === 'jessie' || g.os_codename === 'stretch';
-                    osBadge = `<span class="badge ${isOldOS ? 'badge-danger' : 'badge-info'}">${g.os_version}</span>`;
-                }
+                const osBadge = renderInventoryOsBadge(g);
                 // Cliente / Unidad clicables (blindados: si el dossier no está listo, toast amable)
                 const clienteCell = g.cliente
                     ? `<button type="button" onclick="clickCliente(${g.cliente_id != null ? g.cliente_id : 'null'})" class="text-left hover:text-brand-600 dark:hover:text-brand-400 underline decoration-dotted decoration-brand-500/40 underline-offset-2 cursor-pointer font-semibold">${esc(g.cliente)}</button>`
@@ -2175,13 +2211,13 @@ body::after{
 <td class="font-mono text-xs">${g.fleet_number ? esc(g.fleet_number) : '<span class="text-slate-400">-</span>'}</td>
 <td class="text-center">${relayBadge}</td>
 <td class="font-semibold">${g.version ? esc(g.version) : '-'}</td>
-<td>${osBadge}</td>
-<td>${statusBadge}</td>
+<td class="text-center">${osBadge}</td>
+<td class="text-center">${statusBadge}</td>
 <td class="text-xs text-slate-400">${lastScan}</td>
 <td>
 <div class="flex gap-1">
 <button onclick="viewHistory('${esc(g.ip)}')" class="action-btn" title="${esc(t('btn_history_tooltip'))}"><svg class="text-blue-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"/></svg></button>
-<button onclick="configureGateway('${esc(g.ip)}')" class="action-btn" title="${esc(t('btn_configure_tooltip'))}"><svg class="text-indigo-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.066 2.573c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.573 1.066c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.066-2.573c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z"/><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"/></svg></button>
+<button onclick="configureGateway('${esc(g.ip)}')" class="action-btn" title="${esc(t('btn_configure_tooltip'))}"><svg class="text-sky-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20 16.58A5 5 0 0018 7h-1.26A8 8 0 103 16.25"/><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 19v1m4-2v2m4-1v1"/></svg></button>
 ${(g.os_codename === 'jessie' || g.os_codename === 'stretch') ? `<button onclick="installMono('${esc(g.ip)}', '${esc(g.os_version)}')" class="action-btn" title="${esc(t('mono_install_title'))}"><svg class="text-red-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20 7l-8-4-8 4m16 0l-8 4m8-4v10l-8 4m0-10L4 7m8 4v10M4 7v10l8 4"/></svg></button>` : ''}
 </div>
 </td>
@@ -2198,6 +2234,8 @@ ${(g.os_codename === 'jessie' || g.os_codename === 'stretch') ? `<button onclick
             if (id != null && typeof openUnidadDetalle === 'function') openUnidadDetalle(id, gatewayIp);
             else showToast(currentLang === 'pt' ? 'Ficha da unidade indisponível' : 'Ficha de la unidad no disponible aún', 'warning');
         }
+        window.clickCliente = clickCliente;
+        window.clickUnidad = clickUnidad;
 
         function populateClientFilter(gateways) {
             const select = document.getElementById('filterCliente');
@@ -2221,6 +2259,7 @@ ${(g.os_codename === 'jessie' || g.os_codename === 'stretch') ? `<button onclick
                 const gateways = await res.json();
 
                 allGateways = gateways;
+                pruneSelectedGateways();
 
                 // Animate stats
                 animateCounter('statTotal', gateways.length);
@@ -2259,15 +2298,44 @@ ${(g.os_codename === 'jessie' || g.os_codename === 'stretch') ? `<button onclick
             requestAnimationFrame(update);
         }
 
+        function getVisibleGatewayCheckboxes() {
+            return Array.from(document.querySelectorAll('#gatewayTable input[type="checkbox"][value]'));
+        }
+
+        function getSelectableVisibleGatewayCheckboxes() {
+            return getVisibleGatewayCheckboxes().filter(cb => !cb.disabled);
+        }
+
+        function pruneSelectedGateways() {
+            const visible = getSelectableVisibleGatewayCheckboxes();
+            const visibleIps = new Set(visible.map(cb => cb.value));
+            const validIps = visibleIps.size > 0
+                ? visibleIps
+                : new Set(filteredGatewaysList.filter(g => g.status === 'PENDING').map(g => g.ip));
+            selectedGateways.forEach(ip => { if (!validIps.has(ip)) selectedGateways.delete(ip); });
+        }
+
+        function syncSelectAllCheckbox() {
+            const selectAll = document.getElementById('selectAll');
+            if (!selectAll) return;
+            const visible = getSelectableVisibleGatewayCheckboxes();
+            const selectedVisible = visible.filter(cb => selectedGateways.has(cb.value));
+            selectAll.checked = visible.length > 0 && selectedVisible.length === visible.length;
+            selectAll.indeterminate = selectedVisible.length > 0 && selectedVisible.length < visible.length;
+        }
+
         function toggleGateway(ip) { selectedGateways.has(ip) ? selectedGateways.delete(ip) : selectedGateways.add(ip); updateSelectedCount(); }
         function toggleSelectAll() {
             const selectAll = document.getElementById('selectAll').checked;
-            document.querySelectorAll('input[type="checkbox"][value]').forEach(cb => {
-                if (!cb.disabled) { cb.checked = selectAll; selectAll ? selectedGateways.add(cb.value) : selectedGateways.delete(cb.value); }
+            getSelectableVisibleGatewayCheckboxes().forEach(cb => {
+                cb.checked = selectAll;
+                selectAll ? selectedGateways.add(cb.value) : selectedGateways.delete(cb.value);
             });
             updateSelectedCount();
         }
         function updateSelectedCount() {
+            pruneSelectedGateways();
+            syncSelectAllCheckbox();
             document.getElementById('selectedCount').textContent = selectedGateways.size;
             document.getElementById('btnUpdate').disabled = selectedGateways.size === 0;
         }
@@ -3091,6 +3159,7 @@ const _L = (es, pt) => currentLang === 'pt' ? pt : es;
 function _cDestroy(){ _cCharts.forEach(c=>c.destroy()); _cCharts=[]; if(_cMap){_cMap.remove();_cMap=null;} }
 
 async function openClienteDetalle(id){
+    closeUnidadDetalle();
     _cDestroy();
     let m = document.getElementById('clienteModal'); if (m) m.remove();
     m = document.createElement('div'); m.id='clienteModal'; m.className='dossier-backdrop';
@@ -3112,7 +3181,12 @@ async function openClienteDetalle(id){
                     <h2 class="text-2xl md:text-3xl font-extrabold text-slate-900 dark:text-white">${esc(d.nombre)}</h2>
                     <span class="badge badge-success" style="letter-spacing:.1em">${esc(tag)}</span>
                 </div>
-                <p class="text-xs text-slate-400 mt-1.5 font-mono">${esc(d.subred)} · ${d.unidades.length} ${_L('unidades','unidades')}</p>
+                <p class="text-xs text-slate-400 mt-1.5 font-mono">
+                    ${esc(d.subred)} ·
+                    <button type="button" onclick="window.focusClienteUnidades()" class="text-brand-600 dark:text-brand-400 hover:underline font-semibold cursor-pointer">
+                        ${d.unidades.length} ${_L('unidades','unidades')}
+                    </button>
+                </p>
             </div>
             <button onclick="closeClienteDetalle()" class="action-btn"><svg class="text-slate-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/></svg></button>
         </div>
@@ -3140,7 +3214,7 @@ async function openClienteDetalle(id){
                 <div class="dossier-soft p-4"><p class="text-[11px] font-bold uppercase tracking-widest text-slate-400 mb-2">${_L('Fazendas en mapa','Fazendas no mapa')}</p><div id="cMapa" style="height:170px;border-radius:10px;overflow:hidden"></div></div>
             </div>
             <!-- Tabla de unidades -->
-            <div class="dossier-soft overflow-hidden mb-6">
+            <div class="dossier-soft overflow-hidden mb-6" data-cliente-unidades>
                 <div class="overflow-auto custom-scroll" style="max-height:280px">
                     <table class="data-table"><thead><tr>
                         <th>${_L('Unidad / Fazenda','Unidade / Fazenda')}</th><th>IP</th><th>${_L('Torre','Torre')}</th>
@@ -3156,7 +3230,7 @@ async function openClienteDetalle(id){
                         const relay = u.has_relay===true?'<span class="badge badge-success">✓</span>':u.has_relay===false?'<span class="badge badge-danger">✗</span>':'<span class="badge badge-neutral">·</span>';
                         const alert = (st==='OFFLINE'||st==='ERROR'||soBad);
                         return `<tr class="${alert?'bg-red-50 dark:bg-red-900/10':''}">
-                            <td class="font-medium">${esc(u.unidad)}</td><td class="font-mono text-xs">${esc(u.ip||'-')}</td>
+                            <td class="font-medium"><button type="button" data-open-unidad data-unidad-id="${Number(u.id)}" data-gateway-ip="${esc(u.ip || '')}" class="text-left hover:text-brand-600 dark:hover:text-brand-400 hover:underline">${esc(u.unidad)}</button></td><td class="font-mono text-xs">${esc(u.ip||'-')}</td>
                             <td class="text-slate-400">${esc(u.description||'-')}</td><td class="font-mono text-xs">${esc(u.version||'-')}</td>
                             <td class="text-center">${relay}</td>
                             <td>${u.os_version?`<span class="badge ${soBad?'badge-danger':'badge-info'}">${esc(u.os_version)}</span>`:'-'}</td>
@@ -3179,6 +3253,14 @@ async function openClienteDetalle(id){
                 }).join('')}</div>` : `<p class="text-slate-400 text-sm">${_L('Sin operaciones registradas.','Sem operações registradas.')}</p>`}
             </div>
         </div>`;
+
+        card.querySelectorAll('[data-open-unidad]').forEach(btn => {
+            btn.addEventListener('click', (event) => {
+                event.preventDefault();
+                event.stopPropagation();
+                openUnidadFromCliente(btn.dataset.unidadId, btn.dataset.gatewayIp || null);
+            });
+        });
 
         requestAnimationFrame(()=>{ const b=document.getElementById('cSaludBar'); if(b) b.style.width=d.salud+'%'; });
         [['act',d.kpis.actualizados],['pend',d.kpis.pendientes],['off',d.kpis.offline],['rel',d.kpis.con_relay]]
@@ -3217,7 +3299,26 @@ async function openClienteDetalle(id){
         m.querySelector('.dossier-card').innerHTML=`<div class="p-10 text-center text-red-500">${_L('Error cargando el dossier.','Erro ao carregar o dossier.')}</div>`;
     }
 }
+function focusClienteUnidades(){
+    const modal = document.getElementById('clienteModal');
+    const block = modal?.querySelector('[data-cliente-unidades]');
+    if (!modal || !block) return;
+    block.scrollIntoView({behavior:'smooth', block:'center'});
+    block.style.boxShadow = '0 0 0 2px rgba(14,165,233,.55), 0 16px 40px -28px rgba(14,165,233,.9)';
+    setTimeout(() => { block.style.boxShadow = ''; }, 1200);
+}
+function openUnidadFromCliente(id, gatewayIp = null){
+    if (!Number.isFinite(Number(id))) {
+        showToast(currentLang === 'pt' ? 'Ficha da unidade indisponível' : 'Ficha de la unidad no disponible aún', 'warning');
+        return;
+    }
+    openUnidadDetalle(Number(id), gatewayIp);
+}
 function closeClienteDetalle(){ _cDestroy(); const m=document.getElementById('clienteModal'); if(m) m.remove(); }
+window.openClienteDetalle = openClienteDetalle;
+window.focusClienteUnidades = focusClienteUnidades;
+window.openUnidadFromCliente = openUnidadFromCliente;
+window.closeClienteDetalle = closeClienteDetalle;
 function _cKpi(id,val,label,cc,tc){
     return `<div class="card stat-card ${cc} p-4 text-center">
         <div class="text-3xl font-extrabold ${tc} count-up" id="${id}">0</div>
@@ -3332,6 +3433,7 @@ function uniGo(kind, ip, os) {
 }
 
 async function openUnidadDetalle(id, gatewayIp = null) {
+    closeClienteDetalle();
     _uniEnsureStyle();
     if (_uniMap) { _uniMap.remove(); _uniMap = null; }
     let m = document.getElementById('unidadModal'); if (m) m.remove();
@@ -3407,7 +3509,7 @@ async function openUnidadDetalle(id, gatewayIp = null) {
 
             <!-- Mini-mapa con contexto -->
             <div class="uni-soft p-4">
-                <p class="text-[11px] font-bold uppercase tracking-widest text-slate-400 mb-2">${_L('Ubicación · fazendas del mismo cliente','Localización · fazendas do mesmo cliente')}</p>
+                <p class="text-[11px] font-bold uppercase tracking-widest text-slate-400 mb-2">${_L('Ubicación · gateways de esta unidad','Localização · gateways desta unidade')}</p>
                 <div id="uniMap" style="height:210px;border-radius:10px;overflow:hidden"></div>
             </div>
 
@@ -3444,25 +3546,33 @@ async function openUnidadDetalle(id, gatewayIp = null) {
             </div>
         </div>`;
 
-        // Mini-mapa: pin propio destacado + hermanos tenues
-        const propio = gw && gw.lat && gw.lon ? {lat: gw.lat, lon: gw.lon, st} : null;
-        const herm = (d.hermanos || []).filter(h => h.lat && h.lon);
-        const all = [propio, ...herm].filter(Boolean);
+        // Mini-mapa: todos los gateways con GPS de esta unidad; el gateway abierto queda destacado.
+        const unitPins = (d.gateways || []).filter(item => item.lat && item.lon);
         const mapEl = document.getElementById('uniMap');
-        if (propio) {
-            _uniMap = L.map('uniMap', {zoomControl:false, attributionControl:false}).setView([propio.lat, propio.lon], 8);
+        if (unitPins.length) {
+            const primaryIp = gw && gw.ip ? gw.ip : null;
+            _uniMap = L.map('uniMap', {zoomControl:false, attributionControl:false}).setView([unitPins[0].lat, unitPins[0].lon], 8);
             L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {maxZoom:18}).addTo(_uniMap);
-            herm.forEach(h => {
-                const torre = h.description ? `<br><span>${_L('Torre','Torre')}: ${esc(h.description)}</span>` : '';
-                const frota = h.fleet_number ? `<br><span>${_L('Flota','Frota')}: ${esc(h.fleet_number)}</span>` : '';
-                L.circleMarker([h.lat,h.lon], {radius:5, fillColor:'#94a3b8', color:'#fff', weight:1, fillOpacity:.5})
-                    .bindPopup(`<b>${esc(h.nombre)}</b><br>${esc(h.ip||'—')}${torre}${frota}`).addTo(_uniMap);
+            unitPins.forEach(pin => {
+                const isPrimary = (primaryIp && pin.ip === primaryIp) || pin.is_primary;
+                const pinStatus = {
+                    UPDATED: '#34d399',
+                    PENDING: '#fbbf24',
+                    OFFLINE: '#f87171',
+                    ERROR: '#f87171'
+                }[pin.status] || '#94a3b8';
+                const torre = pin.description ? `<br><span>${_L('Torre','Torre')}: ${esc(pin.description)}</span>` : '';
+                const frota = pin.fleet_number ? `<br><span>${_L('Flota','Frota')}: ${esc(pin.fleet_number)}</span>` : '';
+                const marker = L.circleMarker([pin.lat, pin.lon], {
+                    radius: isPrimary ? 9 : 6,
+                    fillColor: isPrimary ? stMap.dot : pinStatus,
+                    color: isPrimary ? '#fff' : 'rgba(255,255,255,.82)',
+                    weight: isPrimary ? 2 : 1,
+                    fillOpacity: isPrimary ? 1 : .72
+                }).bindPopup(`<b>${esc(d.unidad.nombre)}</b><br>${esc(pin.ip||'')}${torre}${frota}<br>${esc(statusLabel(pin.status))}`).addTo(_uniMap);
+                if (isPrimary) marker.openPopup();
             });
-            const torre = gw && gw.description ? `<br><span>${_L('Torre','Torre')}: ${esc(gw.description)}</span>` : '';
-            const frota = gw && gw.fleet_number ? `<br><span>${_L('Flota','Frota')}: ${esc(gw.fleet_number)}</span>` : '';
-            L.circleMarker([propio.lat, propio.lon], {radius:9, fillColor:stMap.dot, color:'#fff', weight:2, fillOpacity:1})
-                .bindPopup(`<b>${esc(d.unidad.nombre)}</b><br>${esc(ip||'')}${torre}${frota}<br>${esc(stMap.t)}`).addTo(_uniMap).openPopup();
-            const bounds = all.map(p => [p.lat, p.lon]);
+            const bounds = unitPins.map(p => [p.lat, p.lon]);
             _uniMap.fitBounds(bounds, {padding:[24,24], maxZoom:11});
             setTimeout(() => _uniMap && _uniMap.invalidateSize(), 300);
         } else {
