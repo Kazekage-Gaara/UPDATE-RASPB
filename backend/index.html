@@ -505,6 +505,11 @@ body::after{
                         <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-8l-4-4m0 0L8 8m4-4v12"/></svg>
                         <span data-i18n="btn_update">Actualizar</span>
                     </button>
+                    <button onclick="forceUpdateIP()" id="btnForceUpdate"
+                        class="bg-amber-600 hover:bg-amber-700 text-white px-5 py-2.5 rounded-lg font-medium text-sm transition flex items-center gap-2 disabled:opacity-50 disabled:cursor-not-allowed shadow-sm">
+                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"/></svg>
+                        <span data-i18n="btn_force_update">Reinstalar</span>
+                    </button>
                 </div>
                 <p class="text-xs text-slate-400 dark:text-slate-500 mt-2" data-i18n="scan_help">💡 "Escanear" solo verifica | "Actualizar" verifica y actualiza si es necesario | Atajo: Ctrl+Enter</p>
             </div>
@@ -690,6 +695,13 @@ body::after{
                 </div>
             </div>
 
+            <div class="grid grid-cols-2 md:grid-cols-4 gap-4 mb-5">
+                <div class="card p-4"><div class="text-xs text-slate-500" data-i18n="diag_mono">Problemas Mono / espacio</div><div id="diagMono" class="text-2xl font-bold text-amber-500">0</div></div>
+                <div class="card p-4"><div class="text-xs text-slate-500" data-i18n="diag_low_space">Poco espacio detectado</div><div id="diagLowSpace" class="text-2xl font-bold text-red-500">0</div></div>
+                <div class="card p-4"><div class="text-xs text-slate-500" data-i18n="diag_frozen">Cartões congelados</div><div id="diagFrozen" class="text-2xl font-bold text-red-600">0</div></div>
+                <div class="card p-4"><div class="text-xs text-slate-500" data-i18n="diag_persistence">Pruebas persistentes</div><div id="diagPersistence" class="text-2xl font-bold text-emerald-500">0</div></div>
+            </div>
+
             <!-- Top Failures -->
             <div class="card p-5 mb-5">
                 <h3 class="text-sm font-semibold mb-4 text-slate-700 dark:text-slate-200 uppercase tracking-wide" data-i18n="top_failures">Top 10 Clientes con más Fallos (Offline/Error)</h3>
@@ -789,6 +801,7 @@ body::after{
                 ip_placeholder: "Ej: 220.30.22.105 (Ctrl+Enter para actualizar)",
                 btn_scan: "Escanear",
                 btn_update: "Actualizar",
+                btn_force_update: "Reinstalar",
                 scan_help: '💡 "Escanear" solo verifica | "Actualizar" verifica y actualiza si es necesario | Atajo: Ctrl+Enter',
                 scan_multiple: "Escanear Múltiples IPs",
                 scan_multiple_placeholder: "Ingresa IPs separadas por coma, espacio o nueva línea\nEjemplo: 220.30.22.105, 220.30.22.115",
@@ -830,6 +843,7 @@ body::after{
                 status_updated: "OK - sin acción necesaria", status_pending: "Pendiente",
                 status_offline: "Offline", status_error: "Error",
                 confirm_update_single: "¿Actualizar {ip} a la versión {version}?\n\nSe verificará la versión actual y se procederá con la actualización si es necesario.",
+                confirm_force_update_single: "¿Reinstalar {ip} aunque ya esté en la versión {version}?\n\nEsto vuelve a copiar archivos, rehace crontab/configuración, limpia mono_crash y reintenta Relay LPWAN.",
                 confirm_update_multiple: "⚠️ Confirmar actualización\n\n¿Actualizar {count} gateway(s) seleccionados a la versión {version}?\n\nEsto puede tomar varios minutos.",
                 toast_welcome: "Sistema listo — Ctrl+Enter para actualizar rápido",
                 toast_light_mode: "Modo claro activado", toast_dark_mode: "Modo oscuro activado",
@@ -838,6 +852,7 @@ body::after{
                 toast_scan_error: "Error de red al escanear",
                 toast_already_updated: "{ip}: OK - sin acción necesaria",
                 toast_update_success: "✅ {ip} actualizado correctamente",
+                toast_force_update_started: "Reinstalando {ip}...",
                 toast_update_error: "Error en la actualización",
                 toast_starting_update: "Iniciando actualización de {count} dispositivos...",
                 toast_load_error: "Error al cargar la lista de gateways",
@@ -854,6 +869,7 @@ body::after{
                 step_already_updated: "OK - versión correcta",
                 step_no_action: "Sin acción necesaria",
                 step_starting: "Iniciando actualización...",
+                step_force_starting: "Iniciando reinstalación forzada...",
                 step_updating: "Actualizando... (ver barra de progreso arriba)",
                 step_waiting: "Esperando finalización...",
                 step_files_copied: "Archivos copiados y configurados",
@@ -864,6 +880,7 @@ body::after{
                 tab_mapa: "Mapa de Gateways", map_title: "Mapa de Gateways",
                 map_total_gps: "Total con GPS", map_offline: "Offline", map_offline_error: "Offline/Error",
                 report_title: "Dashboard Ejecutivo", global_status: "Estado Global de la Flota",
+                diag_mono: "Problemas Mono / espacio", diag_low_space: "Poco espacio detectado", diag_frozen: "Cartões congelados", diag_persistence: "Pruebas persistentes",
                 by_crop: "Progreso por Tipo de Cultivo", top_failures: "Top 10 Clientes con más Fallos",
                 btn_export_excel: "Exportar a Excel", btn_export_pdf: "Imprimir / PDF",
                 th_client: "Cliente", th_unity: "Unidad", th_crop: "Cultivo", th_total: "Total", th_offline: "Offline/Error",
@@ -958,6 +975,7 @@ body::after{
                 ip_placeholder: "Ex: 220.30.22.105 (Ctrl+Enter para atualizar)",
                 btn_scan: "Escanear",
                 btn_update: "Atualizar",
+                btn_force_update: "Reinstalar",
                 scan_help: '💡 "Escanear" apenas verifica | "Atualizar" verifica e atualiza se necessário | Atalho: Ctrl+Enter',
                 scan_multiple: "Escanear Múltiplos IPs",
                 scan_multiple_placeholder: "Insira IPs separados por vírgula, espaço ou nova linha\nExemplo: 220.30.22.105, 220.30.22.115",
@@ -999,6 +1017,7 @@ body::after{
                 status_updated: "OK - sem ação necessária", status_pending: "Pendente",
                 status_offline: "Offline", status_error: "Erro",
                 confirm_update_single: "Atualizar {ip} para a versão {version}?\n\nA versão atual será verificada e a atualização prosseguirá se necessário.",
+                confirm_force_update_single: "Reinstalar {ip} mesmo que já esteja na versão {version}?\n\nIsso copia os arquivos novamente, refaz crontab/configuração, limpa mono_crash e tenta Relay LPWAN de novo.",
                 confirm_update_multiple: "⚠️ Confirmar atualização\n\nAtualizar {count} gateway(s) selecionados para a versão {version}?\n\nIsso pode levar vários minutos.",
                 toast_welcome: "Sistema pronto — Ctrl+Enter para atualização rápida",
                 toast_light_mode: "Modo claro ativado", toast_dark_mode: "Modo escuro ativado",
@@ -1007,6 +1026,7 @@ body::after{
                 toast_scan_error: "Erro de rede ao escanear",
                 toast_already_updated: "{ip}: OK - sem ação necessária",
                 toast_update_success: "✅ {ip} atualizado corretamente",
+                toast_force_update_started: "Reinstalando {ip}...",
                 toast_update_error: "Erro na atualização",
                 toast_starting_update: "Iniciando atualização de {count} dispositivos...",
                 toast_load_error: "Erro ao carregar a lista de gateways",
@@ -1023,6 +1043,7 @@ body::after{
                 step_already_updated: "OK - versão correta",
                 step_no_action: "Sem ação necessária",
                 step_starting: "Iniciando atualização...",
+                step_force_starting: "Iniciando reinstalação forçada...",
                 step_updating: "Atualizando... (ver barra de progresso acima)",
                 step_waiting: "Aguardando finalização...",
                 step_files_copied: "Arquivos copiados e configurados",
@@ -1033,6 +1054,7 @@ body::after{
                 tab_mapa: "Mapa de Gateways", map_title: "Mapa de Gateways",
                 map_total_gps: "Total com GPS", map_offline: "Offline", map_offline_error: "Offline/Erro",
                 report_title: "Dashboard Executivo", global_status: "Status Global da Frota",
+                diag_mono: "Problemas Mono / espaço", diag_low_space: "Pouco espaço detectado", diag_frozen: "Cartões congelados", diag_persistence: "Testes persistentes",
                 by_crop: "Progresso por Tipo de Cultivo", top_failures: "Top 10 Clientes com mais Falhas",
                 btn_export_excel: "Exportar para Excel", btn_export_pdf: "Imprimir / PDF",
                 th_client: "Cliente", th_unity: "Unidade", th_crop: "Cultivo", th_total: "Total", th_offline: "Offline/Erro",
@@ -1441,7 +1463,8 @@ body::after{
 
             const btnScan = document.getElementById('btnScan');
             const btnUpdate = document.getElementById('btnScanUpdate');
-            btnScan.disabled = true; btnUpdate.disabled = true; isUpdating = true;
+            const btnForce = document.getElementById('btnForceUpdate');
+            btnScan.disabled = true; btnUpdate.disabled = true; btnForce.disabled = true; isUpdating = true;
 
             const resultsDiv = document.getElementById('results');
             const tempId = 'task-' + Date.now();
@@ -1530,7 +1553,76 @@ body::after{
                 document.getElementById(tempId).innerHTML = `<div class="text-red-600 dark:text-red-400 text-sm">❌ ${esc(err.message)}</div>`;
                 showToast(t('toast_scan_error'), 'error');
                 clearOperationInputLater();
-            } finally { btnScan.disabled = false; btnUpdate.disabled = false; isUpdating = false; }
+            } finally { btnScan.disabled = false; btnUpdate.disabled = false; btnForce.disabled = false; isUpdating = false; }
+        }
+
+        async function forceUpdateIP() {
+            const ip = document.getElementById('ipInput').value;
+            if (!ip) { showToast(t('toast_ip_required'), 'warning'); return; }
+
+            const confirmed = await showModal(
+                t('confirm_title'),
+                t('confirm_force_update_single', { ip: ip, version: TARGET_VERSION }),
+                t('btn_force_update')
+            );
+            if (!confirmed) return;
+
+            const btnScan = document.getElementById('btnScan');
+            const btnUpdate = document.getElementById('btnScanUpdate');
+            const btnForce = document.getElementById('btnForceUpdate');
+            btnScan.disabled = true; btnUpdate.disabled = true; btnForce.disabled = true; isUpdating = true;
+
+            const resultsDiv = document.getElementById('results');
+            const tempId = 'task-' + Date.now();
+            resultsDiv.innerHTML = `
+                <div id="${esc(tempId)}" class="card border-l-4 border-amber-400 p-5">
+                    <div class="flex items-center gap-3 mb-3"><svg class="w-5 h-5 text-amber-500 animate-spin" fill="none" viewBox="0 0 24 24"><circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle><path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z"></path></svg><span class="font-semibold text-sm">${esc(ip)}</span></div>
+                    <div class="ml-8 space-y-2 text-sm">
+                        <div id="step1" class="text-amber-600 dark:text-amber-400 font-medium text-sm">${t('step_force_starting')}</div>
+                        <div id="step2" class="text-slate-400 dark:text-slate-500">${t('step_pending')}</div>
+                        <div id="step3" class="text-slate-400 dark:text-slate-500">${t('step_pending')}</div>
+                    </div>
+                </div>`;
+
+            try {
+                const updateRes = await fetch('/api/update', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ ips: [ip], force: true }) });
+                if (!updateRes.ok) {
+                    const error = await updateRes.json();
+                    updateStep(tempId, 'step2', `❌ ${error.detail}`, 'red');
+                    showToast(error.detail, 'error');
+                    clearOperationInputLater();
+                    return;
+                }
+
+                const updateData = await updateRes.json();
+                document.getElementById('updateProgress').classList.remove('hidden');
+                startProgressMonitoring(updateData.tasks);
+                updateStep(tempId, 'step2', t('step_updating'), 'blue');
+                updateStep(tempId, 'step3', t('step_waiting'), 'blue');
+                showToast(t('toast_force_update_started', { ip: ip }), 'info');
+
+                const taskId = updateData.tasks[0].task_id;
+                const updateResult = await waitForTask(taskId, true);
+                const finalStatus = updateResult.result?.status || updateResult.state;
+                const updateOk = updateResult.state === 'SUCCESS' && !["FAILED", "BLOCKED", "ERROR"].includes(finalStatus);
+
+                if (updateOk) {
+                    updateStep(tempId, 'step2', t('step_files_copied'), 'green');
+                    updateStep(tempId, 'step3', updateResult.result?.msg || t('step_service_restarted'), 'green');
+                    showToast(t('toast_update_success', { ip: ip }), 'success');
+                    await loadGateways();
+                    setTimeout(() => loadGateways(), 2000);
+                    setTimeout(() => { resultsDiv.innerHTML = ''; const input = document.getElementById('ipInput'); if (input) input.value = ''; }, 3000);
+                } else {
+                    updateStep(tempId, 'step3', updateResult.result?.msg || t('step_error_update'), 'red');
+                    showToast(updateResult.result?.msg || t('toast_update_error'), 'error');
+                    clearOperationInputLater();
+                }
+            } catch (err) {
+                document.getElementById(tempId).innerHTML = `<div class="text-red-600 dark:text-red-400 text-sm">❌ ${esc(err.message)}</div>`;
+                showToast(t('toast_update_error'), 'error');
+                clearOperationInputLater();
+            } finally { btnScan.disabled = false; btnUpdate.disabled = false; btnForce.disabled = false; isUpdating = false; }
         }
 
         function updateStep(containerId, stepId, message, color) {
@@ -2180,6 +2272,17 @@ ${(g.os_codename === 'jessie' || g.os_codename === 'stretch') ? `<button onclick
             document.getElementById('btnUpdate').disabled = selectedGateways.size === 0;
         }
 
+        function hasMultipleOperationState() {
+            const multipleInput = document.getElementById('multipleIpsInput');
+            const subnetInput = document.getElementById('subnetInput');
+            const results = document.getElementById('multipleScanResults');
+            return Boolean(
+                (multipleInput && multipleInput.value.trim())
+                || (subnetInput && subnetInput.value.trim())
+                || (results && results.innerHTML.trim())
+            );
+        }
+
         async function updateSelected() {
             if (selectedGateways.size === 0) return;
             const count = selectedGateways.size;
@@ -2191,9 +2294,7 @@ ${(g.os_codename === 'jessie' || g.os_codename === 'stretch') ? `<button onclick
             if (!confirmed) return;
 
             const ips = Array.from(selectedGateways);
-            const shouldClearDiscoveredList = ips.length > 0
-                && lastDiscoveredGatewayStatus.size > 0
-                && ips.every(ip => lastDiscoveredGatewayStatus.has(ip));
+            const shouldClearDiscoveredList = hasMultipleOperationState();
             document.getElementById('btnUpdate').disabled = true; isUpdating = true;
             showToast(t('toast_update_started', { ip: ips.join(', ') }), 'info');
 
@@ -2475,6 +2576,12 @@ ${(g.os_codename === 'jessie' || g.os_codename === 'stretch') ? `<button onclick
                 } : {
                     success: '#059669', warning: '#d97706', danger: '#dc2626'
                 };
+
+                const diag = data.diagnosticos || {};
+                document.getElementById('diagMono').textContent = diag.mono_sin_espacio || 0;
+                document.getElementById('diagLowSpace').textContent = diag.poco_espacio || 0;
+                document.getElementById('diagFrozen').textContent = diag.cartao_congelado || 0;
+                document.getElementById('diagPersistence').textContent = diag.persistencia_ok || 0;
 
                 // 1. Global Chart (Doughnut)
                 const ctxGlobal = document.getElementById('chartGlobal').getContext('2d');

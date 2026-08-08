@@ -68,3 +68,11 @@ class UpdateHistory(Base):
     duration_seconds = Column(Integer, nullable=True)
     error_message = Column(Text, nullable=True)
     timestamp = Column(DateTime(timezone=True), server_default=func.now())
+
+class GatewayDiagnosticEvent(Base):
+    __tablename__ = "gateway_diagnostic_events"
+    id = Column(Integer, primary_key=True, index=True)
+    gateway_ip = Column(String, index=True, nullable=False)
+    event_type = Column(String, index=True, nullable=False)
+    details = Column(Text, nullable=True)
+    timestamp = Column(DateTime(timezone=True), server_default=func.now())

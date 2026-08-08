@@ -5,7 +5,7 @@ from datetime import datetime
 from celery import Celery
 from ssh_utils import run_ssh_command, ping_host
 from database import SessionLocal
-from models import Gateway, UpdateHistory, Cliente, Unidad
+from models import Gateway, UpdateHistory, GatewayDiagnosticEvent, Cliente, Unidad
 from config import Config
 
 redis_url = os.getenv('REDIS_URL', 'redis://redis:6379/0')
@@ -40,6 +40,70 @@ def wait_for_ping(ip: str, timeout: int = 180, interval: int = 5) -> bool:
             return True
         time.sleep(interval)
     return False
+
+def cleanup_runtime_artifacts(ip: str) -> dict:
+    """Libera espacio de artefactos conocidos antes de operaciones que escriben temporales."""
+    cmd = f"""
+    FREE_BEFORE=$(df -Pm / 2>/dev/null | awk 'NR==2 {{print $4}}')
+    CRASH_COUNT=$(find / -maxdepth 1 -type f -name 'mono_crash*' 2>/dev/null | wc -l)
+    echo '{Config.RASP_PASSWORD}' | sudo -S find / -maxdepth 1 -type f -name 'mono_crash*' -delete 2>/dev/null || true
+    rm -f /tmp/relay_block.txt /tmp/SolinfNet.conf.tmp /tmp/rootcron /tmp/rootcron.tmp 2>/dev/null || true
+    FREE_AFTER=$(df -Pm / 2>/dev/null | awk 'NR==2 {{print $4}}')
+    echo "MONO_CRASH_COUNT:$CRASH_COUNT"
+    echo "FREE_MB_BEFORE:$FREE_BEFORE"
+    echo "FREE_MB_AFTER:$FREE_AFTER"
+    """
+    res = run_ssh_command(ip, cmd, timeout=90)
+    output = res.get("output", "") if res.get("success") else ""
+    data = {"success": res.get("success", False), "output": output}
+    for line in output.splitlines():
+        if ':' not in line:
+            continue
+        key, value = line.split(':', 1)
+        data[key.strip().lower()] = value.strip()
+    if output:
+        print(f"[{ip}] Limpieza runtime: {output.strip().replace(chr(10), ' | ')}")
+    elif not res.get("success"):
+        print(f"[{ip}] Limpieza runtime falló: {res.get('error', '')}")
+    crash_count = int(data.get('mono_crash_count') or 0)
+    try:
+        free_after = int(data.get('free_mb_after') or 0)
+    except (TypeError, ValueError):
+        free_after = 0
+    if crash_count > 0:
+        save_diagnostic_event(ip, "MONO_NO_SPACE", f"Se encontraron {crash_count} mono_crash; espacio libre despues: {free_after} MB")
+    if free_after <= 100:
+        save_diagnostic_event(ip, "LOW_DISK_SPACE", f"Solo quedan {free_after} MB libres despues de la limpieza")
+    return data
+
+def save_diagnostic_event(ip: str, event_type: str, details: str):
+    db = SessionLocal()
+    try:
+        db.add(GatewayDiagnosticEvent(gateway_ip=ip, event_type=event_type, details=details))
+        db.commit()
+    except Exception as e:
+        db.rollback()
+        print(f"[{ip}] Error guardando diagnostico {event_type}: {e}")
+    finally:
+        db.close()
+
+def prepare_persistence_probe(ip: str) -> str:
+    token = f"{int(time.time())}_{os.getpid()}"
+    cmd = f"printf '%s\n' '{token}' > /home/solinfnet/.update_persistence_probe && sync"
+    res = run_ssh_command(ip, cmd, timeout=15)
+    return token if res.get('success') else ""
+
+def verify_persistence_probe(ip: str, token: str) -> str:
+    if not token:
+        return "NOT_VERIFIED"
+    cmd = "test -f /home/solinfnet/.update_persistence_probe && cat /home/solinfnet/.update_persistence_probe; rm -f /home/solinfnet/.update_persistence_probe"
+    res = run_ssh_command(ip, cmd, timeout=15)
+    value = (res.get('output') or '').strip()
+    if value == token:
+        save_diagnostic_event(ip, "PERSISTENCE_OK", "Marcador sobrevivio al reinicio")
+        return "OK"
+    save_diagnostic_event(ip, "FROZEN_CARD", "El marcador no sobrevivio al reinicio; posible cartao congelado")
+    return "FROZEN"
 
 def _pref2(ip):
     p = ip.split('.')
@@ -343,6 +407,14 @@ def configurar_relay_lpwan(ip: str) -> dict:
     Versión robusta usando heredoc + archivo temporal.
     """
     try:
+        cleanup_info = cleanup_runtime_artifacts(ip)
+        try:
+            free_after = int(cleanup_info.get('free_mb_after') or 0)
+        except (TypeError, ValueError):
+            free_after = 0
+        if cleanup_info.get('success') and free_after <= 1:
+            return {"configurado": False, "error": "Sin espacio libre tras limpiar mono_crash (disco lleno)"}
+
         # 1. Verificar si tiene Hardware RadioLocal (LPWAN)
         cmd_check = "grep -q 'Hardware = RadioLocal' /home/solinfnet/SolinfNet.conf && echo 'TIENE' || echo 'NO_TIENE'"
         res = run_ssh_command(ip, cmd_check, timeout=10)
@@ -565,6 +637,11 @@ def configure_gateway(self, ip: str):
         save_operation_history(ip, "⚙️ CONFIGURAR", "Gateway offline", "FAILED", 0)
         return {"ip": ip, "status": "FAILED", "msg": "Gateway offline", "changes": []}
     
+    cleanup_info = cleanup_runtime_artifacts(ip)
+    crash_count = cleanup_info.get('mono_crash_count', '0')
+    if crash_count not in ('0', ''):
+        update_progress(1, f"Limpieza Mono: {crash_count} crash file(s)", 15)
+
     # 2. Extraer datos actuales del conf
     update_progress(2, "Leyendo configuración actual...", 20)
     conf_data = extract_conf_data(ip)
@@ -583,6 +660,11 @@ def configure_gateway(self, ip: str):
         changes.append(f"Carpetas: {resultado_carpetas.get('carpeta')}")
     if resultado_lpwan.get("configurado"):
         changes.append("RELAY LPWAN agregado")
+    if resultado_lpwan.get("error"):
+        duration = int(time.time() - start_time)
+        msg = f"Error configurando RELAY LPWAN: {resultado_lpwan.get('error')}"
+        save_operation_history(ip, "⚙️ CONFIGURAR", msg, "FAILED", duration)
+        return {"ip": ip, "status": "FAILED", "msg": msg, "changes": changes}
     
     # 6. 🔧 REINICIAR SERVICIO (o reboot si no hay servicio systemd)
     if changes:
@@ -675,8 +757,8 @@ def configure_gateway(self, ip: str):
 
 
 @app.task(bind=True)
-def update_gateway(self, ip: str):
-    """Tarea completa de actualización con verificación de SO y actualización de metadatos"""
+def update_gateway(self, ip: str, force: bool = False):
+    """Tarea completa de actualización con verificación de SO y actualización de metadatos."""
     TARGET_VERSION = Config.TARGET_VERSION
     start_time = time.time()
     
@@ -686,7 +768,8 @@ def update_gateway(self, ip: str):
         })
         print(f"[{ip}] {step}: {message} ({percent}%)")
     
-    print(f"\n{'='*60}\nINICIANDO ACTUALIZACIÓN: {ip}\n{'='*60}")
+    action_label = "REINSTALACIÓN FORZADA" if force else "ACTUALIZACIÓN"
+    print(f"\n{'='*60}\nINICIANDO {action_label}: {ip}\n{'='*60}")
     
     # 1. Verificar conectividad
     update_progress(1, "Verificando conectividad...", 5)
@@ -730,6 +813,13 @@ def update_gateway(self, ip: str):
             else:
                 update_progress(3, f"Debian {debian_num} con Mono {mono_ver} ✓", 20)
     
+    cleanup_info = cleanup_runtime_artifacts(ip)
+    freed_before = cleanup_info.get('free_mb_before', '?')
+    freed_after = cleanup_info.get('free_mb_after', '?')
+    crash_count = cleanup_info.get('mono_crash_count', '0')
+    if crash_count not in ('0', ''):
+        update_progress(3, f"Limpieza Mono: {crash_count} crash file(s), libre {freed_before}->{freed_after} MB", 22)
+
     # 4. Copiar archivos (tolerante a enlaces lentos: compresión + timeout amplio + reintentos)
     update_progress(4, "Copiando archivos...", 25)
     for idx, filename in enumerate(Config.UPDATE_FILES):
@@ -806,6 +896,8 @@ CRON
         return {"ip": ip, "status": "FAILED", "msg": "Error en configuración remota"}
     
     # 6. 🔧 REINICIO ROBUSTO: detectar si hay servicio systemd, si no → reboot (como v3)
+    persistence_probe = prepare_persistence_probe(ip)
+    persistence_status = "NOT_VERIFIED"
     update_progress(6, "Verificando mecanismo de reinicio...", 58)
     svc_check = run_ssh_command(ip, 
         "systemctl list-unit-files 2>/dev/null | grep -c 'solinfnet.service'", timeout=10)
@@ -828,8 +920,11 @@ CRON
                                     int(time.time() - start_time), "Gateway no volvió tras reboot (180s)")
                 return {"ip": ip, "status": "FAILED", 
                         "msg": "⚠️ Gateway no volvió después del reboot (esperar 3 min y re-escanear)"}
+            persistence_status = verify_persistence_probe(ip, persistence_probe)
         else:
             time.sleep(5)
+            # Un restart del servicio no permite diagnosticar persistencia de la SD.
+            run_ssh_command(ip, "rm -f /home/solinfnet/.update_persistence_probe", timeout=10)
     else:
         # Gateway antiguo: SIN servicio systemd → reboot directo (como v3)
         update_progress(6, "Sin servicio systemd → haciendo reboot (como v3)...", 60)
@@ -841,6 +936,7 @@ CRON
                                 int(time.time() - start_time), "Gateway no volvió tras reboot (180s)")
             return {"ip": ip, "status": "FAILED", 
                     "msg": "⚠️ Gateway no volvió después del reboot (esperar 3 min y re-escanear)"}
+        persistence_status = verify_persistence_probe(ip, persistence_probe)
     
     # 7. Esperar inicio
     update_progress(7, "Esperando inicio del servicio...", 70)
@@ -903,14 +999,17 @@ CRON
             automatizaciones.append(f"Carpetas: {resultado_carpetas.get('carpeta')}")
         if resultado_lpwan.get("configurado"):
             automatizaciones.append("Relay LPWAN")
+        lpwan_warning = resultado_lpwan.get("error")
         
         msg_extra = f" | 🔧 {', '.join(automatizaciones)}" if automatizaciones else ""
+        msg_warning = f" | ⚠️ Relay LPWAN no configurado: {lpwan_warning}" if lpwan_warning else ""
+        frozen_warning = " | ⚠️ Cartao congelado confirmado" if persistence_status == "FROZEN" else ""
         
         update_progress(13, "✅ Actualización completada", 100)
         return {
             "ip": ip, 
             "status": "SUCCESS", 
-            "msg": f"✅ Actualizado de {old_version} a {new_version}{msg_extra}", 
+            "msg": f"✅ Actualizado de {old_version} a {new_version}{msg_extra}{msg_warning}{frozen_warning}",
             "duration": duration,
             "automatizaciones": automatizaciones,
             "os_version": os_data.get('os_version') if os_data else None

@@ -6,7 +6,7 @@ from sqlalchemy.orm import Session
 from sqlalchemy import func, case, desc
 from tasks import scan_and_check_version, update_gateway
 from database import get_db, init_db
-from models import Gateway, UpdateHistory, Cliente, Unidad
+from models import Gateway, UpdateHistory, GatewayDiagnosticEvent, Cliente, Unidad
 from config import Config
 from datetime import datetime
 import os, io, xlsxwriter, secrets, ipaddress, threading, time, sqlite3
@@ -222,14 +222,16 @@ async def get_gateway_history(ip: str, db: Session = Depends(get_db), _auth: boo
 async def start_update(request: Request, db: Session = Depends(get_db), _auth: bool = Depends(verify_api_key)):
     # C-2: requiere X-API-Key
     body = await request.json(); ips = body.get("ips", [])
+    force = bool(body.get("force", False))
     if not ips: raise HTTPException(400, "No se proporcionaron IPs")
     if len(ips) > 5: raise HTTPException(400, "Máximo 5 actualizaciones simultáneas")
     ips = [validate_ipv4(ip) for ip in ips]
     out = []
     for ip in ips:
-        t = update_gateway.delay(ip); out.append({"ip": ip, "task_id": t.id})
-        update_tasks[t.id] = {"ip": ip, "started_at": datetime.now()}
-    return {"message": f"Iniciando actualización de {len(ips)} gateways", "tasks": out}
+        t = update_gateway.delay(ip, force); out.append({"ip": ip, "task_id": t.id})
+        update_tasks[t.id] = {"ip": ip, "started_at": datetime.now(), "force": force}
+    action = "reinstalación" if force else "actualización"
+    return {"message": f"Iniciando {action} de {len(ips)} gateways", "tasks": out, "force": force}
 
 @app.get("/api/update/status/{task_id}")
 async def get_update_status(task_id: str, _auth: bool = Depends(verify_api_key)):
@@ -301,6 +303,9 @@ async def get_dashboard_data(db: Session = Depends(get_db), _auth: bool = Depend
         sin_relay = db.query(Gateway).filter(Gateway.has_relay == False).count()
         relay_null = db.query(Gateway).filter(Gateway.has_relay == None).count()
 
+        diagnostics = db.query(GatewayDiagnosticEvent.event_type, func.count(GatewayDiagnosticEvent.id)).group_by(GatewayDiagnosticEvent.event_type).all()
+        diagnostic_counts = {event_type: count for event_type, count in diagnostics}
+
         # 2. Estadísticas por Tipo de Cultivo
         stats = db.query(
             Cliente.tipo_cultivo,
@@ -347,6 +352,12 @@ async def get_dashboard_data(db: Session = Depends(get_db), _auth: bool = Depend
                 "con_relay": con_relay,
                 "sin_relay": sin_relay,
                 "sin_info": relay_null
+            },
+            "diagnosticos": {
+                "mono_sin_espacio": diagnostic_counts.get("MONO_NO_SPACE", 0),
+                "poco_espacio": diagnostic_counts.get("LOW_DISK_SPACE", 0),
+                "cartao_congelado": diagnostic_counts.get("FROZEN_CARD", 0),
+                "persistencia_ok": diagnostic_counts.get("PERSISTENCE_OK", 0)
             },
             "cultivos": cultivos,
             "top_fallos": fallos
