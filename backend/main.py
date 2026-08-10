@@ -303,8 +303,20 @@ async def get_dashboard_data(db: Session = Depends(get_db), _auth: bool = Depend
         sin_relay = db.query(Gateway).filter(Gateway.has_relay == False).count()
         relay_null = db.query(Gateway).filter(Gateway.has_relay == None).count()
 
-        diagnostics = db.query(GatewayDiagnosticEvent.event_type, func.count(GatewayDiagnosticEvent.id)).group_by(GatewayDiagnosticEvent.event_type).all()
-        diagnostic_counts = {event_type: count for event_type, count in diagnostics}
+        diagnostic_rows = db.query(GatewayDiagnosticEvent.event_type, GatewayDiagnosticEvent.gateway_ip)\
+            .filter(GatewayDiagnosticEvent.event_type.in_(["MONO_NO_SPACE", "FROZEN_CARD"]))\
+            .distinct()\
+            .all()
+        diagnostic_ips = {"MONO_NO_SPACE": set(), "FROZEN_CARD": set()}
+        for event_type, gateway_ip in diagnostic_rows:
+            if event_type in diagnostic_ips and gateway_ip:
+                diagnostic_ips[event_type].add(gateway_ip)
+        current_frozen_ips = {ip for (ip,) in db.query(Gateway.ip).filter(Gateway.status == "FROZEN_CARD").all()}
+        frozen_ips = diagnostic_ips["FROZEN_CARD"] | current_frozen_ips
+        diagnostic_counts = {
+            "MONO_NO_SPACE": len(diagnostic_ips["MONO_NO_SPACE"] - frozen_ips),
+            "FROZEN_CARD": len(frozen_ips),
+        }
 
         # 2. Estadísticas por Tipo de Cultivo
         stats = db.query(
@@ -327,7 +339,7 @@ async def get_dashboard_data(db: Session = Depends(get_db), _auth: bool = Depend
         top = db.query(
             Cliente.nombre, 
             Cliente.tipo_cultivo,
-            func.coalesce(func.sum(case((Gateway.status.in_(['OFFLINE', 'ERROR']), 1), else_=0)), 0).label('fallos'),
+            func.coalesce(func.sum(case((Gateway.status.in_(['OFFLINE', 'ERROR', 'FROZEN_CARD']), 1), else_=0)), 0).label('fallos'),
             func.count(Gateway.id).label('total')
         ).join(Gateway, Gateway.cliente_id == Cliente.id)\
          .group_by(Cliente.id, Cliente.nombre, Cliente.tipo_cultivo)\
@@ -355,9 +367,7 @@ async def get_dashboard_data(db: Session = Depends(get_db), _auth: bool = Depend
             },
             "diagnosticos": {
                 "mono_sin_espacio": diagnostic_counts.get("MONO_NO_SPACE", 0),
-                "poco_espacio": diagnostic_counts.get("LOW_DISK_SPACE", 0),
-                "cartao_congelado": diagnostic_counts.get("FROZEN_CARD", 0),
-                "persistencia_ok": diagnostic_counts.get("PERSISTENCE_OK", 0)
+                "cartao_congelado": diagnostic_counts.get("FROZEN_CARD", 0)
             },
             "cultivos": cultivos,
             "top_fallos": fallos
@@ -443,7 +453,7 @@ async def exportar_excel(db: Session = Depends(get_db), lang: str = "es", _auth:
         estado = gw.status or '-'
         if estado == 'UPDATED': ws.write(row, 9, estado, success)
         elif estado == 'PENDING': ws.write(row, 9, estado, pending)
-        elif estado in ['OFFLINE', 'ERROR']: ws.write(row, 9, estado, error_fmt)
+        elif estado in ['OFFLINE', 'ERROR', 'FROZEN_CARD']: ws.write(row, 9, estado, error_fmt)
         else: ws.write(row, 9, estado)
         
         ws.write(row, 10, gw.last_scan.strftime('%Y-%m-%d %H:%M') if gw.last_scan else '-')
@@ -521,6 +531,81 @@ async def get_install_mono_status(task_id: str, _auth: bool = Depends(verify_api
     else:
         return {"state": task.state}
 
+
+@app.get("/api/reportes/diagnosticos/{event_type}")
+async def get_diagnostic_affected(event_type: str, db: Session = Depends(get_db), _auth: bool = Depends(verify_api_key)):
+    """Devuelve gateways unicos afectados por un diagnostico operativo."""
+    allowed = {
+        "MONO_NO_SPACE": {
+            "es": "Problemas Mono / espacio",
+            "pt": "Problemas Mono / espaço",
+        },
+        "FROZEN_CARD": {
+            "es": "Cartao congelado",
+            "pt": "Cartão congelado",
+        },
+    }
+    event_type = (event_type or "").upper()
+    if event_type not in allowed:
+        raise HTTPException(404, "Diagnóstico no soportado")
+
+    events = db.query(GatewayDiagnosticEvent)\
+        .filter(GatewayDiagnosticEvent.event_type == event_type)\
+        .order_by(GatewayDiagnosticEvent.timestamp.desc())\
+        .all()
+
+    latest_by_ip = {}
+    for event in events:
+        if event.gateway_ip not in latest_by_ip:
+            latest_by_ip[event.gateway_ip] = event
+
+    frozen_event_ips = {ip for (ip,) in db.query(GatewayDiagnosticEvent.gateway_ip)\
+        .filter(GatewayDiagnosticEvent.event_type == "FROZEN_CARD")\
+        .distinct()\
+        .all() if ip}
+    current_frozen_ips = {ip for (ip,) in db.query(Gateway.ip).filter(Gateway.status == "FROZEN_CARD").all()}
+    frozen_ips = frozen_event_ips | current_frozen_ips
+
+    if event_type == "MONO_NO_SPACE":
+        latest_by_ip = {ip: event for ip, event in latest_by_ip.items() if ip not in frozen_ips}
+    elif event_type == "FROZEN_CARD":
+        for ip in current_frozen_ips:
+            latest_by_ip.setdefault(ip, None)
+
+    gateways = db.query(Gateway).filter(Gateway.ip.in_(list(latest_by_ip.keys()))).all() if latest_by_ip else []
+    clientes = {c.id: c for c in db.query(Cliente).all()}
+    unidades = {u.id: u for u in db.query(Unidad).all()}
+    gateways_by_ip = {g.ip: g for g in gateways}
+
+    afectados = []
+    for ip, event in latest_by_ip.items():
+        gateway = gateways_by_ip.get(ip)
+        cliente = clientes.get(gateway.cliente_id) if gateway and gateway.cliente_id else None
+        unidad = unidades.get(gateway.unidad_id) if gateway and gateway.unidad_id else None
+        afectados.append({
+            "ip": ip,
+            "cliente_id": cliente.id if cliente else None,
+            "cliente": cliente.nombre if cliente else None,
+            "unidad_id": unidad.id if unidad else None,
+            "unidad": unidad.nombre if unidad else None,
+            "description": gateway.description if gateway else None,
+            "version": gateway.version if gateway else None,
+            "status": gateway.status if gateway else None,
+            "has_relay": gateway.has_relay if gateway else None,
+            "last_scan": gateway.last_scan.isoformat() if gateway and gateway.last_scan else None,
+            "last_update": gateway.last_update.isoformat() if gateway and gateway.last_update else None,
+            "event_ts": event.timestamp.isoformat() if event and event.timestamp else None,
+            "details": event.details if event else None,
+        })
+
+    afectados.sort(key=lambda item: (item["cliente"] or "", item["unidad"] or "", item["ip"]))
+    return {
+        "event_type": event_type,
+        "label": allowed[event_type],
+        "total": len(afectados),
+        "affected": afectados,
+    }
+
 @app.get("/api/cliente/{cliente_id}/detalle")
 async def get_cliente_detalle(cliente_id: int, db: Session = Depends(get_db), _auth: bool = Depends(verify_api_key)):
     """Dossier ejecutivo de un cliente: KPIs, unidades, mini-mapa, historial."""
@@ -536,6 +621,7 @@ async def get_cliente_detalle(cliente_id: int, db: Session = Depends(get_db), _a
     actualizados = sum(1 for g in gateways if g.status == 'UPDATED')
     pendientes   = sum(1 for g in gateways if g.status == 'PENDING')
     offline      = sum(1 for g in gateways if g.status in ('OFFLINE', 'ERROR'))
+    congelados   = sum(1 for g in gateways if g.status == 'FROZEN_CARD')
     con_relay    = sum(1 for g in gateways if g.has_relay is True)
 
     por_so = {}
@@ -564,7 +650,7 @@ async def get_cliente_detalle(cliente_id: int, db: Session = Depends(get_db), _a
     return {
         "id": cliente.id, "nombre": cliente.nombre, "cultivo": cliente.tipo_cultivo, "subred": cliente.subred,
         "salud": round(actualizados / total * 100, 1) if total else 0,
-        "kpis": {"total": total, "actualizados": actualizados, "pendientes": pendientes, "offline": offline, "con_relay": con_relay},
+        "kpis": {"total": total, "actualizados": actualizados, "pendientes": pendientes, "offline": offline, "congelados": congelados, "con_relay": con_relay},
         "por_so": por_so, "unidades": detalle_unidades, "pines": pines,
         "historial": [{"ip": h.gateway_ip, "op": h.old_version, "detalle": h.new_version,
                        "status": h.status, "ts": h.timestamp.isoformat(), "duracion": h.duration_seconds} for h in hist],

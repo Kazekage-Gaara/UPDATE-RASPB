@@ -29,13 +29,16 @@ def read_solinfnet_version(ip: str, attempts: int = 3, wait: float = 2.0) -> str
     return ""
 
 def wait_for_ping(ip: str, timeout: int = 180, interval: int = 5) -> bool:
-    """Espera a que el gateway responda al ping después de un reboot."""
+    """Espera un reboot real: primero debe caer el ping y luego volver."""
     start = time.time()
-    # Primero esperar a que PIERDA el ping (se está apagando)
+    saw_down = False
     time.sleep(5)
     while time.time() - start < timeout:
-        if ping_host(ip):
-            # Dio ping → dar tiempo extra para que servicios arranquen
+        is_up = ping_host(ip)
+        if not is_up:
+            saw_down = True
+        elif saw_down:
+            # Volvió a responder: dar tiempo extra para que servicios arranquen.
             time.sleep(15)
             return True
         time.sleep(interval)
@@ -923,8 +926,8 @@ CRON
             persistence_status = verify_persistence_probe(ip, persistence_probe)
         else:
             time.sleep(5)
-            # Un restart del servicio no permite diagnosticar persistencia de la SD.
-            run_ssh_command(ip, "rm -f /home/solinfnet/.update_persistence_probe", timeout=10)
+            # Un restart del servicio no permite diagnosticar persistencia de la SD;
+            # mantenemos el marcador para validarlo con un reboot controlado al final.
     else:
         # Gateway antiguo: SIN servicio systemd → reboot directo (como v3)
         update_progress(6, "Sin servicio systemd → haciendo reboot (como v3)...", 60)
@@ -960,8 +963,35 @@ CRON
             wait_for_ping(ip, timeout=180)
         time.sleep(5)
     
-    # 10. 🔧 VERIFICAR POR PUERTO (no por systemctl, que puede no existir)
-    update_progress(10, "Verificando que SolinfNet responde...", 90)
+    # 10. Verificar persistencia si el flujo solo reinicio el servicio.
+    if persistence_status == "NOT_VERIFIED":
+        update_progress(10, "Verificando persistencia de la SD con reboot...", 86)
+        if not persistence_probe:
+            persistence_probe = prepare_persistence_probe(ip)
+        run_ssh_command(ip, f"echo '{Config.RASP_PASSWORD}' | sudo -S reboot", timeout=10)
+        update_progress(10, "Esperando retorno tras reboot de persistencia...", 88)
+        if not wait_for_ping(ip, timeout=180):
+            save_gateway_status(ip, old_version, "OFFLINE", None, os_data)
+            save_update_history(ip, old_version, TARGET_VERSION, "FAILED",
+                                int(time.time() - start_time), "Gateway no volvió tras reboot de persistencia (180s)")
+            return {"ip": ip, "status": "FAILED",
+                    "msg": "⚠️ Gateway no volvió después del reboot de persistencia"}
+        persistence_status = verify_persistence_probe(ip, persistence_probe)
+
+    if persistence_status == "FROZEN":
+        update_progress(10, "⚠️ Cartao congelado detectado", 90)
+        post_reboot_version = read_solinfnet_version(ip, attempts=6, wait=5.0) or old_version
+        post_conf_data = extract_conf_data(ip)
+        duration = int(time.time() - start_time)
+        save_gateway_status(ip, post_reboot_version, "FROZEN_CARD", post_conf_data, os_data)
+        save_update_history(ip, old_version, TARGET_VERSION, "FAILED", duration, "Cartao congelado")
+        return {"ip": ip, "status": "FAILED",
+                "msg": "⚠️ Cartao congelado detectado",
+                "duration": duration, "diagnostic": "FROZEN_CARD",
+                "version_after_reboot": post_reboot_version}
+
+    # 11. 🔧 VERIFICAR POR PUERTO (no por systemctl, que puede no existir)
+    update_progress(11, "Verificando que SolinfNet responde...", 90)
     ver_res = run_ssh_command(ip, 
         "curl -s -u admin:admin -m 5 http://localhost:8085/about.htm 2>/dev/null | grep -oE 'Version: [0-9.]+' | head -1",
         timeout=15)
@@ -979,16 +1009,16 @@ CRON
             return {"ip": ip, "status": "FAILED", 
                     "msg": "⚠️ Archivos copiados pero SolinfNet no responde (verificar manualmente)"}
     
-    # 11. 🆕 RE-EXTRAER DATOS DEL CONF (para actualizar has_relay y otros metadatos)
-    update_progress(11, "Actualizando metadatos del gateway...", 90)
+    # 12. 🆕 RE-EXTRAER DATOS DEL CONF (para actualizar has_relay y otros metadatos)
+    update_progress(12, "Actualizando metadatos del gateway...", 92)
     conf_data = extract_conf_data(ip)
     
-    # 12. Verificar nueva versión. Después de reiniciar, about.htm puede tardar en reflejar la versión nueva.
-    update_progress(12, "Verificando nueva versión...", 95)
+    # 13. Verificar nueva versión. Después de reiniciar, about.htm puede tardar en reflejar la versión nueva.
+    update_progress(13, "Verificando nueva versión...", 96)
     new_version = read_solinfnet_version(ip, attempts=10, wait=5.0) or "Desconocida"
     duration = int(time.time() - start_time)
     
-    # 13. 🆕 GUARDAR TODO EN LA BD (incluyendo SO, Relay, Conf)
+    # 14. 🆕 GUARDAR TODO EN LA BD (incluyendo SO, Relay, Conf)
     if new_version == TARGET_VERSION or normalize_version(new_version) == normalize_version(TARGET_VERSION):
         save_gateway_status(ip, new_version, "UPDATED", conf_data, os_data)
         save_update_history(ip, old_version, new_version, "SUCCESS", duration, None)
@@ -1003,13 +1033,12 @@ CRON
         
         msg_extra = f" | 🔧 {', '.join(automatizaciones)}" if automatizaciones else ""
         msg_warning = f" | ⚠️ Relay LPWAN no configurado: {lpwan_warning}" if lpwan_warning else ""
-        frozen_warning = " | ⚠️ Cartao congelado confirmado" if persistence_status == "FROZEN" else ""
         
-        update_progress(13, "✅ Actualización completada", 100)
+        update_progress(14, "✅ Actualización completada", 100)
         return {
             "ip": ip, 
             "status": "SUCCESS", 
-            "msg": f"✅ Actualizado de {old_version} a {new_version}{msg_extra}{msg_warning}{frozen_warning}",
+            "msg": f"✅ Actualizado de {old_version} a {new_version}{msg_extra}{msg_warning}",
             "duration": duration,
             "automatizaciones": automatizaciones,
             "os_version": os_data.get('os_version') if os_data else None

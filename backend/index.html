@@ -612,6 +612,7 @@ body::after{
                         <option value="PENDING" data-i18n="opt_status_pending">🔄 Pendiente</option>
                         <option value="OFFLINE" data-i18n="opt_status_offline">❌ Offline</option>
                         <option value="ERROR" data-i18n="opt_status_error">⚠️ Error</option>
+                        <option value="FROZEN_CARD" data-i18n="opt_status_frozen">🧊 Necesario substituir</option>
                     </select>
                     <select id="filterOS" onchange="applyFilters()" class="bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-600 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-brand-500 transition">
                         <option value="" data-i18n="opt_all_os">Todos los SO</option>
@@ -708,11 +709,27 @@ body::after{
                 </div>
             </div>
 
-            <div class="grid grid-cols-2 md:grid-cols-4 gap-4 mb-5">
-                <div class="card p-4"><div class="text-xs text-slate-500" data-i18n="diag_mono">Problemas Mono / espacio</div><div id="diagMono" class="text-2xl font-bold text-amber-500">0</div></div>
-                <div class="card p-4"><div class="text-xs text-slate-500" data-i18n="diag_low_space">Poco espacio detectado</div><div id="diagLowSpace" class="text-2xl font-bold text-red-500">0</div></div>
-                <div class="card p-4"><div class="text-xs text-slate-500" data-i18n="diag_frozen">Cartões congelados</div><div id="diagFrozen" class="text-2xl font-bold text-red-600">0</div></div>
-                <div class="card p-4"><div class="text-xs text-slate-500" data-i18n="diag_persistence">Pruebas persistentes</div><div id="diagPersistence" class="text-2xl font-bold text-emerald-500">0</div></div>
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-5">
+                <button type="button" onclick="openDiagnosticDetail('MONO_NO_SPACE')" class="card card-interactive p-4 text-left group focus:outline-none focus:ring-2 focus:ring-amber-400">
+                    <div class="flex items-start justify-between gap-3">
+                        <div>
+                            <div class="text-xs text-slate-500" data-i18n="diag_mono">Problemas Mono / espacio</div>
+                            <div class="text-[11px] text-slate-400 mt-1" data-i18n="diag_click_help">Clic para ver afectados</div>
+                        </div>
+                        <span class="text-amber-500 group-hover:scale-110 transition">↗</span>
+                    </div>
+                    <div id="diagMono" class="text-2xl font-bold text-amber-500 mt-2">0</div>
+                </button>
+                <button type="button" onclick="openDiagnosticDetail('FROZEN_CARD')" class="card card-interactive p-4 text-left group focus:outline-none focus:ring-2 focus:ring-red-400">
+                    <div class="flex items-start justify-between gap-3">
+                        <div>
+                            <div class="text-xs text-slate-500" data-i18n="diag_frozen">Tarjetas congeladas</div>
+                            <div class="text-[11px] text-slate-400 mt-1" data-i18n="diag_click_help">Clic para ver afectados</div>
+                        </div>
+                        <span class="text-red-500 group-hover:scale-110 transition">↗</span>
+                    </div>
+                    <div id="diagFrozen" class="text-2xl font-bold text-red-600 mt-2">0</div>
+                </button>
             </div>
 
             <!-- Top Failures -->
@@ -854,11 +871,12 @@ body::after{
                 no_gateways: "No hay gateways. Escanea una IP.",
                 btn_history: "Historial",
                 status_updated: "OK - sin acción necesaria", status_pending: "Pendiente",
-                status_offline: "Offline", status_error: "Error",
+                status_offline: "Offline", status_error: "Error", status_frozen: "Cartao congelado - necesario substituir",
                 status_updated_main: "OK", status_updated_sub: "Sin acción",
                 status_pending_main: "Pendiente", status_pending_sub: "Actualizar",
                 status_offline_main: "Offline", status_offline_sub: "Sin acceso",
                 status_error_main: "Error", status_error_sub: "Revisar",
+                status_frozen_main: "Necesario", status_frozen_sub: "Substituir",
                 confirm_update_single: "¿Actualizar {ip} a la versión {version}?\n\nSe verificará la versión actual y se procederá con la actualización si es necesario.",
                 confirm_force_update_single: "¿Reinstalar {ip} aunque ya esté en la versión {version}?\n\nEsto vuelve a copiar archivos, rehace crontab/configuración, limpia mono_crash y reintenta Relay LPWAN.",
                 confirm_update_multiple: "⚠️ Confirmar actualización\n\n¿Actualizar {count} gateway(s) seleccionados a la versión {version}?\n\nEsto puede tomar varios minutos.",
@@ -897,7 +915,7 @@ body::after{
                 tab_mapa: "Mapa de Gateways", map_title: "Mapa de Gateways",
                 map_total_gps: "Total con GPS", map_offline: "Offline", map_offline_error: "Offline/Error",
                 report_title: "Dashboard Ejecutivo", global_status: "Estado Global de la Flota",
-                diag_mono: "Problemas Mono / espacio", diag_low_space: "Poco espacio detectado", diag_frozen: "Tarjetas congeladas", diag_persistence: "Pruebas persistentes",
+                diag_mono: "Problemas Mono / espacio", diag_frozen: "Tarjetas congeladas", diag_click_help: "Clic para ver afectados",
                 by_crop: "Progreso por Tipo de Cultivo", top_failures: "Top 10 Clientes con más Fallos",
                 btn_export_excel: "Exportar a Excel", btn_export_pdf: "Imprimir / PDF",
                 th_client: "Cliente", th_unity: "Unidad", th_crop: "Cultivo", th_total: "Total", th_offline: "Offline/Error",
@@ -929,6 +947,7 @@ body::after{
                 opt_status_pending: "🔄 Pendiente",
                 opt_status_offline: "❌ Offline",
                 opt_status_error: "⚠️ Error",
+                opt_status_frozen: "🧊 Necesario substituir",
                 opt_all_os: "Todos los SO",
                 opt_all_relay: "Todos los Relay",
                 opt_relay_with: "✅ Con Relay LPWAN",
@@ -1032,11 +1051,12 @@ body::after{
                 no_gateways: "Não há gateways. Escaneie um IP.",
                 btn_history: "Histórico",
                 status_updated: "OK - sem ação necessária", status_pending: "Pendente",
-                status_offline: "Offline", status_error: "Erro",
+                status_offline: "Offline", status_error: "Erro", status_frozen: "Cartão congelado - necessário substituir",
                 status_updated_main: "OK", status_updated_sub: "Sem ação",
                 status_pending_main: "Pendente", status_pending_sub: "Atualizar",
                 status_offline_main: "Offline", status_offline_sub: "Sem acesso",
                 status_error_main: "Erro", status_error_sub: "Revisar",
+                status_frozen_main: "Necessário", status_frozen_sub: "Substituir",
                 confirm_update_single: "Atualizar {ip} para a versão {version}?\n\nA versão atual será verificada e a atualização prosseguirá se necessário.",
                 confirm_force_update_single: "Reinstalar {ip} mesmo que já esteja na versão {version}?\n\nIsso copia os arquivos novamente, refaz crontab/configuração, limpa mono_crash e tenta Relay LPWAN de novo.",
                 confirm_update_multiple: "⚠️ Confirmar atualização\n\nAtualizar {count} gateway(s) selecionados para a versão {version}?\n\nIsso pode levar vários minutos.",
@@ -1075,7 +1095,7 @@ body::after{
                 tab_mapa: "Mapa de Gateways", map_title: "Mapa de Gateways",
                 map_total_gps: "Total com GPS", map_offline: "Offline", map_offline_error: "Offline/Erro",
                 report_title: "Dashboard Executivo", global_status: "Status Global da Frota",
-                diag_mono: "Problemas Mono / espaço", diag_low_space: "Pouco espaço detectado", diag_frozen: "Cartões congelados", diag_persistence: "Testes persistentes",
+                diag_mono: "Problemas Mono / espaço", diag_frozen: "Cartões congelados", diag_click_help: "Clique para ver afetados",
                 by_crop: "Progresso por Tipo de Cultivo", top_failures: "Top 10 Clientes com mais Falhas",
                 btn_export_excel: "Exportar para Excel", btn_export_pdf: "Imprimir / PDF",
                 th_client: "Cliente", th_unity: "Unidade", th_crop: "Cultivo", th_total: "Total", th_offline: "Offline/Erro",
@@ -1107,6 +1127,7 @@ body::after{
                 opt_status_pending: "🔄 Pendente",
                 opt_status_offline: "❌ Offline",
                 opt_status_error: "⚠️ Erro",
+                opt_status_frozen: "🧊 Necessário substituir",
                 opt_all_os: "Todos os SO",
                 opt_all_relay: "Todos os Relay",
                 opt_relay_with: "✅ Com Relay LPWAN",
@@ -1173,7 +1194,8 @@ body::after{
                 UPDATED: t('status_updated'),
                 PENDING: t('status_pending'),
                 OFFLINE: t('status_offline'),
-                ERROR: t('status_error')
+                ERROR: t('status_error'),
+                FROZEN_CARD: t('status_frozen')
             };
             return map[status] || status || '-';
         }
@@ -1183,7 +1205,8 @@ body::after{
                 UPDATED: ['badge-success', 'status_updated_main', 'status_updated_sub'],
                 PENDING: ['badge-warning', 'status_pending_main', 'status_pending_sub'],
                 OFFLINE: ['badge-danger', 'status_offline_main', 'status_offline_sub'],
-                ERROR: ['badge-danger', 'status_error_main', 'status_error_sub']
+                ERROR: ['badge-danger', 'status_error_main', 'status_error_sub'],
+                FROZEN_CARD: ['badge-danger', 'status_frozen_main', 'status_frozen_sub']
             }[status] || ['badge-neutral', 'status_error_main', 'status_error_sub'];
             const [tone, mainKey, subKey] = config;
             return `<span class="badge ${tone} status-pill" title="${esc(statusLabel(status))}"><span class="badge-main">${esc(t(mainKey))}</span><span class="badge-sub">${esc(t(subKey))}</span></span>`;
@@ -1839,7 +1862,7 @@ body::after{
             progressContent.innerHTML = Array.from(stateByIp.values()).map(task => {
                 const resultStatus = task.result?.status;
                 const completed = task.state === 'SUCCESS' || task.state === 'FAILURE';
-                const failed = task.state === 'FAILURE' || ['FAILED', 'BLOCKED', 'ERROR', 'OFFLINE'].includes(resultStatus);
+                const failed = task.state === 'FAILURE' || ['FAILED', 'BLOCKED', 'ERROR', 'OFFLINE', 'FROZEN_CARD'].includes(resultStatus) || task.result?.diagnostic === 'FROZEN_CARD';
                 const percent = completed ? 100 : (task.percent || 0);
                 const icon = completed
                     ? (failed ? '❌' : '✅')
@@ -2023,7 +2046,7 @@ body::after{
 
                 const failedCount = Array.from(stateByIp.values()).filter(task => {
                     const resultStatus = task.result?.status;
-                    return task.state === 'FAILURE' || ['FAILED', 'BLOCKED', 'ERROR', 'OFFLINE'].includes(resultStatus);
+                    return task.state === 'FAILURE' || ['FAILED', 'BLOCKED', 'ERROR', 'OFFLINE', 'FROZEN_CARD'].includes(resultStatus) || task.result?.diagnostic === 'FROZEN_CARD';
                 }).length;
 
                 if (failedCount > 0) {
@@ -2065,7 +2088,7 @@ body::after{
                     clearInterval(interval);
                     const r = data.result;
                     let borderClass = 'border-emerald-400', textClass = 'text-emerald-700 dark:text-emerald-400', icon = '✅';
-                    if (r.status === 'OFFLINE' || r.status === 'ERROR') { borderClass = 'border-red-400'; textClass = 'text-red-700 dark:text-red-400'; icon = '❌'; }
+                    if (r.status === 'OFFLINE' || r.status === 'ERROR' || r.status === 'FROZEN_CARD' || r.diagnostic === 'FROZEN_CARD') { borderClass = 'border-red-400'; textClass = 'text-red-700 dark:text-red-400'; icon = '❌'; }
                     if (r.status === 'PENDING') { borderClass = 'border-amber-400'; textClass = 'text-amber-700 dark:text-amber-400'; icon = '🔄'; }
                     document.getElementById(domId).className = `card border-l-4 ${borderClass} p-3 flex justify-between items-center`;
                     document.getElementById(domId).innerHTML = `<span class="font-mono font-semibold text-sm">${esc(ip)}</span><span class="${textClass} font-medium text-sm">${icon} ${esc(r.msg)}</span>`;
@@ -2392,12 +2415,22 @@ ${(g.os_codename === 'jessie' || g.os_codename === 'stretch') ? `<button onclick
             const progressContent = document.getElementById('progressContent');
             if (progressContent) progressContent.removeAttribute('data-batch-run-id');
 
+            const terminalResultStatuses = ['FAILED', 'BLOCKED', 'ERROR', 'OFFLINE', 'FROZEN_CARD'];
+            const isTaskTerminal = (task) => task.state === 'SUCCESS' || task.state === 'FAILURE' || terminalResultStatuses.includes(task.result?.status) || task.result?.diagnostic === 'FROZEN_CARD';
+            const isTaskFailed = (task) => task.state === 'FAILURE' || terminalResultStatuses.includes(task.result?.status) || task.result?.diagnostic === 'FROZEN_CARD';
+            const humanTaskMessage = (msg) => {
+                if (!msg) return '';
+                if (/cartao congelado|cartão congelado|frozen_card/i.test(msg)) return currentLang === 'pt' ? 'Cartão congelado detectado' : 'Cartao congelado detectado';
+                return msg;
+            };
+
             const renderTaskCard = (task, completed = false) => {
-                const percent = completed ? 100 : (task.percent || 0);
-                const resultStatus = task.result?.status || task.state;
-                const isSuccess = completed && task.state === 'SUCCESS' && !['FAILED', 'BLOCKED', 'ERROR'].includes(resultStatus);
-                const icon = completed ? (isSuccess ? '✅' : '❌') : '<svg class="w-4 h-4 animate-spin" fill="none" viewBox="0 0 24 24"><circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle><path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z"></path></svg>';
-                const msg = completed ? (task.result?.msg || task.error || 'OK') : (tProgress(task.message) || t('progress_waiting_start'));
+                const done = completed || isTaskTerminal(task);
+                const percent = done ? 100 : (task.percent || 0);
+                const isSuccess = done && !isTaskFailed(task);
+                const icon = done ? (isSuccess ? '✅' : '❌') : '<svg class="w-4 h-4 animate-spin" fill="none" viewBox="0 0 24 24"><circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle><path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z"></path></svg>';
+                const rawMsg = done ? (task.result?.msg || task.error || 'OK') : (tProgress(task.message) || t('progress_waiting_start'));
+                const msg = humanTaskMessage(rawMsg);
                 return `<div class="bg-white/10 rounded-lg p-4">
                     <div class="flex justify-between items-center mb-2"><span class="font-mono font-bold text-sm">${esc(task.ip || '')}</span><span class="text-sm font-bold flex items-center gap-2">${icon}${percent}%</span></div>
                     <div class="w-full bg-white/20 rounded-full h-1.5"><div class="bg-white h-1.5 rounded-full progress-bar" style="width: ${percent}%"></div></div>
@@ -2458,7 +2491,7 @@ ${(g.os_codename === 'jessie' || g.os_codename === 'stretch') ? `<button onclick
                                 }
                                 missingPollsById.delete(base.task_id);
                                 const normalized = { ...base, ...status, task_id: base.task_id, ip: status.ip || base.ip };
-                                if (status.state === 'SUCCESS' || status.state === 'FAILURE') completedById.set(base.task_id, normalized);
+                                if (isTaskTerminal(normalized)) completedById.set(base.task_id, normalized);
                                 else directActive.push(normalized);
                             });
                             completed = Array.from(completedById.values());
@@ -2505,10 +2538,22 @@ ${(g.os_codename === 'jessie' || g.os_codename === 'stretch') ? `<button onclick
                         return;
                     }
 
+                    const activeStillRunning = data.active.filter(task => !isTaskTerminal(task));
+                    const activeTerminal = data.active.filter(task => isTaskTerminal(task));
                     progressContent.innerHTML = [
-                        ...data.active.map(task => renderTaskCard(task)),
+                        ...activeStillRunning.map(task => renderTaskCard(task)),
+                        ...activeTerminal.map(task => renderTaskCard(task, true)),
                         ...data.completed.map(task => renderTaskCard(task, true))
                     ].join('');
+
+                    if (activeStillRunning.length === 0 && activeTerminal.length > 0) {
+                        clearInterval(updateProgressInterval);
+                        updateProgressInterval = null;
+                        setTimeout(() => {
+                            loadGateways();
+                            setTimeout(() => document.getElementById('updateProgress').classList.add('hidden'), 5000);
+                        }, 2000);
+                    }
                 } catch (err) { console.error(err); }
             }, 2000);
         }
@@ -2575,7 +2620,13 @@ ${(g.os_codename === 'jessie' || g.os_codename === 'stretch') ? `<button onclick
                                 const badge = ok
                                     ? '<span class="badge badge-success">OK</span>'
                                     : `<span class="badge badge-danger">${esc(h.status)}</span>`;
-                                const err = (!ok && h.error_message) ? `<div class="text-xs text-red-500 mt-1">${esc(h.error_message)}</div>` : '';
+                                const cleanHistoryError = (msg) => {
+                                    if (!msg) return '';
+                                    if (/cartao congelado|cartão congelado|frozen_card/i.test(msg)) return currentLang === 'pt' ? 'Cartão congelado' : 'Cartao congelado';
+                                    return msg;
+                                };
+                                const errMsg = cleanHistoryError(h.error_message);
+                                const err = (!ok && errMsg) ? `<div class="text-xs text-red-500 mt-1">${esc(errMsg)}</div>` : '';
                                 return `<tr>
                                     <td class="text-xs text-slate-400 whitespace-nowrap">${fecha}</td>
                                     <td class="font-medium">${esc(op)}</td>
@@ -2616,6 +2667,88 @@ ${(g.os_codename === 'jessie' || g.os_codename === 'stretch') ? `<button onclick
             if (tabName === 'reportes') setTimeout(buildMuroSalud, 150);
         }
 
+        async function openDiagnosticDetail(eventType) {
+            const labels = {
+                MONO_NO_SPACE: currentLang === 'pt' ? 'Problemas Mono / espaço' : 'Problemas Mono / espacio',
+                FROZEN_CARD: currentLang === 'pt' ? 'Cartões congelados' : 'Tarjetas congeladas'
+            };
+            const modalId = 'diagnosticModal';
+            let modal = document.getElementById(modalId);
+            if (!modal) {
+                modal = document.createElement('div');
+                modal.id = modalId;
+                modal.className = 'modal-backdrop';
+                modal.onclick = (e) => { if (e.target === modal) modal.remove(); };
+                document.body.appendChild(modal);
+            }
+            modal.innerHTML = `
+                <div class="modal-content" style="max-width: 980px;">
+                    <div class="flex justify-between items-start gap-4 p-5 border-b border-slate-200 dark:border-slate-700">
+                        <div>
+                            <p class="text-[11px] uppercase tracking-widest text-slate-400 font-bold">${currentLang === 'pt' ? 'Diagnóstico operacional' : 'Diagnóstico operativo'}</p>
+                            <h3 class="text-lg font-semibold text-slate-900 dark:text-white mt-1">${esc(labels[eventType] || eventType)}</h3>
+                        </div>
+                        <button onclick="document.getElementById('${modalId}').remove()" class="text-slate-400 hover:text-slate-600 dark:hover:text-slate-200 p-1 rounded-lg hover:bg-slate-100 dark:hover:bg-slate-700 transition">
+                            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/></svg>
+                        </button>
+                    </div>
+                    <div class="overflow-y-auto p-5" style="max-height: 70vh;" id="diagnosticContent">
+                        <div class="flex items-center justify-center py-12 text-slate-400"><svg class="w-6 h-6 animate-spin mr-2" fill="none" viewBox="0 0 24 24"><circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle><path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z"></path></svg>${currentLang === 'pt' ? 'Carregando afetados...' : 'Cargando afectados...'}</div>
+                    </div>
+                </div>`;
+            modal.classList.remove('hidden');
+
+            try {
+                const res = await fetch(`/api/reportes/diagnosticos/${encodeURIComponent(eventType)}`);
+                if (!res.ok) throw new Error('diagnostic detail failed');
+                const data = await res.json();
+                const affected = data.affected || [];
+                const content = document.getElementById('diagnosticContent');
+                if (!affected.length) {
+                    content.innerHTML = `<div class="text-center py-12 text-slate-400">${currentLang === 'pt' ? 'Nenhum gateway afetado por este diagnóstico.' : 'No hay gateways afectados por este diagnóstico.'}</div>`;
+                    return;
+                }
+                const clients = new Set(affected.map(a => a.cliente).filter(Boolean)).size;
+                const outdated = affected.filter(a => a.status && a.status !== 'UPDATED').length;
+                content.innerHTML = `
+                    <div class="grid grid-cols-1 sm:grid-cols-3 gap-3 mb-4">
+                        <div class="dossier-soft p-4"><div class="text-xs text-slate-400 uppercase tracking-wider">${currentLang === 'pt' ? 'Gateways afetados' : 'Gateways afectados'}</div><div class="text-2xl font-bold text-red-500 mt-1">${affected.length}</div></div>
+                        <div class="dossier-soft p-4"><div class="text-xs text-slate-400 uppercase tracking-wider">${currentLang === 'pt' ? 'Clientes' : 'Clientes'}</div><div class="text-2xl font-bold text-blue-500 mt-1">${clients}</div></div>
+                        <div class="dossier-soft p-4"><div class="text-xs text-slate-400 uppercase tracking-wider">${currentLang === 'pt' ? 'Com ação pendente' : 'Con acción pendiente'}</div><div class="text-2xl font-bold text-amber-500 mt-1">${outdated}</div></div>
+                    </div>
+                    <div class="overflow-auto custom-scroll border border-slate-200 dark:border-slate-700 rounded-xl">
+                        <table class="data-table">
+                            <thead><tr>
+                                <th>IP</th><th>${currentLang === 'pt' ? 'Cliente' : 'Cliente'}</th><th>${currentLang === 'pt' ? 'Unidade' : 'Unidad'}</th><th>${currentLang === 'pt' ? 'Descrição' : 'Descripción'}</th><th>${currentLang === 'pt' ? 'Status' : 'Estado'}</th><th>${currentLang === 'pt' ? 'Último evento' : 'Último evento'}</th>
+                            </tr></thead>
+                            <tbody>${affected.map(a => {
+                                const ts = a.event_ts ? new Date(a.event_ts).toLocaleString(currentLang === 'pt' ? 'pt-BR' : 'es-ES', {dateStyle:'short', timeStyle:'short'}) : '-';
+                                const ipArg = JSON.stringify(a.ip || null).replace(/</g, '\u003c');
+                                const clienteCell = a.cliente_id
+                                    ? `<button type="button" onclick='openClienteDetalle(${Number(a.cliente_id)})' class="text-left text-blue-600 dark:text-blue-400 hover:underline font-semibold">${esc(a.cliente || '-')}</button>`
+                                    : esc(a.cliente || '-');
+                                const unidadCell = a.unidad_id
+                                    ? `<button type="button" onclick='openUnidadDetalle(${Number(a.unidad_id)}, ${ipArg})' class="text-left text-blue-600 dark:text-blue-400 hover:underline font-semibold">${esc(a.unidad || '-')}</button>`
+                                    : esc(a.unidad || '-');
+                                return `<tr>
+                                    <td class="font-mono text-xs font-semibold">${esc(a.ip)}</td>
+                                    <td>${clienteCell}</td>
+                                    <td>${unidadCell}</td>
+                                    <td class="text-slate-400 max-w-[180px] truncate" title="${esc(a.description || '')}">${esc(a.description || '-')}</td>
+                                    <td>${renderInventoryStatusBadge(a.status)}</td>
+                                    <td class="text-xs text-slate-400 whitespace-nowrap">${esc(ts)}</td>
+                                </tr>`;
+                            }).join('')}</tbody>
+                        </table>
+                    </div>`;
+            } catch (err) {
+                console.error(err);
+                const content = document.getElementById('diagnosticContent');
+                if (content) content.innerHTML = `<div class="text-center py-12 text-red-400">${currentLang === 'pt' ? 'Erro ao carregar afetados.' : 'Error al cargar afectados.'}</div>`;
+            }
+        }
+        window.openDiagnosticDetail = openDiagnosticDetail;
+
         async function loadDashboard() {
             try {
                 const tabReportes = document.getElementById('tab-reportes');
@@ -2647,9 +2780,7 @@ ${(g.os_codename === 'jessie' || g.os_codename === 'stretch') ? `<button onclick
 
                 const diag = data.diagnosticos || {};
                 document.getElementById('diagMono').textContent = diag.mono_sin_espacio || 0;
-                document.getElementById('diagLowSpace').textContent = diag.poco_espacio || 0;
                 document.getElementById('diagFrozen').textContent = diag.cartao_congelado || 0;
-                document.getElementById('diagPersistence').textContent = diag.persistencia_ok || 0;
 
                 // 1. Global Chart (Doughnut)
                 const ctxGlobal = document.getElementById('chartGlobal').getContext('2d');
@@ -3201,9 +3332,10 @@ async function openClienteDetalle(id){
                 </div>
             </div>
             <!-- KPIs -->
-            <div class="grid grid-cols-2 md:grid-cols-4 gap-3 mb-6">
+            <div class="grid grid-cols-2 md:grid-cols-5 gap-3 mb-6">
                 ${_cKpi('ck_act_'+d.id, d.kpis.actualizados, _L('Actualizados','Atualizados'), 'stat-card-updated', 'text-emerald-600 dark:text-emerald-400')}
                 ${_cKpi('ck_pend_'+d.id, d.kpis.pendientes,  _L('Pendientes','Pendentes'),  'stat-card-pending', 'text-amber-600 dark:text-amber-400')}
+                ${_cKpi('ck_sub_'+d.id,  d.kpis.congelados || 0, _L('Substituir','Substituir'), 'stat-card-offline', 'text-red-600 dark:text-red-400')}
                 ${_cKpi('ck_off_'+d.id,  d.kpis.offline,     _L('Offline','Offline'),        'stat-card-offline', 'text-red-600 dark:text-red-400')}
                 ${_cKpi('ck_rel_'+d.id,  d.kpis.con_relay,   _L('Con Relay','Com Relay'),    'stat-card-total',   'text-blue-600 dark:text-blue-400')}
             </div>
@@ -3224,11 +3356,12 @@ async function openClienteDetalle(id){
                         const st=u.status;
                         const stB = st==='UPDATED'?`<span class="badge badge-success">${_L('Actualizado','Atualizado')}</span>`
                             : st==='PENDING'?`<span class="badge badge-warning">${_L('Pendiente','Pendente')}</span>`
+                            : st==='FROZEN_CARD'?`<span class="badge badge-danger">${_L('Necesario substituir','Necessário substituir')}</span>`
                             : st==='SIN_GATEWAY'?`<span class="badge badge-neutral">—</span>`
-                            : `<span class="badge badge-danger">${esc(st)}</span>`;
+                            : `<span class="badge badge-danger">${esc(statusLabel(st))}</span>`;
                         const soBad = u.os_codename==='jessie'||u.os_codename==='stretch';
                         const relay = u.has_relay===true?'<span class="badge badge-success">✓</span>':u.has_relay===false?'<span class="badge badge-danger">✗</span>':'<span class="badge badge-neutral">·</span>';
-                        const alert = (st==='OFFLINE'||st==='ERROR'||soBad);
+                        const alert = (st==='OFFLINE'||st==='ERROR'||st==='FROZEN_CARD'||soBad);
                         return `<tr class="${alert?'bg-red-50 dark:bg-red-900/10':''}">
                             <td class="font-medium"><button type="button" data-open-unidad data-unidad-id="${Number(u.id)}" data-gateway-ip="${esc(u.ip || '')}" class="text-left hover:text-brand-600 dark:hover:text-brand-400 hover:underline">${esc(u.unidad)}</button></td><td class="font-mono text-xs">${esc(u.ip||'-')}</td>
                             <td class="text-slate-400">${esc(u.description||'-')}</td><td class="font-mono text-xs">${esc(u.version||'-')}</td>
@@ -3263,7 +3396,7 @@ async function openClienteDetalle(id){
         });
 
         requestAnimationFrame(()=>{ const b=document.getElementById('cSaludBar'); if(b) b.style.width=d.salud+'%'; });
-        [['act',d.kpis.actualizados],['pend',d.kpis.pendientes],['off',d.kpis.offline],['rel',d.kpis.con_relay]]
+        [['act',d.kpis.actualizados],['pend',d.kpis.pendientes],['sub',d.kpis.congelados || 0],['off',d.kpis.offline],['rel',d.kpis.con_relay]]
             .forEach(([k,v])=>animateCounter('ck_'+k+'_'+d.id, v));
 
         const isDark=document.documentElement.classList.contains('dark');
@@ -3272,7 +3405,7 @@ async function openClienteDetalle(id){
             plugins:{legend:{position:'bottom',labels:{color:txt,boxWidth:10,padding:10,font:{size:11}}}}};
         _cCharts.push(new Chart(document.getElementById('cSalud'),{type:'doughnut',
             data:{labels:[_L('Sana','Saudável'),_L('Atención','Atenção')],
-              datasets:[{data:[d.kpis.actualizados,d.kpis.pendientes+d.kpis.offline],backgroundColor:['#10b981','#ef4444'],borderColor:bdc,borderWidth:2}]},options:dOpt}));
+              datasets:[{data:[d.kpis.actualizados,d.kpis.pendientes+d.kpis.offline+(d.kpis.congelados || 0)],backgroundColor:['#10b981','#ef4444'],borderColor:bdc,borderWidth:2}]},options:dOpt}));
         const soK=Object.keys(d.por_so), soV=Object.values(d.por_so);
         _cCharts.push(new Chart(document.getElementById('cSO'),{type:'doughnut',
             data:{labels:soK,datasets:[{data:soV,backgroundColor:['#10b981','#f59e0b','#ef4444','#3b82f6','#94a3b8'],borderColor:bdc,borderWidth:2}]},options:dOpt}));
@@ -3286,7 +3419,7 @@ async function openClienteDetalle(id){
                 const torre = p.description ? `<br><span>${_L('Torre','Torre')}: ${esc(p.description)}</span>` : '';
                 const frota = p.fleet_number ? `<br><span>${_L('Flota','Frota')}: ${esc(p.fleet_number)}</span>` : '';
                 L.circleMarker([p.lat,p.lon],{radius:6,fillColor:col,color:'#fff',weight:1,fillOpacity:.9})
-                    .bindPopup(`<b>${esc(p.ip)}</b><br>${esc(p.unidad||'')}${torre}${frota}<br>${esc(p.status)}`).addTo(_cMap);
+                    .bindPopup(`<b>${esc(p.ip)}</b><br>${esc(p.unidad||'')}${torre}${frota}<br>${esc(statusLabel(p.status))}`).addTo(_cMap);
                 bounds.push([p.lat,p.lon]);
             });
             _cMap.fitBounds(bounds,{padding:[18,18]});
@@ -3455,6 +3588,7 @@ async function openUnidadDetalle(id, gatewayIp = null) {
             PENDING:  {t:_L('Pendiente','Pendente'),     g1:'#b45309', g2:'#f59e0b', dot:'#fbbf24'},
             OFFLINE:  {t:_L('Offline','Offline'),         g1:'#b91c1c', g2:'#ef4444', dot:'#f87171'},
             ERROR:    {t:_L('Error','Erro'),               g1:'#b91c1c', g2:'#ef4444', dot:'#f87171'},
+            FROZEN_CARD:{t:_L('Necesario substituir','Necessário substituir'), g1:'#991b1b', g2:'#ef4444', dot:'#f87171'},
             SIN_GATEWAY:{t:_L('Sin gateway vinculado','Sem gateway vinculado'), g1:'#475569', g2:'#64748b', dot:'#94a3b8'},
         }[st] || {t:st, g1:'#475569', g2:'#64748b', dot:'#94a3b8'};
         const ip = gw ? gw.ip : null;
@@ -3811,7 +3945,7 @@ async function sceneMap(wrap, K) {
 async function sceneWall(wrap, K) {
     const gws = await (await fetch('/api/gateways?t=' + Date.now())).json();
     const map = {};
-    gws.forEach(g => { if (!g.cliente) return; (map[g.cliente] = map[g.cliente] || {n:g.cliente,t:0,ok:0,off:0}); map[g.cliente].t++; if (g.status==='UPDATED') map[g.cliente].ok++; if (g.status==='OFFLINE'||g.status==='ERROR') map[g.cliente].off++; });
+    gws.forEach(g => { if (!g.cliente) return; (map[g.cliente] = map[g.cliente] || {n:g.cliente,t:0,ok:0,off:0,sub:0}); map[g.cliente].t++; if (g.status==='UPDATED') map[g.cliente].ok++; if (g.status==='OFFLINE'||g.status==='ERROR') map[g.cliente].off++; if (g.status==='FROZEN_CARD') map[g.cliente].sub++; });
     const list = Object.values(map).map(c => ({...c, s: c.t?Math.round(c.ok/c.t*100):0})).sort((a,b)=>a.s-b.s||b.off-a.off);
     wrap.innerHTML = `<div class="kio-h" style="font-size:clamp(1.2rem,2.6vw,2rem);margin-bottom:.8rem">${_L('Semáforo por cliente · del más crítico al más sano','Semáforo por cliente · do mais crítico ao mais saudável')}</div><div class="kio-wall" id="kioWall"></div>`;
     document.getElementById('kioWall').innerHTML = list.map((c,i) => {
@@ -3819,7 +3953,7 @@ async function sceneWall(wrap, K) {
         return `<div class="kio-ficha" style="--mc:${col};animation-delay:${Math.min(i*45,700)}ms">
           <div style="display:flex;justify-content:space-between;align-items:baseline;gap:.5rem"><span class="kn">${c.n}</span><span class="kp">${c.s}%</span></div>
           <div class="kb"><i style="width:${c.s}%"></i></div>
-          <div style="font-size:.72rem;color:#94a3b8">${c.ok}/${c.t} ${_L('sanos','saudáveis')}${c.off?` · <span style="color:#f87171">${c.off} offline</span>`:''}</div>
+          <div style="font-size:.72rem;color:#94a3b8">${c.ok}/${c.t} ${_L('sanos','saudáveis')}${c.off?` · <span style="color:#f87171">${c.off} offline</span>`:''}${c.sub?` · <span style="color:#f87171">${c.sub} ${_L('substituir','substituir')}</span>`:''}</div>
         </div>`;
     }).join('') || `<div style="color:#64748b;margin:auto">${_L('Sin datos','Sem dados')}</div>`;
 }
