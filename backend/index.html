@@ -699,13 +699,21 @@ body::after{
 
             <!-- Charts -->
             <div class="grid grid-cols-1 md:grid-cols-2 gap-5 mb-6">
-                <div class="card p-5">
-                    <h3 class="text-sm font-semibold mb-4 text-slate-700 dark:text-slate-200 uppercase tracking-wide" data-i18n="global_status">Estado Global de la Flota</h3>
-                    <div style="position: relative; height: 300px;"><canvas id="chartGlobal"></canvas></div>
+                <div class="card p-5 overflow-hidden">
+                    <div class="flex flex-wrap items-center justify-between gap-3 mb-4">
+                        <h3 class="text-sm font-semibold text-slate-700 dark:text-slate-200 uppercase tracking-wide" data-i18n="global_status">Estado Global de la Flota</h3>
+                        <div id="globalChartTypeControl" class="flex rounded-xl bg-slate-100/80 dark:bg-slate-900/60 p-1 border border-slate-200 dark:border-slate-700"></div>
+                    </div>
+                    <div class="rounded-2xl bg-gradient-to-br from-white to-slate-50 dark:from-slate-900/70 dark:to-slate-950/40 border border-slate-100 dark:border-slate-800 p-3" style="position: relative; height: 315px;"><canvas id="chartGlobal"></canvas></div>
+                    <p class="mt-3 text-[11px] text-slate-400" data-i18n="chart_click_hint">Clic en pendientes, offline/error o substituir para ver afectados</p>
                 </div>
-                <div class="card p-5">
-                    <h3 class="text-sm font-semibold mb-4 text-slate-700 dark:text-slate-200 uppercase tracking-wide" data-i18n="by_crop">Progreso por Tipo de Cultivo</h3>
-                    <div style="position: relative; height: 300px;"><canvas id="chartCultivos"></canvas></div>
+                <div class="card p-5 overflow-hidden">
+                    <div class="flex flex-wrap items-center justify-between gap-3 mb-4">
+                        <h3 class="text-sm font-semibold text-slate-700 dark:text-slate-200 uppercase tracking-wide" data-i18n="by_crop">Progreso por Tipo de Cultivo</h3>
+                        <div id="cropChartTypeControl" class="flex rounded-xl bg-slate-100/80 dark:bg-slate-900/60 p-1 border border-slate-200 dark:border-slate-700"></div>
+                    </div>
+                    <div class="rounded-2xl bg-gradient-to-br from-white to-slate-50 dark:from-slate-900/70 dark:to-slate-950/40 border border-slate-100 dark:border-slate-800 p-3" style="position: relative; height: 315px;"><canvas id="chartCultivos"></canvas></div>
+                    <p class="mt-3 text-[11px] text-slate-400" data-i18n="chart_click_hint">Clic en pendientes, offline/error o substituir para ver afectados</p>
                 </div>
             </div>
 
@@ -741,7 +749,7 @@ body::after{
 <th data-i18n="th_client">Cliente</th>
 <th data-i18n="th_crop">Cultivo</th>
 <th class="text-center" data-i18n="th_total">Total</th>
-<th class="text-center text-red-500" data-i18n="th_offline">Offline/Error</th>
+<th class="text-center text-red-500" data-i18n="th_attention">Atención</th>
 <th class="text-center" data-i18n="th_failure_pct">% Fallo</th>
 </tr></thead>
                         <tbody id="topFallosTable"></tbody>
@@ -768,9 +776,12 @@ body::after{
             </div>
 
             <!-- Relay Chart -->
-            <div class="card p-5">
-                <h3 class="text-sm font-semibold mb-4 text-slate-700 dark:text-slate-200 uppercase tracking-wide" data-i18n="relay_coverage">Cobertura Relay LPWAN</h3>
-                <div style="position: relative; height: 300px;"><canvas id="chartRelay"></canvas></div>
+            <div class="card p-5 overflow-hidden">
+                <div class="flex flex-wrap items-center justify-between gap-3 mb-4">
+                    <h3 class="text-sm font-semibold text-slate-700 dark:text-slate-200 uppercase tracking-wide" data-i18n="relay_coverage">Cobertura Relay LPWAN</h3>
+                    <div id="relayChartTypeControl" class="flex rounded-xl bg-slate-100/80 dark:bg-slate-900/60 p-1 border border-slate-200 dark:border-slate-700"></div>
+                </div>
+                <div class="rounded-2xl bg-gradient-to-br from-white to-slate-50 dark:from-slate-900/70 dark:to-slate-950/40 border border-slate-100 dark:border-slate-800 p-3" style="position: relative; height: 315px;"><canvas id="chartRelay"></canvas></div>
             </div>
         </div><!-- /tab-reportes -->
 
@@ -916,7 +927,7 @@ body::after{
                 map_total_gps: "Total con GPS", map_offline: "Offline", map_offline_error: "Offline/Error",
                 report_title: "Dashboard Ejecutivo", global_status: "Estado Global de la Flota",
                 diag_mono: "Problemas Mono / espacio", diag_frozen: "Tarjetas congeladas", diag_click_help: "Clic para ver afectados",
-                by_crop: "Progreso por Tipo de Cultivo", top_failures: "Top 10 Clientes con más Fallos",
+                by_crop: "Progreso por Tipo de Cultivo", top_failures: "Top 10 Clientes que necesitan atención",
                 btn_export_excel: "Exportar a Excel", btn_export_pdf: "Imprimir / PDF",
                 th_client: "Cliente", th_unity: "Unidad", th_crop: "Cultivo", th_total: "Total", th_offline: "Offline/Error",
                 th_description: "Descripción",
@@ -958,7 +969,8 @@ body::after{
                 filter_clear: "Limpiar filtros",
                 pagination_show: "Mostrar",
                 pagination_all: "Todo",
-                th_failure_pct: "% Fallo",
+                th_attention: "Atención",
+                th_failure_pct: "% Atención",
                 no_gateways_found: "No se encontraron gateways",
                 history_loading: "Cargando historial...",
                 history_empty_title: "Sin historial todavía",
@@ -974,6 +986,21 @@ body::after{
                 relay_with: "Con Relay LPWAN",
                 relay_without: "Sin Relay",
                 relay_unknown: "Sin Información",
+                chart_view: "Vista",
+                chart_gateways: "Gateways",
+                chart_total_label: "Total",
+                chart_type_doughnut: "Dona",
+                chart_type_bar: "Barras",
+                chart_type_stacked: "Apilado",
+                chart_type_horizontal: "Horizontal",
+                chart_type_line: "Línea",
+                chart_status_frozen: "Necesario substituir",
+                chart_click_hint: "Clic en pendientes, offline/error o substituir para ver afectados",
+                report_status_detail: "Gateways por estado",
+                report_status_empty: "No hay gateways en este estado.",
+                report_status_updated_skip: "La lista de actualizados es muy grande; usa las categorias de atencion para operar.",
+                report_last_scan: "Última revisión",
+                report_units: "Unidades",
                 map_popup_client: "Cliente",
                 map_popup_unit: "Unidad",
                 map_popup_description: "Descripción",
@@ -1096,7 +1123,7 @@ body::after{
                 map_total_gps: "Total com GPS", map_offline: "Offline", map_offline_error: "Offline/Erro",
                 report_title: "Dashboard Executivo", global_status: "Status Global da Frota",
                 diag_mono: "Problemas Mono / espaço", diag_frozen: "Cartões congelados", diag_click_help: "Clique para ver afetados",
-                by_crop: "Progresso por Tipo de Cultivo", top_failures: "Top 10 Clientes com mais Falhas",
+                by_crop: "Progresso por Tipo de Cultivo", top_failures: "Top 10 Clientes que precisam de atenção",
                 btn_export_excel: "Exportar para Excel", btn_export_pdf: "Imprimir / PDF",
                 th_client: "Cliente", th_unity: "Unidade", th_crop: "Cultivo", th_total: "Total", th_offline: "Offline/Erro",
                 th_description: "Descrição",
@@ -1138,7 +1165,8 @@ body::after{
                 filter_clear: "Limpar filtros",
                 pagination_show: "Mostrar",
                 pagination_all: "Tudo",
-                th_failure_pct: "% Falha",
+                th_attention: "Atenção",
+                th_failure_pct: "% Atenção",
                 no_gateways_found: "Nenhum gateway encontrado",
                 history_loading: "Carregando histórico...",
                 history_empty_title: "Sem histórico ainda",
@@ -1154,6 +1182,21 @@ body::after{
                 relay_with: "Com Relay LPWAN",
                 relay_without: "Sem Relay",
                 relay_unknown: "Sem Informação",
+                chart_view: "Vista",
+                chart_gateways: "Gateways",
+                chart_total_label: "Total",
+                chart_type_doughnut: "Rosca",
+                chart_type_bar: "Barras",
+                chart_type_stacked: "Empilhado",
+                chart_type_horizontal: "Horizontal",
+                chart_type_line: "Linha",
+                chart_status_frozen: "Necessário substituir",
+                chart_click_hint: "Clique em pendentes, offline/erro ou substituir para ver afetados",
+                report_status_detail: "Gateways por status",
+                report_status_empty: "Não há gateways neste status.",
+                report_status_updated_skip: "A lista de atualizados é muito grande; use as categorias de atenção para operar.",
+                report_last_scan: "Última revisão",
+                report_units: "Unidades",
                 map_popup_client: "Cliente",
                 map_popup_unit: "Unidade",
                 map_popup_description: "Descrição",
@@ -2210,7 +2253,7 @@ body::after{
             }
             tbody.innerHTML = gateways.map(g => {
                 let statusBadge = '', canUpdate = false;
-                if (g.status === 'PENDING') canUpdate = true;
+                if (isInventoryUpdateSelectable(g.status)) canUpdate = true;
                 statusBadge = renderInventoryStatusBadge(g.status);
                 const lastScan = g.last_scan ? new Date(g.last_scan).toLocaleString(currentLang === 'pt' ? 'pt-BR' : 'es-ES', {dateStyle: 'short', timeStyle: 'short'}) : '-';
                 const isChecked = selectedGateways.has(g.ip) ? 'checked' : '';
@@ -2329,12 +2372,16 @@ ${(g.os_codename === 'jessie' || g.os_codename === 'stretch') ? `<button onclick
             return getVisibleGatewayCheckboxes().filter(cb => !cb.disabled);
         }
 
+        function isInventoryUpdateSelectable(status) {
+            return ['PENDING', 'OFFLINE', 'ERROR'].includes(status);
+        }
+
         function pruneSelectedGateways() {
             const visible = getSelectableVisibleGatewayCheckboxes();
             const visibleIps = new Set(visible.map(cb => cb.value));
             const validIps = visibleIps.size > 0
                 ? visibleIps
-                : new Set(filteredGatewaysList.filter(g => g.status === 'PENDING').map(g => g.ip));
+                : new Set(filteredGatewaysList.filter(g => isInventoryUpdateSelectable(g.status)).map(g => g.ip));
             selectedGateways.forEach(ip => { if (!validIps.has(ip)) selectedGateways.delete(ip); });
         }
 
@@ -2648,6 +2695,41 @@ ${(g.os_codename === 'jessie' || g.os_codename === 'stretch') ? `<button onclick
         let chartGlobalInstance = null;
         let chartCultivosInstance = null;
         let dashboardLoaded = false;
+        let chartGlobalType = localStorage.getItem('chartGlobalType') || 'doughnut';
+        let chartCultivosType = localStorage.getItem('chartCultivosType') || 'stacked';
+        let chartRelayType = localStorage.getItem('chartRelayType') || 'doughnut';
+
+        const reportChartOptions = {
+            global: ['doughnut', 'bar'],
+            crop: ['stacked', 'horizontal', 'line'],
+            relay: ['doughnut', 'bar']
+        };
+        if (!reportChartOptions.global.includes(chartGlobalType)) chartGlobalType = 'doughnut';
+        if (!reportChartOptions.relay.includes(chartRelayType)) chartRelayType = 'doughnut';
+
+        function renderReportChartControls() {
+            const render = (id, group, active) => {
+                const host = document.getElementById(id);
+                if (!host) return;
+                host.innerHTML = reportChartOptions[group].map(type => {
+                    const selected = type === active;
+                    const label = t(`chart_type_${type}`);
+                    return `<button type="button" onclick="setReportChartType('${group}','${type}')" class="px-3 py-1.5 rounded-lg text-[11px] font-bold uppercase tracking-wide transition ${selected ? 'bg-blue-600 text-white shadow-sm shadow-blue-500/30' : 'text-slate-500 hover:text-slate-800 hover:bg-white dark:text-slate-400 dark:hover:text-white dark:hover:bg-slate-800'}" title="${esc(t('chart_view'))}: ${esc(label)}">${esc(label)}</button>`;
+                }).join('');
+            };
+            render('globalChartTypeControl', 'global', chartGlobalType);
+            render('cropChartTypeControl', 'crop', chartCultivosType);
+            render('relayChartTypeControl', 'relay', chartRelayType);
+        }
+
+        function setReportChartType(group, type) {
+            if (!reportChartOptions[group] || !reportChartOptions[group].includes(type)) return;
+            if (group === 'global') { chartGlobalType = type; localStorage.setItem('chartGlobalType', type); }
+            if (group === 'crop') { chartCultivosType = type; localStorage.setItem('chartCultivosType', type); }
+            if (group === 'relay') { chartRelayType = type; localStorage.setItem('chartRelayType', type); }
+            loadDashboard();
+        }
+        window.setReportChartType = setReportChartType;
 
         function switchTab(tabName) {
             document.getElementById('tab-operaciones').classList.add('hidden');
@@ -2749,6 +2831,99 @@ ${(g.os_codename === 'jessie' || g.os_codename === 'stretch') ? `<button onclick
         }
         window.openDiagnosticDetail = openDiagnosticDetail;
 
+        async function openReportStatusDetail(statusGroup, cultivo = null) {
+            const group = String(statusGroup || '').toUpperCase();
+            if (group === 'UPDATED') {
+                showToast(t('report_status_updated_skip'), 'info');
+                return;
+            }
+            const labels = {
+                PENDING: t('stat_pending'),
+                OFFLINE: t('map_offline_error'),
+                FROZEN_CARD: t('chart_status_frozen')
+            };
+            if (!labels[group]) return;
+
+            const modalId = 'reportStatusModal';
+            let modal = document.getElementById(modalId);
+            if (!modal) {
+                modal = document.createElement('div');
+                modal.id = modalId;
+                modal.className = 'modal-backdrop';
+                modal.onclick = (e) => { if (e.target === modal) modal.remove(); };
+                document.body.appendChild(modal);
+            }
+            const scope = cultivo ? ` · ${(cultivo || t('chart_unassigned')).toUpperCase()}` : '';
+            modal.innerHTML = `
+                <div class="modal-content" style="max-width: 1040px;">
+                    <div class="flex justify-between items-start gap-4 p-5 border-b border-slate-200 dark:border-slate-700">
+                        <div>
+                            <p class="text-[11px] uppercase tracking-widest text-slate-400 font-bold">${esc(t('report_status_detail'))}</p>
+                            <h3 class="text-lg font-semibold text-slate-900 dark:text-white mt-1">${esc(labels[group])}${esc(scope)}</h3>
+                        </div>
+                        <button onclick="document.getElementById('${modalId}').remove()" class="text-slate-400 hover:text-slate-600 dark:hover:text-slate-200 p-1 rounded-lg hover:bg-slate-100 dark:hover:bg-slate-700 transition">
+                            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/></svg>
+                        </button>
+                    </div>
+                    <div class="overflow-y-auto p-5" style="max-height: 70vh;" id="reportStatusContent">
+                        <div class="flex items-center justify-center py-12 text-slate-400"><svg class="w-6 h-6 animate-spin mr-2" fill="none" viewBox="0 0 24 24"><circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle><path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z"></path></svg>${currentLang === 'pt' ? 'Carregando gateways...' : 'Cargando gateways...'}</div>
+                    </div>
+                </div>`;
+            modal.classList.remove('hidden');
+
+            try {
+                const url = `/api/reportes/gateways_estado/${encodeURIComponent(group)}${cultivo ? `?cultivo=${encodeURIComponent(cultivo)}` : ''}`;
+                const res = await fetch(url);
+                if (!res.ok) throw new Error('status detail failed');
+                const data = await res.json();
+                const gateways = data.gateways || [];
+                const content = document.getElementById('reportStatusContent');
+                if (!gateways.length) {
+                    content.innerHTML = `<div class="text-center py-12 text-slate-400">${esc(t('report_status_empty'))}</div>`;
+                    return;
+                }
+                const clients = new Set(gateways.map(g => g.cliente).filter(Boolean)).size;
+                const units = new Set(gateways.map(g => g.unidad).filter(Boolean)).size;
+                content.innerHTML = `
+                    <div class="grid grid-cols-1 sm:grid-cols-3 gap-3 mb-4">
+                        <div class="dossier-soft p-4"><div class="text-xs text-slate-400 uppercase tracking-wider">Gateways</div><div class="text-2xl font-bold text-red-500 mt-1">${gateways.length}</div></div>
+                        <div class="dossier-soft p-4"><div class="text-xs text-slate-400 uppercase tracking-wider">${esc(t('th_client'))}</div><div class="text-2xl font-bold text-blue-500 mt-1">${clients}</div></div>
+                        <div class="dossier-soft p-4"><div class="text-xs text-slate-400 uppercase tracking-wider">${esc(t('report_units'))}</div><div class="text-2xl font-bold text-amber-500 mt-1">${units}</div></div>
+                    </div>
+                    <div class="overflow-auto custom-scroll border border-slate-200 dark:border-slate-700 rounded-xl">
+                        <table class="data-table">
+                            <thead><tr>
+                                <th>IP</th><th>${esc(t('th_client'))}</th><th>${esc(t('th_unity'))}</th><th>${esc(t('th_description'))}</th><th>${esc(t('th_version'))}</th><th>${esc(t('th_status'))}</th><th>${esc(t('report_last_scan'))}</th>
+                            </tr></thead>
+                            <tbody>${gateways.map(g => {
+                                const ts = g.last_scan ? new Date(g.last_scan).toLocaleString(currentLang === 'pt' ? 'pt-BR' : 'es-ES', {dateStyle:'short', timeStyle:'short'}) : '-';
+                                const ipArg = JSON.stringify(g.ip || null).replace(/</g, '\u003c');
+                                const clienteCell = g.cliente_id
+                                    ? `<button type="button" onclick='openClienteDetalle(${Number(g.cliente_id)})' class="text-left text-blue-600 dark:text-blue-400 hover:underline font-semibold">${esc(g.cliente || '-')}</button>`
+                                    : esc(g.cliente || '-');
+                                const unidadCell = g.unidad_id
+                                    ? `<button type="button" onclick='openUnidadDetalle(${Number(g.unidad_id)}, ${ipArg})' class="text-left text-blue-600 dark:text-blue-400 hover:underline font-semibold">${esc(g.unidad || '-')}</button>`
+                                    : esc(g.unidad || '-');
+                                return `<tr>
+                                    <td class="font-mono text-xs font-semibold">${esc(g.ip)}</td>
+                                    <td>${clienteCell}</td>
+                                    <td>${unidadCell}</td>
+                                    <td class="text-slate-400 max-w-[180px] truncate" title="${esc(g.description || '')}">${esc(g.description || '-')}</td>
+                                    <td class="font-mono text-xs">${esc(g.version || '-')}</td>
+                                    <td>${renderInventoryStatusBadge(g.status)}</td>
+                                    <td class="text-xs text-slate-400 whitespace-nowrap">${esc(ts)}</td>
+                                </tr>`;
+                            }).join('')}</tbody>
+                        </table>
+                    </div>`;
+            } catch (err) {
+                console.error(err);
+                const content = document.getElementById('reportStatusContent');
+                if (content) content.innerHTML = `<div class="text-center py-12 text-red-400">${currentLang === 'pt' ? 'Erro ao carregar gateways.' : 'Error al cargar gateways.'}</div>`;
+            }
+        }
+        window.openReportStatusDetail = openReportStatusDetail;
+
         async function loadDashboard() {
             try {
                 const tabReportes = document.getElementById('tab-reportes');
@@ -2773,102 +2948,139 @@ ${(g.os_codename === 'jessie' || g.os_codename === 'stretch') ? `<button onclick
                 const borderColor = isDark ? '#1e293b' : '#ffffff';
 
                 const colors = isDark ? {
-                    success: '#34d399', warning: '#fbbf24', danger: '#f87171'
+                    success: '#34d399', warning: '#fbbf24', danger: '#f87171', frozen: '#fb7185', info: '#60a5fa', muted: '#64748b'
                 } : {
-                    success: '#059669', warning: '#d97706', danger: '#dc2626'
+                    success: '#059669', warning: '#d97706', danger: '#dc2626', frozen: '#be123c', info: '#2563eb', muted: '#94a3b8'
                 };
+                const statusLabels = [t('stat_updated'), t('stat_pending'), t('map_offline_error'), t('chart_status_frozen')];
+                const statusGroups = ['UPDATED', 'PENDING', 'OFFLINE', 'FROZEN_CARD'];
+                const statusValues = [data.globales.actualizados || 0, data.globales.pendientes || 0, data.globales.offline || 0, data.globales.congelados || 0];
+                const statusColors = [colors.success, colors.warning, colors.danger, colors.frozen];
+                const percentTooltip = function(context) {
+                    const total = context.dataset.data.reduce((a, b) => a + b, 0);
+                    const percentage = total > 0 ? ((context.raw / total) * 100).toFixed(1) : 0;
+                    return `${context.label}: ${context.raw} (${percentage}%)`;
+                };
+                const centerTextPlugin = (id) => ({
+                    id,
+                    beforeDraw: function(chart) {
+                        const ctx = chart.ctx;
+                        const width = chart.width;
+                        const height = chart.height;
+                        const total = chart.data.datasets[0].data.reduce((a, b) => a + b, 0);
+                        ctx.restore();
+                        const fontSize = (height / 10).toFixed(2);
+                        ctx.font = `800 ${fontSize}px Inter, sans-serif`;
+                        ctx.textBaseline = 'middle';
+                        ctx.fillStyle = textColor;
+                        const text = `${total}`;
+                        const textX = Math.round((width - ctx.measureText(text).width) / 2);
+                        const textY = height / 2 - 10;
+                        ctx.fillText(text, textX, textY);
+                        const subtext = t('chart_total_label');
+                        ctx.font = `500 ${(fontSize * 0.45).toFixed(2)}px Inter, sans-serif`;
+                        ctx.fillStyle = isDark ? '#94a3b8' : '#64748b';
+                        const subtextX = Math.round((width - ctx.measureText(subtext).width) / 2);
+                        ctx.fillText(subtext, subtextX, textY + parseInt(fontSize) * 0.8);
+                        ctx.save();
+                    }
+                });
+                const compactLegend = { position: 'bottom', labels: { color: textColor, padding: 15, font: { size: 11, weight: '600', family: 'Inter' }, usePointStyle: true, pointStyle: 'circle' } };
 
                 const diag = data.diagnosticos || {};
                 document.getElementById('diagMono').textContent = diag.mono_sin_espacio || 0;
                 document.getElementById('diagFrozen').textContent = diag.cartao_congelado || 0;
+                renderReportChartControls();
 
-                // 1. Global Chart (Doughnut)
+                // 1. Global Chart
                 const ctxGlobal = document.getElementById('chartGlobal').getContext('2d');
                 if (chartGlobalInstance) chartGlobalInstance.destroy();
                 chartGlobalInstance = new Chart(ctxGlobal, {
-                    type: 'doughnut',
+                    type: chartGlobalType,
                     data: {
-                        labels: [t('stat_updated'), t('stat_pending'), t('map_offline_error')],
+                        labels: statusLabels,
                         datasets: [{
-                            data: [data.globales.actualizados, data.globales.pendientes, data.globales.offline],
-                            backgroundColor: [colors.success, colors.warning, colors.danger],
+                            label: t('chart_gateways'),
+                            data: statusValues,
+                            backgroundColor: statusColors,
                             borderColor: borderColor,
-                            borderWidth: 3,
+                            borderWidth: chartGlobalType === 'bar' ? 1 : 3,
+                            borderRadius: chartGlobalType === 'bar' ? 10 : 0,
                             hoverOffset: 8
                         }]
                     },
                     options: {
                         responsive: true,
                         maintainAspectRatio: false,
-                        cutout: '65%',
+                        cutout: chartGlobalType === 'doughnut' ? '68%' : undefined,
+                        scales: chartGlobalType === 'bar' ? {
+                            x: { ticks: { color: textColor, font: { weight: '700', size: 11 } }, grid: { display: false } },
+                            y: { beginAtZero: true, ticks: { color: isDark ? '#94a3b8' : '#64748b', stepSize: 1, precision: 0 }, grid: { color: gridColor } }
+                        } : undefined,
                         plugins: {
-                            legend: {
-                                position: 'bottom',
-                                labels: { color: textColor, padding: 15, font: { size: 12, weight: '500', family: 'Inter' }, usePointStyle: true, pointStyle: 'circle' }
-                            },
-                            tooltip: {
-                                callbacks: {
-                                    label: function(context) {
-                                        const total = context.dataset.data.reduce((a, b) => a + b, 0);
-                                        const percentage = total > 0 ? ((context.raw / total) * 100).toFixed(1) : 0;
-                                        return `${context.label}: ${context.raw} (${percentage}%)`;
-                                    }
-                                }
-                            }
+                            legend: compactLegend,
+                            tooltip: { callbacks: { label: percentTooltip } }
                         },
-                        animation: { animateRotate: true, animateScale: true }
+                        onClick: (event, activeElements) => {
+                            const item = activeElements && activeElements[0];
+                            if (!item) return;
+                            const group = statusGroups[item.index];
+                            if (!statusValues[item.index]) return;
+                            openReportStatusDetail(group);
+                        },
+                        onHover: (event, activeElements) => {
+                            const item = activeElements && activeElements[0];
+                            const canOpen = item && statusGroups[item.index] !== 'UPDATED' && statusValues[item.index] > 0;
+                            if (event.native && event.native.target) event.native.target.style.cursor = canOpen ? 'pointer' : 'default';
+                        },
+                        animation: { duration: 800, easing: 'easeOutQuart', animateRotate: true, animateScale: true }
                     },
-                    plugins: [{
-                        id: 'centerText',
-                        beforeDraw: function(chart) {
-                            const ctx = chart.ctx;
-                            const width = chart.width;
-                            const height = chart.height;
-                            const total = chart.data.datasets[0].data.reduce((a, b) => a + b, 0);
-                            ctx.restore();
-                            const fontSize = (height / 10).toFixed(2);
-                            ctx.font = `800 ${fontSize}px Inter, sans-serif`;
-                            ctx.textBaseline = 'middle';
-                            ctx.fillStyle = textColor;
-                            const text = `${total}`;
-                            const textX = Math.round((width - ctx.measureText(text).width) / 2);
-                            const textY = height / 2 - 10;
-                            ctx.fillText(text, textX, textY);
-                            const subtext = 'Total';
-                            ctx.font = `500 ${(fontSize * 0.45).toFixed(2)}px Inter, sans-serif`;
-                            ctx.fillStyle = isDark ? '#94a3b8' : '#64748b';
-                            const subtextX = Math.round((width - ctx.measureText(subtext).width) / 2);
-                            ctx.fillText(subtext, subtextX, textY + parseInt(fontSize) * 0.8);
-                            ctx.save();
-                        }
-                    }]
+                    plugins: chartGlobalType === 'doughnut' ? [centerTextPlugin('centerTextGlobal')] : []
                 });
 
-                // 2. Crop Chart (Stacked Bar)
+                // 2. Crop Chart
                 const ctxCultivos = document.getElementById('chartCultivos').getContext('2d');
                 if (chartCultivosInstance) chartCultivosInstance.destroy();
                 const labelsCultivos = data.cultivos.map(c => (c.tipo || t('chart_unassigned')).toUpperCase());
+                const cropIsLine = chartCultivosType === 'line';
+                const cropIsHorizontal = chartCultivosType === 'horizontal';
+                const cropStatusGroups = ['UPDATED', 'PENDING', 'OFFLINE', 'FROZEN_CARD'];
+                const cropDatasets = [
+                    { label: t('stat_updated'), data: data.cultivos.map(c => c.actualizados), backgroundColor: cropIsLine ? 'rgba(5,150,105,.14)' : colors.success, borderColor: colors.success, borderWidth: cropIsLine ? 3 : 1, borderRadius: 7, tension: .35, fill: false },
+                    { label: t('stat_pending'), data: data.cultivos.map(c => c.pendientes), backgroundColor: cropIsLine ? 'rgba(217,119,6,.14)' : colors.warning, borderColor: colors.warning, borderWidth: cropIsLine ? 3 : 1, borderRadius: 7, tension: .35, fill: false },
+                    { label: t('map_offline_error'), data: data.cultivos.map(c => c.offline), backgroundColor: cropIsLine ? 'rgba(220,38,38,.12)' : colors.danger, borderColor: colors.danger, borderWidth: cropIsLine ? 3 : 1, borderRadius: 7, tension: .35, fill: false },
+                    { label: t('chart_status_frozen'), data: data.cultivos.map(c => c.congelados || 0), backgroundColor: cropIsLine ? 'rgba(190,18,60,.12)' : colors.frozen, borderColor: colors.frozen, borderWidth: cropIsLine ? 3 : 1, borderRadius: 7, tension: .35, fill: false }
+                ];
 
                 chartCultivosInstance = new Chart(ctxCultivos, {
-                    type: 'bar',
-                    data: {
-                        labels: labelsCultivos,
-                        datasets: [
-                            { label: t('stat_updated'), data: data.cultivos.map(c => c.actualizados), backgroundColor: colors.success, borderColor: borderColor, borderWidth: 1, borderRadius: 2 },
-                            { label: t('stat_pending'), data: data.cultivos.map(c => c.pendientes), backgroundColor: colors.warning, borderColor: borderColor, borderWidth: 1, borderRadius: 2 },
-                            { label: 'Offline', data: data.cultivos.map(c => c.offline), backgroundColor: colors.danger, borderColor: borderColor, borderWidth: 1, borderRadius: 2 }
-                        ]
-                    },
+                    type: cropIsLine ? 'line' : 'bar',
+                    data: { labels: labelsCultivos, datasets: cropDatasets },
                     options: {
                         responsive: true,
                         maintainAspectRatio: false,
+                        indexAxis: cropIsHorizontal ? 'y' : 'x',
                         scales: {
-                            x: { stacked: true, ticks: { color: textColor, font: { weight: '600', size: 11 } }, grid: { display: false } },
-                            y: { stacked: true, beginAtZero: true, ticks: { color: isDark ? '#94a3b8' : '#64748b', stepSize: 1, precision: 0 }, grid: { color: gridColor } }
+                            x: { stacked: !cropIsLine, ticks: { color: textColor, font: { weight: '600', size: 11 } }, grid: { display: cropIsHorizontal, color: gridColor } },
+                            y: { stacked: !cropIsLine, beginAtZero: true, ticks: { color: isDark ? '#94a3b8' : '#64748b', stepSize: 1, precision: 0 }, grid: { color: gridColor } }
                         },
                         plugins: {
-                            legend: { position: 'bottom', labels: { color: textColor, padding: 15, font: { size: 11 }, usePointStyle: true, pointStyle: 'rect' } },
-                            tooltip: { callbacks: { afterBody: function(context) { const idx = context[0].dataIndex; const crop = data.cultivos[idx]; return `Total ${crop.tipo}: ${crop.total}`; } } }
+                            legend: { position: 'bottom', labels: { color: textColor, padding: 15, font: { size: 11, weight: '600' }, usePointStyle: true, pointStyle: cropIsLine ? 'line' : 'rectRounded' } },
+                            tooltip: { callbacks: { afterBody: function(context) { const idx = context[0].dataIndex; const crop = data.cultivos[idx]; return `${t('chart_total_label')} ${crop.tipo}: ${crop.total}`; } } }
+                        },
+                        onClick: (event, activeElements) => {
+                            const item = activeElements && activeElements[0];
+                            if (!item) return;
+                            const group = cropStatusGroups[item.datasetIndex];
+                            const crop = data.cultivos[item.index];
+                            const value = cropDatasets[item.datasetIndex]?.data?.[item.index] || 0;
+                            if (!crop || !value) return;
+                            openReportStatusDetail(group, crop.tipo || 'Sin Asignar');
+                        },
+                        onHover: (event, activeElements) => {
+                            const item = activeElements && activeElements[0];
+                            const group = item ? cropStatusGroups[item.datasetIndex] : null;
+                            const value = item ? (cropDatasets[item.datasetIndex]?.data?.[item.index] || 0) : 0;
+                            if (event.native && event.native.target) event.native.target.style.cursor = group !== 'UPDATED' && value > 0 ? 'pointer' : 'default';
                         },
                         animation: { duration: 800, easing: 'easeOutQuart' }
                     }
@@ -2892,7 +3104,7 @@ ${(g.os_codename === 'jessie' || g.os_codename === 'stretch') ? `<button onclick
                 }
 
                 loadRecentUpdates();
-                loadRelayChart();
+                loadRelayChart(data);
             } catch (err) {
                 console.error("Error cargando dashboard", err);
                 showToast(currentLang === 'pt' ? 'Erro ao carregar dashboard' : 'Error al cargar dashboard', 'error');
@@ -2950,63 +3162,73 @@ ${(g.os_codename === 'jessie' || g.os_codename === 'stretch') ? `<button onclick
 
         let chartRelayInstance = null;
 
-        async function loadRelayChart() {
+        async function loadRelayChart(dashboardData = null) {
             try {
-                const res = await fetch('/api/reportes/dashboard');
-                const data = await res.json();
-
+                const data = dashboardData || await (await fetch('/api/reportes/dashboard')).json();
                 const ctxRelay = document.getElementById('chartRelay').getContext('2d');
                 if (chartRelayInstance) chartRelayInstance.destroy();
 
                 const isDark = document.documentElement.classList.contains('dark');
                 const textColor = isDark ? '#e2e8f0' : '#334155';
+                const gridColor = isDark ? '#334155' : '#e2e8f0';
+                const borderColor = isDark ? '#1e293b' : '#ffffff';
+                const relayData = [data.relay.con_relay || 0, data.relay.sin_relay || 0, data.relay.sin_info || 0];
+                const relayColors = [isDark ? '#34d399' : '#059669', isDark ? '#f87171' : '#dc2626', isDark ? '#64748b' : '#94a3b8'];
+                const relayTotalPlugin = {
+                    id: 'centerTextRelay',
+                    beforeDraw: function(chart) {
+                        if (chartRelayType !== 'doughnut') return;
+                        const ctx = chart.ctx;
+                        const width = chart.width;
+                        const height = chart.height;
+                        const total = chart.data.datasets[0].data.reduce((a, b) => a + b, 0);
+                        ctx.restore();
+                        const fontSize = (height / 10).toFixed(2);
+                        ctx.font = `800 ${fontSize}px Inter, sans-serif`;
+                        ctx.textBaseline = 'middle';
+                        ctx.fillStyle = textColor;
+                        const text = `${total}`;
+                        const textX = Math.round((width - ctx.measureText(text).width) / 2);
+                        const textY = height / 2 - 10;
+                        ctx.fillText(text, textX, textY);
+                        const subtext = t('chart_total_label');
+                        ctx.font = `500 ${(fontSize * 0.45).toFixed(2)}px Inter, sans-serif`;
+                        ctx.fillStyle = isDark ? '#94a3b8' : '#64748b';
+                        const subtextX = Math.round((width - ctx.measureText(subtext).width) / 2);
+                        ctx.fillText(subtext, subtextX, textY + parseInt(fontSize) * 0.8);
+                        ctx.save();
+                    }
+                };
 
                 chartRelayInstance = new Chart(ctxRelay, {
-                    type: 'doughnut',
+                    type: chartRelayType,
                     data: {
                         labels: [t('relay_with'), t('relay_without'), t('relay_unknown')],
                         datasets: [{
-                            data: [data.relay.con_relay, data.relay.sin_relay, data.relay.sin_info],
-                            backgroundColor: [isDark ? '#34d399' : '#059669', isDark ? '#f87171' : '#dc2626', isDark ? '#64748b' : '#94a3b8'],
-                            borderColor: isDark ? '#1e293b' : '#ffffff',
-                            borderWidth: 3,
+                            label: t('chart_gateways'),
+                            data: relayData,
+                            backgroundColor: relayColors,
+                            borderColor: borderColor,
+                            borderWidth: chartRelayType === 'bar' ? 1 : 3,
+                            borderRadius: chartRelayType === 'bar' ? 10 : 0,
                             hoverOffset: 8
                         }]
                     },
                     options: {
                         responsive: true,
                         maintainAspectRatio: false,
-                        cutout: '65%',
+                        cutout: chartRelayType === 'doughnut' ? '68%' : undefined,
+                        scales: chartRelayType === 'bar' ? {
+                            x: { ticks: { color: textColor, font: { weight: '700', size: 11 } }, grid: { display: false } },
+                            y: { beginAtZero: true, ticks: { color: isDark ? '#94a3b8' : '#64748b', stepSize: 1, precision: 0 }, grid: { color: gridColor } }
+                        } : undefined,
                         plugins: {
-                            legend: { position: 'bottom', labels: { color: textColor, padding: 15, font: { size: 12, weight: '500', family: 'Inter' }, usePointStyle: true, pointStyle: 'circle' } },
+                            legend: { position: 'bottom', labels: { color: textColor, padding: 15, font: { size: 11, weight: '600', family: 'Inter' }, usePointStyle: true, pointStyle: 'circle' } },
                             tooltip: { callbacks: { label: function(context) { const total = context.dataset.data.reduce((a, b) => a + b, 0); const percentage = total > 0 ? ((context.raw / total) * 100).toFixed(1) : 0; return `${context.label}: ${context.raw} (${percentage}%)`; } } }
                         },
-                        animation: { animateRotate: true, animateScale: true }
+                        animation: { duration: 800, easing: 'easeOutQuart', animateRotate: true, animateScale: true }
                     },
-                    plugins: [{
-                        id: 'centerTextRelay',
-                        beforeDraw: function(chart) {
-                            const ctx = chart.ctx;
-                            const width = chart.width;
-                            const height = chart.height;
-                            const total = chart.data.datasets[0].data.reduce((a, b) => a + b, 0);
-                            ctx.restore();
-                            const fontSize = (height / 10).toFixed(2);
-                            ctx.font = `800 ${fontSize}px Inter, sans-serif`;
-                            ctx.textBaseline = 'middle';
-                            ctx.fillStyle = textColor;
-                            const text = `${total}`;
-                            const textX = Math.round((width - ctx.measureText(text).width) / 2);
-                            const textY = height / 2 - 10;
-                            ctx.fillText(text, textX, textY);
-                            const subtext = 'Total';
-                            ctx.font = `500 ${(fontSize * 0.45).toFixed(2)}px Inter, sans-serif`;
-                            ctx.fillStyle = isDark ? '#94a3b8' : '#64748b';
-                            const subtextX = Math.round((width - ctx.measureText(subtext).width) / 2);
-                            ctx.fillText(subtext, subtextX, textY + parseInt(fontSize) * 0.8);
-                            ctx.save();
-                        }
-                    }]
+                    plugins: [relayTotalPlugin]
                 });
             } catch (err) {
                 console.error("Error cargando gráfico Relay:", err);
@@ -3120,7 +3342,20 @@ ${(g.os_codename === 'jessie' || g.os_codename === 'stretch') ? `<button onclick
 
                         if (status.state === 'SUCCESS') {
                             clearInterval(interval);
-                            const result = status.result;
+                            const result = status.result || {};
+                            if (result.status && result.status !== 'SUCCESS') {
+                                const errorMsg = result.msg || t('error_configuring_ip', { ip: ip });
+                                document.getElementById(tempId).innerHTML = `
+                                    <div class="flex items-center gap-3">
+                                        <svg class="w-5 h-5 text-red-500" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M4.293 4.293a1 1 0 011.414 0L10 8.586l4.293-4.293a1 1 0 111.414 1.414L11.414 10l4.293 4.293a1 1 0 01-1.414 1.414L10 11.414l-4.293 4.293a1 1 0 01-1.414-1.414L8.586 10 4.293 5.707a1 1 0 010-1.414z" clip-rule="evenodd"/></svg>
+                                        <span class="font-semibold text-sm">${esc(ip)}</span>
+                                        <span class="text-red-700 dark:text-red-400 font-medium text-sm ml-2">${esc(errorMsg)}</span>
+                                    </div>`;
+                                document.getElementById(tempId).className = 'card border-l-4 border-red-400 p-4';
+                                showToast(`${ip}: ${errorMsg}`, 'error');
+                                await loadGateways();
+                                return;
+                            }
                             const msg = result.changes && result.changes.length > 0
                                 ? t('config_success_changed', { changes: result.changes.join(', '), duration: result.duration })
                                 : t('config_success_no_changes', { duration: result.duration });
@@ -3289,6 +3524,72 @@ let _cCharts = [], _cMap = null;
 const _L = (es, pt) => currentLang === 'pt' ? pt : es;
 function _cDestroy(){ _cCharts.forEach(c=>c.destroy()); _cCharts=[]; if(_cMap){_cMap.remove();_cMap=null;} }
 
+let _expandedDossierMap = null;
+function closeExpandedDossierMap() {
+    if (_expandedDossierMap) { _expandedDossierMap.remove(); _expandedDossierMap = null; }
+    const modal = document.getElementById('expandedMapModal');
+    if (modal) modal.remove();
+}
+function openExpandedDossierMap(title, pins) {
+    const cleanPins = (pins || []).filter(p => p && p.lat && p.lon);
+    if (!cleanPins.length) {
+        showToast(_L('Sin coordenadas GPS para ampliar.', 'Sem coordenadas GPS para ampliar.'), 'warning');
+        return;
+    }
+    closeExpandedDossierMap();
+    const modal = document.createElement('div');
+    modal.id = 'expandedMapModal';
+    modal.className = 'modal-backdrop';
+    modal.style.zIndex = '95';
+    modal.onclick = (event) => { if (event.target === modal) closeExpandedDossierMap(); };
+    modal.innerHTML = `
+        <div class="modal-content" style="max-width:min(1180px,96vw);width:96vw;">
+            <div class="flex items-center justify-between gap-4 p-4 border-b border-slate-200 dark:border-slate-700">
+                <div>
+                    <p class="text-[11px] font-bold uppercase tracking-widest text-slate-400">${_L('Mapa ampliado','Mapa ampliado')}</p>
+                    <h3 class="text-lg font-semibold text-slate-900 dark:text-white">${esc(title || _L('Ubicación','Localização'))}</h3>
+                </div>
+                <button type="button" onclick="closeExpandedDossierMap()" class="action-btn" title="${_L('Cerrar','Fechar')}">
+                    <svg class="text-slate-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/></svg>
+                </button>
+            </div>
+            <div class="p-4">
+                <div id="expandedDossierMap" style="height:min(72vh,720px);min-height:420px;border-radius:12px;overflow:hidden"></div>
+            </div>
+        </div>`;
+    document.body.appendChild(modal);
+
+    _expandedDossierMap = L.map('expandedDossierMap', {zoomControl:true, attributionControl:true})
+        .setView([cleanPins[0].lat, cleanPins[0].lon], 8);
+    L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {maxZoom:18}).addTo(_expandedDossierMap);
+    const bounds = [];
+    cleanPins.forEach(pin => {
+        const color = {
+            UPDATED: '#10b981',
+            PENDING: '#f59e0b',
+            OFFLINE: '#ef4444',
+            ERROR: '#ef4444',
+            FROZEN_CARD: '#ef4444'
+        }[pin.status] || '#64748b';
+        const titleLine = pin.unidad || pin.name || pin.ip || '';
+        const torre = pin.description ? `<br><span>${_L('Torre','Torre')}: ${esc(pin.description)}</span>` : '';
+        const frota = pin.fleet_number ? `<br><span>${_L('Flota','Frota')}: ${esc(pin.fleet_number)}</span>` : '';
+        const marker = L.circleMarker([pin.lat, pin.lon], {
+            radius: pin.is_primary ? 10 : 7,
+            fillColor: color,
+            color: '#fff',
+            weight: pin.is_primary ? 2 : 1,
+            fillOpacity: .92
+        }).bindPopup(`<b>${esc(titleLine)}</b><br>${esc(pin.ip || '')}${torre}${frota}<br>${esc(statusLabel(pin.status))}`).addTo(_expandedDossierMap);
+        if (pin.is_primary) marker.openPopup();
+        bounds.push([pin.lat, pin.lon]);
+    });
+    _expandedDossierMap.fitBounds(bounds, {padding:[36,36], maxZoom:13});
+    setTimeout(() => _expandedDossierMap && _expandedDossierMap.invalidateSize(), 150);
+}
+window.closeExpandedDossierMap = closeExpandedDossierMap;
+window.openExpandedDossierMap = openExpandedDossierMap;
+
 async function openClienteDetalle(id){
     closeUnidadDetalle();
     _cDestroy();
@@ -3343,7 +3644,13 @@ async function openClienteDetalle(id){
             <div class="grid grid-cols-1 lg:grid-cols-3 gap-4 mb-6">
                 <div class="dossier-soft p-4"><p class="text-[11px] font-bold uppercase tracking-widest text-slate-400 mb-2">${_L('Salud','Saúde')}</p><div style="position:relative;height:170px"><canvas id="cSalud"></canvas></div></div>
                 <div class="dossier-soft p-4"><p class="text-[11px] font-bold uppercase tracking-widest text-slate-400 mb-2">${_L('Por Sistema Operativo','Por Sistema Operacional')}</p><div style="position:relative;height:170px"><canvas id="cSO"></canvas></div></div>
-                <div class="dossier-soft p-4"><p class="text-[11px] font-bold uppercase tracking-widest text-slate-400 mb-2">${_L('Fazendas en mapa','Fazendas no mapa')}</p><div id="cMapa" style="height:170px;border-radius:10px;overflow:hidden"></div></div>
+                <div class="dossier-soft p-4">
+                    <div class="flex items-center justify-between gap-2 mb-2">
+                        <p class="text-[11px] font-bold uppercase tracking-widest text-slate-400">${_L('Fazendas en mapa','Fazendas no mapa')}</p>
+                        ${d.pines.length ? `<button type="button" id="cMapExpandBtn" class="action-btn" title="${_L('Ampliar mapa','Ampliar mapa')}"><svg class="text-slate-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 8V4h4M20 8V4h-4M4 16v4h4M20 16v4h-4"/></svg></button>` : ''}
+                    </div>
+                    <div id="cMapa" style="height:170px;border-radius:10px;overflow:hidden"></div>
+                </div>
             </div>
             <!-- Tabla de unidades -->
             <div class="dossier-soft overflow-hidden mb-6" data-cliente-unidades>
@@ -3410,6 +3717,14 @@ async function openClienteDetalle(id){
         _cCharts.push(new Chart(document.getElementById('cSO'),{type:'doughnut',
             data:{labels:soK,datasets:[{data:soV,backgroundColor:['#10b981','#f59e0b','#ef4444','#3b82f6','#94a3b8'],borderColor:bdc,borderWidth:2}]},options:dOpt}));
 
+        const cMapExpandBtn = document.getElementById('cMapExpandBtn');
+        if (cMapExpandBtn) {
+            cMapExpandBtn.addEventListener('click', () => openExpandedDossierMap(
+                `${_L('Fazendas de','Fazendas de')} ${d.nombre}`,
+                d.pines
+            ));
+        }
+
         if(d.pines.length){
             _cMap=L.map('cMapa',{zoomControl:false,attributionControl:false}).setView([d.pines[0].lat,d.pines[0].lon],6);
             L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png',{maxZoom:18}).addTo(_cMap);
@@ -3447,7 +3762,7 @@ function openUnidadFromCliente(id, gatewayIp = null){
     }
     openUnidadDetalle(Number(id), gatewayIp);
 }
-function closeClienteDetalle(){ _cDestroy(); const m=document.getElementById('clienteModal'); if(m) m.remove(); }
+function closeClienteDetalle(){ closeExpandedDossierMap(); _cDestroy(); const m=document.getElementById('clienteModal'); if(m) m.remove(); }
 window.openClienteDetalle = openClienteDetalle;
 window.focusClienteUnidades = focusClienteUnidades;
 window.openUnidadFromCliente = openUnidadFromCliente;
@@ -3643,7 +3958,10 @@ async function openUnidadDetalle(id, gatewayIp = null) {
 
             <!-- Mini-mapa con contexto -->
             <div class="uni-soft p-4">
-                <p class="text-[11px] font-bold uppercase tracking-widest text-slate-400 mb-2">${_L('Ubicación · gateways de esta unidad','Localização · gateways desta unidade')}</p>
+                <div class="flex items-center justify-between gap-2 mb-2">
+                    <p class="text-[11px] font-bold uppercase tracking-widest text-slate-400">${_L('Ubicación · gateways de esta unidad','Localização · gateways desta unidade')}</p>
+                    ${(d.gateways || []).some(item => item.lat && item.lon) ? `<button type="button" id="uniMapExpandBtn" class="action-btn" title="${_L('Ampliar mapa','Ampliar mapa')}"><svg class="text-slate-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 8V4h4M20 8V4h-4M4 16v4h4M20 16v4h-4"/></svg></button>` : ''}
+                </div>
                 <div id="uniMap" style="height:210px;border-radius:10px;overflow:hidden"></div>
             </div>
 
@@ -3681,8 +3999,16 @@ async function openUnidadDetalle(id, gatewayIp = null) {
         </div>`;
 
         // Mini-mapa: todos los gateways con GPS de esta unidad; el gateway abierto queda destacado.
-        const unitPins = (d.gateways || []).filter(item => item.lat && item.lon);
+        const unitPins = (d.gateways || []).filter(item => item.lat && item.lon)
+            .map(item => ({ ...item, unidad: d.unidad.nombre }));
         const mapEl = document.getElementById('uniMap');
+        const uniMapExpandBtn = document.getElementById('uniMapExpandBtn');
+        if (uniMapExpandBtn) {
+            uniMapExpandBtn.addEventListener('click', () => openExpandedDossierMap(
+                `${_L('Ubicación de','Localização de')} ${d.unidad.nombre}`,
+                unitPins
+            ));
+        }
         if (unitPins.length) {
             const primaryIp = gw && gw.ip ? gw.ip : null;
             _uniMap = L.map('uniMap', {zoomControl:false, attributionControl:false}).setView([unitPins[0].lat, unitPins[0].lon], 8);
@@ -3718,7 +4044,7 @@ async function openUnidadDetalle(id, gatewayIp = null) {
     }
 }
 function _spec(label, val) { return `<div class="uni-spec"><b>${label}</b><span>${val}</span></div>`; }
-function closeUnidadDetalle() { if (_uniMap) { _uniMap.remove(); _uniMap = null; } const m = document.getElementById('unidadModal'); if (m) m.remove(); }
+function closeUnidadDetalle() { closeExpandedDossierMap(); if (_uniMap) { _uniMap.remove(); _uniMap = null; } const m = document.getElementById('unidadModal'); if (m) m.remove(); }
 
 // ============ MODO PRESENTACIÓN / KIOSCO ============
 let _kio = null;

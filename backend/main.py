@@ -288,6 +288,54 @@ async def get_update_progress(_auth: bool = Depends(verify_api_key)):
 
     return {"active": act, "completed": comp, "total": len(update_tasks)}
 
+@app.get("/api/reportes/gateways_estado/{status_group}")
+async def get_gateways_by_report_status(status_group: str, cultivo: str | None = None, db: Session = Depends(get_db), _auth: bool = Depends(verify_api_key)):
+    """Lista gateways por estado operativo para drill-down desde los graficos."""
+    status_map = {
+        "PENDING": ["PENDING"],
+        "OFFLINE": ["OFFLINE", "ERROR"],
+        "FROZEN_CARD": ["FROZEN_CARD"],
+    }
+    statuses = status_map.get(status_group.upper())
+    if not statuses:
+        raise HTTPException(status_code=400, detail="Estado de reporte invalido")
+
+    rows_query = db.query(Gateway, Cliente, Unidad).outerjoin(
+        Cliente, Gateway.cliente_id == Cliente.id
+    ).outerjoin(
+        Unidad, Gateway.unidad_id == Unidad.id
+    ).filter(Gateway.status.in_(statuses))
+
+    if cultivo:
+        if cultivo == "Sin Asignar":
+            rows_query = rows_query.filter(Cliente.tipo_cultivo == None)
+        else:
+            rows_query = rows_query.filter(Cliente.tipo_cultivo == cultivo)
+
+    rows = rows_query.order_by(Cliente.nombre.asc(), Unidad.nombre.asc(), Gateway.ip.asc()).all()
+    return {
+        "status_group": status_group.upper(),
+        "cultivo": cultivo,
+        "total": len(rows),
+        "gateways": [{
+            "id": g.id,
+            "ip": g.ip,
+            "version": g.version,
+            "status": g.status,
+            "last_scan": g.last_scan.isoformat() if g.last_scan else None,
+            "last_update": g.last_update.isoformat() if g.last_update else None,
+            "cliente": c.nombre if c else None,
+            "cliente_id": c.id if c else None,
+            "unidad": u.nombre if u else None,
+            "unidad_id": u.id if u else None,
+            "cultivo": c.tipo_cultivo if c else None,
+            "description": g.description,
+            "fleet_number": g.fleet_number,
+            "has_relay": g.has_relay,
+            "os_version": g.os_version,
+        } for g, c, u in rows]
+    }
+
 @app.get("/api/reportes/dashboard")
 async def get_dashboard_data(db: Session = Depends(get_db), _auth: bool = Depends(verify_api_key)):
     """Obtiene las estadísticas para los gráficos del dashboard"""
@@ -297,6 +345,7 @@ async def get_dashboard_data(db: Session = Depends(get_db), _auth: bool = Depend
         act = db.query(Gateway).filter(Gateway.status == 'UPDATED').count()
         pend = db.query(Gateway).filter(Gateway.status == 'PENDING').count()
         off = db.query(Gateway).filter(Gateway.status.in_(['OFFLINE', 'ERROR'])).count()
+        frozen = db.query(Gateway).filter(Gateway.status == 'FROZEN_CARD').count()
         
         # 🆕 NUEVO: Estadísticas de Relay LPWAN
         con_relay = db.query(Gateway).filter(Gateway.has_relay == True).count()
@@ -324,7 +373,8 @@ async def get_dashboard_data(db: Session = Depends(get_db), _auth: bool = Depend
             func.count(Gateway.id).label('total'),
             func.coalesce(func.sum(case((Gateway.status == 'UPDATED', 1), else_=0)), 0).label('act'),
             func.coalesce(func.sum(case((Gateway.status == 'PENDING', 1), else_=0)), 0).label('pend'),
-            func.coalesce(func.sum(case((Gateway.status.in_(['OFFLINE', 'ERROR']), 1), else_=0)), 0).label('off')
+            func.coalesce(func.sum(case((Gateway.status.in_(['OFFLINE', 'ERROR']), 1), else_=0)), 0).label('off'),
+            func.coalesce(func.sum(case((Gateway.status == 'FROZEN_CARD', 1), else_=0)), 0).label('frozen')
         ).outerjoin(Gateway, Gateway.cliente_id == Cliente.id).group_by(Cliente.tipo_cultivo).all()
 
         cultivos = [{
@@ -332,7 +382,8 @@ async def get_dashboard_data(db: Session = Depends(get_db), _auth: bool = Depend
             "total": int(r.total or 0), 
             "actualizados": int(r.act or 0), 
             "pendientes": int(r.pend or 0), 
-            "offline": int(r.off or 0)
+            "offline": int(r.off or 0),
+            "congelados": int(r.frozen or 0)
         } for r in stats]
 
         # 3. Top 10 Clientes con más fallos
@@ -358,7 +409,8 @@ async def get_dashboard_data(db: Session = Depends(get_db), _auth: bool = Depend
                 "total": total, 
                 "actualizados": act, 
                 "pendientes": pend, 
-                "offline": off
+                "offline": off,
+                "congelados": frozen
             },
             "relay": {  # 🆕 NUEVO
                 "con_relay": con_relay,
@@ -376,7 +428,7 @@ async def get_dashboard_data(db: Session = Depends(get_db), _auth: bool = Depend
         import traceback
         traceback.print_exc()
         return {
-            "globales": {"total": 0, "actualizados": 0, "pendientes": 0, "offline": 0},
+            "globales": {"total": 0, "actualizados": 0, "pendientes": 0, "offline": 0, "congelados": 0},
             "relay": {"con_relay": 0, "sin_relay": 0, "sin_info": 0},
             "cultivos": [],
             "top_fallos": [],

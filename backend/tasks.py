@@ -1,6 +1,7 @@
 import os
 import time
 import subprocess
+import re
 from datetime import datetime
 from celery import Celery
 from ssh_utils import run_ssh_command, ping_host
@@ -11,18 +12,30 @@ from config import Config
 redis_url = os.getenv('REDIS_URL', 'redis://redis:6379/0')
 app = Celery('tasks', broker=redis_url, backend=redis_url)
 
+def clean_solinfnet_version(value):
+    """Extrae solo la version numerica aunque SSH imprima banners de login."""
+    if not value:
+        return ""
+    text = str(value)
+    match = re.search(r'Version:\s*([0-9]+(?:\.[0-9]+)+)', text, re.IGNORECASE)
+    if not match:
+        match = re.search(r'\b([0-9]+(?:\.[0-9]+)+)\b', text)
+    return match.group(1) if match else ""
+
 def normalize_version(version):
     if not version: return ""
-    parts = str(version).split('.')
-    return f"{parts[0]}.{parts[1]}" if len(parts) >= 2 else version
+    cleaned = clean_solinfnet_version(version) or str(version)
+    parts = cleaned.split('.')
+    return f"{parts[0]}.{parts[1]}" if len(parts) >= 2 else cleaned
 
 def read_solinfnet_version(ip: str, attempts: int = 3, wait: float = 2.0) -> str:
     """Lee la versión del about.htm con reintentos (el servicio a veces tarda tras un reinicio)."""
     cmd = ("curl -s -u admin:admin -m 5 http://localhost:8085/about.htm 2>/dev/null "
-           "| grep -o 'Version: [0-9.]\\+' | awk '{print $2}' | head -1")
+           "| grep -oE 'Version: [0-9.]+' | awk '{print $2}' | head -1")
     for _ in range(attempts):
         res = run_ssh_command(ip, cmd, timeout=Config.SSH_TIMEOUT)
-        v = (res.get("output") or "").strip() if res.get("success") else ""
+        output = (res.get("output") or "").strip() if res.get("success") else ""
+        v = clean_solinfnet_version(output)
         if v:
             return v
         time.sleep(wait)
@@ -285,12 +298,8 @@ def extract_conf_data(ip: str):
         cmd_relay = "grep -c 'Hardware = Relay' /home/solinfnet/SolinfNet.conf 2>/dev/null || echo '0'"
         res_relay = run_ssh_command(ip, cmd_relay, timeout=10)
         if res_relay["success"]:
-            relay_count = res_relay["output"].strip()
-            # Si el output es solo un número y es > 0, tiene relay
-            try:
-                data['has_relay'] = int(relay_count) > 0
-            except:
-                data['has_relay'] = False
+            relay_numbers = re.findall(r'\b\d+\b', res_relay.get("output", ""))
+            data['has_relay'] = bool(relay_numbers and int(relay_numbers[-1]) > 0)
         else:
             data['has_relay'] = False
         
@@ -426,16 +435,13 @@ def configurar_relay_lpwan(ip: str) -> dict:
         
         print(f"[{ip}] ✅ Tiene antenas LPWAN (RadioLocal)")
         
-        # 2. 🔧 CORREGIDO: Verificar si ya tiene Relay configurado (lógica simple)
-        # Si grep encuentra la línea, el output NO está vacío → ya tiene Relay
-        cmd_relay = "grep 'Hardware = Relay' /home/solinfnet/SolinfNet.conf | head -1"
+        # 2. Verificar si ya tiene Relay configurado sin confundirse con banners SSH.
+        cmd_relay = "grep -q 'Hardware = Relay' /home/solinfnet/SolinfNet.conf && echo RELAY_PRESENT || echo RELAY_ABSENT"
         res_relay = run_ssh_command(ip, cmd_relay, timeout=10)
-        
-        # Si el output tiene contenido (no vacío), ya existe Relay
         relay_output = res_relay.get("output", "").strip() if res_relay["success"] else ""
         print(f"[{ip}] Verificando Relay existente: '{relay_output}'")
         
-        if relay_output:  # Si hay contenido, ya tiene Relay
+        if "RELAY_PRESENT" in relay_output:
             return {"configurado": False, "mensaje": "Relay ya configurado"}
         
         print(f"[{ip}] ✅ No tiene Relay - procediendo a configurarlo")
@@ -1058,7 +1064,7 @@ def save_gateway_status(ip: str, version: str, status: str, conf_data: dict = No
         
         if gateway:
             if version is not None:
-                gateway.version = version
+                gateway.version = clean_solinfnet_version(version) or version
             if status is not None:
                 gateway.status = status
             gateway.last_scan = datetime.now()
@@ -1083,7 +1089,7 @@ def save_gateway_status(ip: str, version: str, status: str, conf_data: dict = No
         else:
             gateway = Gateway(
                 ip=ip,
-                version=version,
+                version=clean_solinfnet_version(version) or version,
                 status=status or "UNKNOWN",
                 last_scan=datetime.now(),
                 cliente_id=cliente_id,
