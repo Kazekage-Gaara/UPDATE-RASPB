@@ -9,11 +9,27 @@ from database import get_db, init_db
 from models import Gateway, UpdateHistory, GatewayDiagnosticEvent, Cliente, Unidad
 from config import Config
 from datetime import datetime
+from zoneinfo import ZoneInfo
 import os, io, xlsxwriter, secrets, ipaddress, threading, time, sqlite3
 
 app = FastAPI(title="SolinfNet Control Center")
 templates = Jinja2Templates(directory=".")
 update_tasks = {}
+APP_TIMEZONE = ZoneInfo("America/Sao_Paulo")
+
+
+def app_now() -> datetime:
+    """Hora de referencia del panel, compatible con las columnas SQLite actuales."""
+    return datetime.now(APP_TIMEZONE).replace(tzinfo=None)
+
+
+def serialize_datetime(value: datetime | None) -> str | None:
+    """Envía fechas con zona explícita, también para registros SQLite históricos."""
+    if not value:
+        return None
+    if value.tzinfo is None:
+        value = value.replace(tzinfo=APP_TIMEZONE)
+    return value.astimezone(APP_TIMEZONE).isoformat()
 
 # ============ C-2: AUTENTICACIÓN POR API KEY ============
 # Header esperado: X-API-Key: <clave>
@@ -41,6 +57,12 @@ def validate_ipv4(ip: str) -> str:
         return str(ipaddress.IPv4Address(ip))
     except ValueError:
         raise HTTPException(status_code=400, detail=f"IPv4 inválida: {ip}")
+
+
+@app.get("/api/time")
+async def get_server_time(_auth: bool = Depends(verify_api_key)):
+    """Referencia NTP del servidor para relojes iguales en todos los navegadores."""
+    return {"now": serialize_datetime(app_now()), "timezone": "America/Sao_Paulo"}
 
 _client_import_scheduler_started = False
 _database_backup_scheduler_started = False
@@ -90,7 +112,7 @@ def backup_database_if_needed(force: bool = False):
         return None
 
     os.makedirs(Config.DB_BACKUP_DIR, exist_ok=True)
-    today = datetime.now().strftime("%Y%m%d")
+    today = app_now().strftime("%Y%m%d")
     if not force:
         existing_today = [
             name for name in os.listdir(Config.DB_BACKUP_DIR)
@@ -100,7 +122,7 @@ def backup_database_if_needed(force: bool = False):
             cleanup_old_database_backups()
             return os.path.join(Config.DB_BACKUP_DIR, sorted(existing_today)[-1])
 
-    stamp = datetime.now().strftime("%Y%m%d-%H%M%S")
+    stamp = app_now().strftime("%Y%m%d-%H%M%S")
     target = os.path.join(Config.DB_BACKUP_DIR, f"solinfnet-{stamp}.db")
     try:
         with sqlite3.connect(source) as src, sqlite3.connect(target) as dst:
@@ -191,8 +213,8 @@ async def get_gateways(db: Session = Depends(get_db), _auth: bool = Depends(veri
         "ip": g.ip, 
         "version": g.version, 
         "status": g.status, 
-        "last_scan": g.last_scan.isoformat() if g.last_scan else None,
-        "last_update": g.last_update.isoformat() if g.last_update else None,
+        "last_scan": serialize_datetime(g.last_scan),
+        "last_update": serialize_datetime(g.last_update),
         "cliente": c.nombre if c else None,
         "cliente_id": c.id if c else None,
         "unidad": u.nombre if u else None,
@@ -216,7 +238,7 @@ async def get_gateway_history(ip: str, db: Session = Depends(get_db), _auth: boo
     h = db.query(UpdateHistory).filter(UpdateHistory.gateway_ip == ip).order_by(UpdateHistory.timestamp.desc()).all()
     return [{"id": x.id, "old_version": x.old_version, "new_version": x.new_version, "status": x.status,
              "duration_seconds": x.duration_seconds, "error_message": x.error_message,
-             "timestamp": x.timestamp.isoformat()} for x in h]
+             "timestamp": serialize_datetime(x.timestamp)} for x in h]
 
 @app.post("/api/update")
 async def start_update(request: Request, db: Session = Depends(get_db), _auth: bool = Depends(verify_api_key)):
@@ -229,7 +251,7 @@ async def start_update(request: Request, db: Session = Depends(get_db), _auth: b
     out = []
     for ip in ips:
         t = update_gateway.delay(ip, force); out.append({"ip": ip, "task_id": t.id})
-        update_tasks[t.id] = {"ip": ip, "started_at": datetime.now(), "force": force}
+        update_tasks[t.id] = {"ip": ip, "started_at": app_now(), "force": force}
     action = "reinstalación" if force else "actualización"
     return {"message": f"Iniciando {action} de {len(ips)} gateways", "tasks": out, "force": force}
 
@@ -253,7 +275,7 @@ async def get_update_progress(_auth: bool = Depends(verify_api_key)):
     """Estado de actualizaciones: limpia terminadas y detecta PENDING zombie / worker ocupado."""
     act, comp = [], []
     finished_ids = []
-    now = datetime.now()
+    now = app_now()
 
     for tid, info in list(update_tasks.items()):
         t = update_gateway.AsyncResult(tid)
@@ -322,8 +344,8 @@ async def get_gateways_by_report_status(status_group: str, cultivo: str | None =
             "ip": g.ip,
             "version": g.version,
             "status": g.status,
-            "last_scan": g.last_scan.isoformat() if g.last_scan else None,
-            "last_update": g.last_update.isoformat() if g.last_update else None,
+            "last_scan": serialize_datetime(g.last_scan),
+            "last_update": serialize_datetime(g.last_update),
             "cliente": c.nombre if c else None,
             "cliente_id": c.id if c else None,
             "unidad": u.nombre if u else None,
@@ -452,7 +474,7 @@ async def get_actualizaciones_recientes(db: Session = Depends(get_db), limit: in
         "new_version": h.new_version,
         "status": h.status,
         "duration_seconds": h.duration_seconds,
-        "timestamp": h.timestamp.isoformat(),
+        "timestamp": serialize_datetime(h.timestamp),
         "error_message": h.error_message
     } for h, g, c in actualizaciones]
 
@@ -493,7 +515,7 @@ async def exportar_excel(db: Session = Depends(get_db), lang: str = "es", _auth:
     report_title = 'Reporte SolinfNet - Inventario y Estado' if lang == 'es' else 'Relatório SolinfNet - Inventário e Status'
     generated_label = 'Generado el' if lang == 'es' else 'Gerado em'
     ws.merge_range(0, 0, 0, len(headers) - 1, report_title, title)
-    ws.write(1, 0, f"{generated_label}: {datetime.now().strftime('%Y-%m-%d %H:%M')}", subtitle)
+    ws.write(1, 0, f"{generated_label}: {app_now().strftime('%Y-%m-%d %H:%M')}", subtitle)
     ws.set_row(0, 28)
     header_row = 3
     for col, heading in enumerate(headers):
@@ -553,7 +575,7 @@ async def exportar_excel(db: Session = Depends(get_db), lang: str = "es", _auth:
     without_relay = sum(gw.has_relay is False for gw, _, _ in gateways)
     summary_title = 'Resumen ejecutivo SolinfNet' if lang == 'es' else 'Resumo executivo SolinfNet'
     summary.merge_range('A1:D1', summary_title, title)
-    summary.write('A2', f"{generated_label}: {datetime.now().strftime('%Y-%m-%d %H:%M')}", subtitle)
+    summary.write('A2', f"{generated_label}: {app_now().strftime('%Y-%m-%d %H:%M')}", subtitle)
     summary.write_row('A4', ['Estado' if lang == 'es' else 'Status', 'Total'], header)
     summary_rows = [
         (status_labels['UPDATED'], updated),
@@ -717,9 +739,9 @@ async def get_diagnostic_affected(event_type: str, db: Session = Depends(get_db)
             "version": gateway.version if gateway else None,
             "status": gateway.status if gateway else None,
             "has_relay": gateway.has_relay if gateway else None,
-            "last_scan": gateway.last_scan.isoformat() if gateway and gateway.last_scan else None,
-            "last_update": gateway.last_update.isoformat() if gateway and gateway.last_update else None,
-            "event_ts": event.timestamp.isoformat() if event and event.timestamp else None,
+            "last_scan": serialize_datetime(gateway.last_scan) if gateway else None,
+            "last_update": serialize_datetime(gateway.last_update) if gateway else None,
+            "event_ts": serialize_datetime(event.timestamp) if event else None,
             "details": event.details if event else None,
         })
 
@@ -778,7 +800,7 @@ async def get_cliente_detalle(cliente_id: int, db: Session = Depends(get_db), _a
         "kpis": {"total": total, "actualizados": actualizados, "pendientes": pendientes, "offline": offline, "congelados": congelados, "con_relay": con_relay},
         "por_so": por_so, "unidades": detalle_unidades, "pines": pines,
         "historial": [{"ip": h.gateway_ip, "op": h.old_version, "detalle": h.new_version,
-                       "status": h.status, "ts": h.timestamp.isoformat(), "duracion": h.duration_seconds} for h in hist],
+                       "status": h.status, "ts": serialize_datetime(h.timestamp), "duracion": h.duration_seconds} for h in hist],
     }
 
 @app.get("/api/unidad/{unidad_id}/detalle")
@@ -808,7 +830,7 @@ async def get_unidad_detalle(unidad_id: int, gateway_ip: str = None, db: Session
         rows = db.query(UpdateHistory).filter(UpdateHistory.gateway_ip == gw.ip)\
                  .order_by(UpdateHistory.timestamp.desc()).limit(8).all()
         hist = [{"op": r.old_version, "detalle": r.new_version, "status": r.status,
-                 "ts": r.timestamp.isoformat(), "duracion": r.duration_seconds} for r in rows]
+                 "ts": serialize_datetime(r.timestamp), "duracion": r.duration_seconds} for r in rows]
 
     return {
         "unidad": {"id": u.id, "nombre": u.nombre},
@@ -822,7 +844,7 @@ async def get_unidad_detalle(unidad_id: int, gateway_ip: str = None, db: Session
             "vid": gw.vid, "hardware_type": gw.hardware_type, "use_gps": gw.use_gps,
             "has_relay": gw.has_relay, "os_version": gw.os_version, "os_codename": gw.os_codename,
             "lat": gw.latitude, "lon": gw.longitude,
-            "last_scan": gw.last_scan.isoformat() if gw.last_scan else None,
+            "last_scan": serialize_datetime(gw.last_scan),
         },
         "gateways": gateways_unidad, "hermanos": [], "historial": hist,
     }

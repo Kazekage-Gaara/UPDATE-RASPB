@@ -3,6 +3,7 @@ import time
 import subprocess
 import re
 from datetime import datetime
+from zoneinfo import ZoneInfo
 from celery import Celery
 from ssh_utils import run_ssh_command, ping_host
 from database import SessionLocal
@@ -11,6 +12,12 @@ from config import Config
 
 redis_url = os.getenv('REDIS_URL', 'redis://redis:6379/0')
 app = Celery('tasks', broker=redis_url, backend=redis_url)
+APP_TIMEZONE = ZoneInfo("America/Sao_Paulo")
+
+
+def app_now() -> datetime:
+    """Mantiene las fechas de SQLite en la referencia horaria del panel."""
+    return datetime.now(APP_TIMEZONE).replace(tzinfo=None)
 
 def clean_solinfnet_version(value):
     """Extrae solo la version numerica aunque SSH imprima banners de login."""
@@ -1068,7 +1075,7 @@ def save_gateway_status(ip: str, version: str, status: str, conf_data: dict = No
                 gateway.version = clean_solinfnet_version(version) or version
             if status is not None:
                 gateway.status = status
-            gateway.last_scan = datetime.now()
+            gateway.last_scan = app_now()
             if cliente_id: gateway.cliente_id = cliente_id
             if uid: gateway.unidad_id = uid
             
@@ -1093,7 +1100,7 @@ def save_gateway_status(ip: str, version: str, status: str, conf_data: dict = No
                 ip=ip,
                 version=clean_solinfnet_version(version) or version,
                 status=status or "UNKNOWN",
-                last_scan=datetime.now(),
+                last_scan=app_now(),
                 cliente_id=cliente_id,
                 unidad_id=uid,
                 description=conf_data.get('description') if conf_data else None,
@@ -1120,10 +1127,10 @@ def save_update_history(ip, old_version, new_version, status, duration, error_me
     db = SessionLocal()
     try:
         db.add(UpdateHistory(gateway_ip=ip, old_version=old_version, new_version=new_version,
-                             status=status, duration_seconds=duration, error_message=error_message, timestamp=datetime.now()))
+                             status=status, duration_seconds=duration, error_message=error_message, timestamp=app_now()))
         if status == "SUCCESS":
             gw = db.query(Gateway).filter(Gateway.ip == ip).first()
-            if gw: gw.last_update = datetime.now()
+            if gw: gw.last_update = app_now()
         db.commit()
     except Exception as e:
         db.rollback(); print(f"Error BD historial {ip}: {e}")
@@ -1141,7 +1148,7 @@ def save_operation_history(ip, operacion, detalle, status, duration=0):
             status=status,                # SUCCESS / FAILED / SKIPPED
             duration_seconds=duration,
             error_message=None if status == 'SUCCESS' else detalle[:500],
-            timestamp=datetime.now()
+            timestamp=app_now()
         ))
         db.commit()
     except Exception as e:
