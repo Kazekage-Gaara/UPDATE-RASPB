@@ -467,54 +467,127 @@ async def exportar_excel(db: Session = Depends(get_db), lang: str = "es", _auth:
     output = io.BytesIO()
     workbook = xlsxwriter.Workbook(output, {'in_memory': True})
 
-    header = workbook.add_format({'bold': True, 'bg_color': '#2D5016', 'font_color': 'white', 'border': 1, 'align': 'center'})
-    success = workbook.add_format({'bg_color': '#C6EFCE', 'font_color': '#006100', 'align': 'center'})
-    pending = workbook.add_format({'bg_color': '#FFEB9C', 'font_color': '#9C6500', 'align': 'center'})
-    error_fmt = workbook.add_format({'bg_color': '#FFC7CE', 'font_color': '#9C0006', 'align': 'center'})
-    relay_yes = workbook.add_format({'bg_color': '#C6EFCE', 'font_color': '#006100', 'align': 'center'})
-    relay_no = workbook.add_format({'bg_color': '#FFC7CE', 'font_color': '#9C0006', 'align': 'center'})
+    title = workbook.add_format({'bold': True, 'font_size': 18, 'font_color': 'white', 'bg_color': '#14532D', 'align': 'vcenter'})
+    subtitle = workbook.add_format({'font_color': '#475569', 'italic': True})
+    header = workbook.add_format({'bold': True, 'bg_color': '#166534', 'font_color': 'white', 'border': 1, 'align': 'center', 'valign': 'vcenter'})
+    label = workbook.add_format({'bold': True, 'bg_color': '#DCFCE7', 'font_color': '#14532D', 'border': 1})
+    value = workbook.add_format({'align': 'center', 'border': 1})
+    success = workbook.add_format({'bg_color': '#DCFCE7', 'font_color': '#166534', 'align': 'center', 'bold': True})
+    pending = workbook.add_format({'bg_color': '#FEF3C7', 'font_color': '#92400E', 'align': 'center', 'bold': True})
+    error_fmt = workbook.add_format({'bg_color': '#FEE2E2', 'font_color': '#991B1B', 'align': 'center', 'bold': True})
+    relay_yes = workbook.add_format({'bg_color': '#DCFCE7', 'font_color': '#166534', 'align': 'center', 'bold': True})
+    relay_no = workbook.add_format({'bg_color': '#FEE2E2', 'font_color': '#991B1B', 'align': 'center', 'bold': True})
+    relay_unknown = workbook.add_format({'bg_color': '#E2E8F0', 'font_color': '#475569', 'align': 'center'})
 
-    ws = workbook.add_worksheet('Inventario y Estado')
-    
+    inventory_name = 'Inventario y Estado' if lang == 'es' else 'Inventário e Status'
+    summary_name = 'Resumen' if lang == 'es' else 'Resumo'
+    ws = workbook.add_worksheet(inventory_name)
+    summary = workbook.add_worksheet(summary_name)
+    ws.set_tab_color('#166534')
+    summary.set_tab_color('#0F766E')
+
     headers = ['IP', 'Cliente', 'Unidad', 'Cultivo', 'Descripción', 'Flota', 'Relay LPWAN', 'Versión', 'SO', 'Estado', 'Último Escaneo', 'Última Actualización']
     if lang == 'pt':
         headers = ['IP', 'Cliente', 'Unidade', 'Cultivo', 'Descrição', 'Frota', 'Relay LPWAN', 'Versão', 'SO', 'Status', 'Última Varredura', 'Última Atualização']
-        
-    for col, h in enumerate(headers):
-        ws.write(0, col, h, header)
 
-    for row, (gw, cl, un) in enumerate(gateways, start=1):
+    report_title = 'Reporte SolinfNet - Inventario y Estado' if lang == 'es' else 'Relatório SolinfNet - Inventário e Status'
+    generated_label = 'Generado el' if lang == 'es' else 'Gerado em'
+    ws.merge_range(0, 0, 0, len(headers) - 1, report_title, title)
+    ws.write(1, 0, f"{generated_label}: {datetime.now().strftime('%Y-%m-%d %H:%M')}", subtitle)
+    ws.set_row(0, 28)
+    header_row = 3
+    for col, heading in enumerate(headers):
+        ws.write(header_row, col, heading, header)
+
+    status_labels = {
+        'UPDATED': 'Actualizado' if lang == 'es' else 'Atualizado',
+        'PENDING': 'Pendiente' if lang == 'es' else 'Pendente',
+        'OFFLINE': 'Offline',
+        'ERROR': 'Error',
+        'FROZEN_CARD': 'Necesario sustituir' if lang == 'es' else 'Necessário substituir',
+    }
+
+    for row, (gw, cl, un) in enumerate(gateways, start=header_row + 1):
         ws.write(row, 0, gw.ip)
-        ws.write(row, 1, cl.nombre if cl else ('Sin Asignar' if lang=='es' else 'Não Atribuído'))
+        ws.write(row, 1, cl.nombre if cl else ('Sin Asignar' if lang == 'es' else 'Não Atribuído'))
         ws.write(row, 2, un.nombre if un else '-')
         ws.write(row, 3, cl.tipo_cultivo.upper() if cl else '-')
         ws.write(row, 4, gw.description or '-')
         ws.write(row, 5, gw.fleet_number or '-')
-        
-        # 🆕 Relay LPWAN
         if gw.has_relay is True:
-            ws.write(row, 6, '✅ Sí' if lang == 'es' else '✅ Sim', relay_yes)
+            ws.write(row, 6, 'Sí' if lang == 'es' else 'Sim', relay_yes)
         elif gw.has_relay is False:
-            ws.write(row, 6, '❌ No', relay_no)
+            ws.write(row, 6, 'No', relay_no)
         else:
-            ws.write(row, 6, '❓')
-        
+            ws.write(row, 6, '-' if lang == 'es' else 'Sem informação', relay_unknown)
         ws.write(row, 7, gw.version or '-')
         ws.write(row, 8, gw.os_version or '-')
-        
+
         estado = gw.status or '-'
-        if estado == 'UPDATED': ws.write(row, 9, estado, success)
-        elif estado == 'PENDING': ws.write(row, 9, estado, pending)
-        elif estado in ['OFFLINE', 'ERROR', 'FROZEN_CARD']: ws.write(row, 9, estado, error_fmt)
-        else: ws.write(row, 9, estado)
-        
+        estado_visible = status_labels.get(estado, estado)
+        if estado == 'UPDATED':
+            ws.write(row, 9, estado_visible, success)
+        elif estado == 'PENDING':
+            ws.write(row, 9, estado_visible, pending)
+        elif estado in ['OFFLINE', 'ERROR', 'FROZEN_CARD']:
+            ws.write(row, 9, estado_visible, error_fmt)
+        else:
+            ws.write(row, 9, estado_visible)
         ws.write(row, 10, gw.last_scan.strftime('%Y-%m-%d %H:%M') if gw.last_scan else '-')
         ws.write(row, 11, gw.last_update.strftime('%Y-%m-%d %H:%M') if gw.last_update else '-')
 
-    ws.autofilter(0, 0, len(gateways), len(headers) - 1)
-    for col, w in zip('ABCDEFGHIJKL', [18, 25, 35, 12, 30, 10, 12, 10, 12, 12, 18, 18]):
-        ws.set_column(f'{col}:{col}', w)
-    
+    ws.autofilter(header_row, 0, header_row + len(gateways), len(headers) - 1)
+    ws.freeze_panes(header_row + 1, 0)
+    ws.set_landscape()
+    ws.fit_to_pages(1, 0)
+    ws.repeat_rows(header_row)
+    for col, width in zip('ABCDEFGHIJKL', [18, 25, 35, 12, 30, 10, 16, 12, 14, 24, 18, 18]):
+        ws.set_column(f'{col}:{col}', width)
+
+    total = len(gateways)
+    updated = sum(gw.status == 'UPDATED' for gw, _, _ in gateways)
+    pending_count = sum(gw.status == 'PENDING' for gw, _, _ in gateways)
+    offline = sum(gw.status in ('OFFLINE', 'ERROR') for gw, _, _ in gateways)
+    frozen = sum(gw.status == 'FROZEN_CARD' for gw, _, _ in gateways)
+    with_relay = sum(gw.has_relay is True for gw, _, _ in gateways)
+    without_relay = sum(gw.has_relay is False for gw, _, _ in gateways)
+    summary_title = 'Resumen ejecutivo SolinfNet' if lang == 'es' else 'Resumo executivo SolinfNet'
+    summary.merge_range('A1:D1', summary_title, title)
+    summary.write('A2', f"{generated_label}: {datetime.now().strftime('%Y-%m-%d %H:%M')}", subtitle)
+    summary.write_row('A4', ['Estado' if lang == 'es' else 'Status', 'Total'], header)
+    summary_rows = [
+        (status_labels['UPDATED'], updated),
+        (status_labels['PENDING'], pending_count),
+        ('Offline / Error', offline),
+        (status_labels['FROZEN_CARD'], frozen),
+    ]
+    for row, (name, count) in enumerate(summary_rows, start=4):
+        summary.write(row, 0, name, label)
+        summary.write(row, 1, count, value)
+    summary.write_row('A10', ['Indicador' if lang == 'es' else 'Indicador', 'Total'], header)
+    relay_rows = [
+        ('Gateways', total),
+        ('Con Relay LPWAN' if lang == 'es' else 'Com Relay LPWAN', with_relay),
+        ('Sin Relay LPWAN' if lang == 'es' else 'Sem Relay LPWAN', without_relay),
+    ]
+    for row, (name, count) in enumerate(relay_rows, start=10):
+        summary.write(row, 0, name, label)
+        summary.write(row, 1, count, value)
+    chart = workbook.add_chart({'type': 'doughnut'})
+    chart.add_series({
+        'name': 'Estado' if lang == 'es' else 'Status',
+        'categories': f"='{summary_name}'!$A$5:$A$8",
+        'values': f"='{summary_name}'!$B$5:$B$8",
+        'points': [{'fill': {'color': color}} for color in ['#16A34A', '#F59E0B', '#DC2626', '#BE123C']],
+        'data_labels': {'percentage': True, 'category': True},
+    })
+    chart.set_title({'name': 'Estado de la flota' if lang == 'es' else 'Status da frota'})
+    chart.set_legend({'position': 'bottom'})
+    chart.set_style(10)
+    summary.insert_chart('D4', chart, {'x_scale': 1.25, 'y_scale': 1.25})
+    summary.set_column('A:A', 28)
+    summary.set_column('B:B', 12)
+
     workbook.close()
     output.seek(0)
 

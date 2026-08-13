@@ -294,14 +294,15 @@ def extract_conf_data(ip: str):
         if data.get('use_gps') and ('latitude' not in data or 'longitude' not in data):
             data.update(extract_ttygps_data(ip))
         
-        # 🆕 DETECTAR SI TIENE RELAY LPWAN
-        cmd_relay = "grep -c 'Hardware = Relay' /home/solinfnet/SolinfNet.conf 2>/dev/null || echo '0'"
+        # Detectar Relay LPWAN con marcadores explicitos para no confundirse con banners SSH.
+        cmd_relay = "grep -q 'Hardware = Relay' /home/solinfnet/SolinfNet.conf && echo RELAY_PRESENT || echo RELAY_ABSENT"
         res_relay = run_ssh_command(ip, cmd_relay, timeout=10)
         if res_relay["success"]:
-            relay_numbers = re.findall(r'\b\d+\b', res_relay.get("output", ""))
-            data['has_relay'] = bool(relay_numbers and int(relay_numbers[-1]) > 0)
-        else:
-            data['has_relay'] = False
+            relay_output = res_relay.get("output", "")
+            if "RELAY_PRESENT" in relay_output:
+                data['has_relay'] = True
+            elif "RELAY_ABSENT" in relay_output:
+                data['has_relay'] = False
         
         # Debug
         if 'latitude' in data and 'longitude' in data:
@@ -1080,7 +1081,8 @@ def save_gateway_status(ip: str, version: str, status: str, conf_data: dict = No
                 gateway.vid = conf_data.get('vid')
                 gateway.hardware_type = conf_data.get('hardware_type')
                 gateway.use_gps = conf_data.get('use_gps')
-                gateway.has_relay = conf_data.get('has_relay')  # 🆕 NUEVO
+                if 'has_relay' in conf_data:
+                    gateway.has_relay = conf_data.get('has_relay')
             
             # Guardar datos del SO
             if os_data:

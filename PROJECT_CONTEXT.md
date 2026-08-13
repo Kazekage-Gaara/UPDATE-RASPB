@@ -200,6 +200,8 @@ Qué partes están funcionando y cuál es el estado actual.
 
 ## Últimos cambios
 
+- 2026-08-13: Se mejoro la exportacion de reportes: el PDF prepara los graficos con una paleta de alto contraste y fondo blanco sin gradientes antes de imprimir; el Excel ahora incorpora pestaña de resumen con grafico, encabezado, filtros, filas congeladas, estados traducidos y formato de lectura.
+
 Resumen de los cambios recientes importantes.
 
 ## Trabajo pendiente
@@ -318,3 +320,4 @@ Prioriza siempre:
 - 2026-08-12: Se agrego vista ampliada de mapa en los dossiers de cliente y unidad. Cuando hay coordenadas GPS, aparece un boton junto al mini-mapa que abre un modal grande con los mismos pines, popups y bounds; al cerrar el dossier tambien se desmonta el mapa ampliado si estaba abierto.
 - 2026-08-12: Se corrigio la diferencia de totales en Reportes: el dashboard ahora cuenta `FROZEN_CARD` como categoria propia (`Necesario substituir`) en el grafico global y por cultivo, por lo que las categorias suman el total real de gateways. Tambien se mejoro la presentacion visual de los graficos con tarjetas mas pulidas y controles para alternar vistas (dona/barras/polar y apilado/horizontal/linea), con textos ES/PT-BR.
 - 2026-08-12: Se quito la vista Polar de los graficos de Reportes por baja legibilidad. Se agrego drill-down clicable desde los graficos global y por cultivo: al clicar categorias de atencion (`PENDING`, `OFFLINE/ERROR`, `FROZEN_CARD`) se abre un modal con IP, cliente, unidad, descripcion, version, estado y ultima revision, con enlaces a dossiers de cliente/unidad. `UPDATED` no abre lista para evitar cargar demasiados registros.
+- 2026-08-13: Se corrigio la deteccion persistida de Relay LPWAN en `extract_conf_data()`: ahora usa marcadores `RELAY_PRESENT/RELAY_ABSENT` en vez de parsear numeros de `grep -c`, evitando falsos negativos por ruido/banners en stdout; ademas `save_gateway_status()` conserva el valor existente si una lectura SSH no consigue confirmar Relay. Se verifico `220.165.1.105`: el gateway tiene `Hardware = Relay`, se refrescaron metadatos en la BD runtime y la API ya devuelve `has_relay=true`. Se reconstruyo `worker`.

@@ -200,12 +200,21 @@
 
         /* ============ PRINT STYLES ============ */
         @media print {
-            header, #tab-btn-operaciones, #tab-btn-reportes, #tab-btn-mapa, .toast-container, button, footer, .pagination-controls { display: none !important; }
+            @page { margin: 12mm; size: auto; }
+            header, #tab-btn-operaciones, #tab-btn-reportes, #tab-btn-mapa, .toast-container, button, footer, .pagination-controls, [id$="ChartTypeControl"], .report-print-hint { display: none !important; }
             #tab-operaciones { display: none !important; }
             #tab-reportes { display: block !important; }
-            body { background: white !important; color: black !important; }
+            body, #tab-reportes { background: white !important; color: #0f172a !important; }
             .card, .bg-white, .dark\:bg-gray-800, .dark\:bg-slate-800 { background: white !important; box-shadow: none !important; border: 1px solid #ddd !important; }
-            canvas { max-width: 100% !important; height: auto !important; }
+            /* Los contenedores de Chart.js heredan gradientes oscuros en modo dark. */
+            #tab-reportes .rounded-2xl { background-color: #ffffff !important; background-image: none !important; border: 1px solid #cbd5e1 !important; border-radius: 0.5rem !important; }
+            #tab-reportes .grid { grid-template-columns: 1fr !important; }
+            #tab-reportes h2, #tab-reportes h3, #tab-reportes th, #tab-reportes td, #tab-reportes p, #tab-reportes div { color: #0f172a; }
+            #tab-reportes .text-amber-500 { color: #a16207 !important; }
+            #tab-reportes .text-red-600, #tab-reportes .text-red-500 { color: #b91c1c !important; }
+            #tab-reportes .text-emerald-500, #tab-reportes .text-green-500 { color: #047857 !important; }
+            #tab-reportes canvas { max-width: 100% !important; height: auto !important; }
+            #tab-reportes [style*="background"] { print-color-adjust: exact !important; -webkit-print-color-adjust: exact !important; }
             table { page-break-inside: avoid; }
             tr { page-break-inside: avoid; }
             * { -webkit-print-color-adjust: exact !important; print-color-adjust: exact !important; }
@@ -690,7 +699,7 @@ body::after{
                         <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/></svg>
                         <span data-i18n="btn_export_excel">Exportar a Excel</span>
                     </button>
-                    <button onclick="window.print()" class="px-4 py-2 rounded-lg text-sm font-medium bg-slate-600 hover:bg-slate-700 text-white transition flex items-center gap-2 shadow-sm">
+                    <button onclick="printReports()" class="px-4 py-2 rounded-lg text-sm font-medium bg-slate-600 hover:bg-slate-700 text-white transition flex items-center gap-2 shadow-sm">
                         <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 17h2a2 2 0 002-2v-4a2 2 0 00-2-2H5a2 2 0 00-2 2v4a2 2 0 002 2h2m2 4h6a2 2 0 002-2v-4a2 2 0 00-2-2H9a2 2 0 00-2 2v4a2 2 0 002 2zm8-12V5a2 2 0 00-2-2H9a2 2 0 00-2 2v4h10z"/></svg>
                         <span data-i18n="btn_export_pdf">Imprimir / PDF</span>
                     </button>
@@ -705,7 +714,7 @@ body::after{
                         <div id="globalChartTypeControl" class="flex rounded-xl bg-slate-100/80 dark:bg-slate-900/60 p-1 border border-slate-200 dark:border-slate-700"></div>
                     </div>
                     <div class="rounded-2xl bg-gradient-to-br from-white to-slate-50 dark:from-slate-900/70 dark:to-slate-950/40 border border-slate-100 dark:border-slate-800 p-3" style="position: relative; height: 315px;"><canvas id="chartGlobal"></canvas></div>
-                    <p class="mt-3 text-[11px] text-slate-400" data-i18n="chart_click_hint">Clic en pendientes, offline/error o substituir para ver afectados</p>
+                    <p class="report-print-hint mt-3 text-[11px] text-slate-400" data-i18n="chart_click_hint">Clic en pendientes, offline/error o substituir para ver afectados</p>
                 </div>
                 <div class="card p-5 overflow-hidden">
                     <div class="flex flex-wrap items-center justify-between gap-3 mb-4">
@@ -713,7 +722,7 @@ body::after{
                         <div id="cropChartTypeControl" class="flex rounded-xl bg-slate-100/80 dark:bg-slate-900/60 p-1 border border-slate-200 dark:border-slate-700"></div>
                     </div>
                     <div class="rounded-2xl bg-gradient-to-br from-white to-slate-50 dark:from-slate-900/70 dark:to-slate-950/40 border border-slate-100 dark:border-slate-800 p-3" style="position: relative; height: 315px;"><canvas id="chartCultivos"></canvas></div>
-                    <p class="mt-3 text-[11px] text-slate-400" data-i18n="chart_click_hint">Clic en pendientes, offline/error o substituir para ver afectados</p>
+                    <p class="report-print-hint mt-3 text-[11px] text-slate-400" data-i18n="chart_click_hint">Clic en pendientes, offline/error o substituir para ver afectados</p>
                 </div>
             </div>
 
@@ -2942,7 +2951,7 @@ ${(g.os_codename === 'jessie' || g.os_codename === 'stretch') ? `<button onclick
                     tabReportes.style.visibility = 'visible';
                 }
 
-                const isDark = document.documentElement.classList.contains('dark');
+                const isDark = document.documentElement.classList.contains('dark') && !document.body.classList.contains('print-report');
                 const textColor = isDark ? '#e2e8f0' : '#334155';
                 const gridColor = isDark ? '#334155' : '#e2e8f0';
                 const borderColor = isDark ? '#1e293b' : '#ffffff';
@@ -3130,6 +3139,31 @@ ${(g.os_codename === 'jessie' || g.os_codename === 'stretch') ? `<button onclick
             }
         }
 
+        let printingReports = false;
+        async function printReports() {
+            if (printingReports) return;
+            printingReports = true;
+            document.body.classList.add('print-report');
+            try {
+                await loadDashboard();
+                // Da tiempo al navegador para pintar los canvas con la paleta de impresion.
+                await new Promise(resolve => setTimeout(resolve, 180));
+                window.print();
+            } catch (err) {
+                console.error('Error preparando PDF:', err);
+                document.body.classList.remove('print-report');
+                printingReports = false;
+                showToast(currentLang === 'pt' ? 'Erro ao preparar PDF' : 'Error al preparar PDF', 'error');
+            }
+        }
+
+        window.addEventListener('afterprint', () => {
+            if (!printingReports) return;
+            document.body.classList.remove('print-report');
+            printingReports = false;
+            loadDashboard();
+        });
+
         async function loadRecentUpdates() {
             try {
                 const res = await fetch('/api/reportes/actualizaciones_recientes?limit=15');
@@ -3168,7 +3202,7 @@ ${(g.os_codename === 'jessie' || g.os_codename === 'stretch') ? `<button onclick
                 const ctxRelay = document.getElementById('chartRelay').getContext('2d');
                 if (chartRelayInstance) chartRelayInstance.destroy();
 
-                const isDark = document.documentElement.classList.contains('dark');
+                const isDark = document.documentElement.classList.contains('dark') && !document.body.classList.contains('print-report');
                 const textColor = isDark ? '#e2e8f0' : '#334155';
                 const gridColor = isDark ? '#334155' : '#e2e8f0';
                 const borderColor = isDark ? '#1e293b' : '#ffffff';
