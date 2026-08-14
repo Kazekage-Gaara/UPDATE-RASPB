@@ -10,7 +10,7 @@ from models import Gateway, UpdateHistory, GatewayDiagnosticEvent, Cliente, Unid
 from config import Config
 from datetime import datetime
 from zoneinfo import ZoneInfo
-import os, io, xlsxwriter, secrets, ipaddress, threading, time, sqlite3
+import os, io, xlsxwriter, secrets, ipaddress, threading, time, sqlite3, re
 
 app = FastAPI(title="SolinfNet Control Center")
 templates = Jinja2Templates(directory=".")
@@ -30,6 +30,51 @@ def serialize_datetime(value: datetime | None) -> str | None:
     if value.tzinfo is None:
         value = value.replace(tzinfo=APP_TIMEZONE)
     return value.astimezone(APP_TIMEZONE).isoformat()
+
+
+def mono_incident_is_resolved(event: GatewayDiagnosticEvent, resolved_events: list[GatewayDiagnosticEvent]) -> tuple[bool, datetime | None]:
+    """Determina si una alerta Mono ya fue corregida, tambien para datos anteriores."""
+    explicit_resolution = next(
+        (item for item in resolved_events if item.gateway_ip == event.gateway_ip and item.timestamp >= event.timestamp),
+        None,
+    )
+    if explicit_resolution:
+        return True, explicit_resolution.timestamp
+
+    # Antes de registrar eventos de resolucion, el resultado de la limpieza ya
+    # incluia el espacio libre final; sirve para clasificar el historial legado.
+    match = re.search(r"espacio libre despues:\s*(\d+)\s*MB", event.details or "", re.IGNORECASE)
+    if match and int(match.group(1)) > 100:
+        return True, event.timestamp
+    return False, None
+
+
+def get_mono_incidents(db: Session, cliente_id: int | None = None) -> list[dict]:
+    """Obtiene incidentes de espacio, conservando el estado y fecha de resolucion."""
+    events_query = db.query(GatewayDiagnosticEvent).filter(
+        GatewayDiagnosticEvent.event_type.in_(["MONO_NO_SPACE", "MONO_SPACE_RESOLVED"])
+    )
+    events = events_query.order_by(GatewayDiagnosticEvent.timestamp.desc()).all()
+    detections = [event for event in events if event.event_type == "MONO_NO_SPACE"]
+    resolutions = [event for event in events if event.event_type == "MONO_SPACE_RESOLVED"]
+
+    gateways = db.query(Gateway).filter(Gateway.ip.in_({event.gateway_ip for event in detections})).all() if detections else []
+    gateways_by_ip = {gateway.ip: gateway for gateway in gateways}
+    if cliente_id is not None:
+        detections = [event for event in detections if gateways_by_ip.get(event.gateway_ip) and gateways_by_ip[event.gateway_ip].cliente_id == cliente_id]
+
+    incidents = []
+    for event in detections:
+        resolved, resolved_at = mono_incident_is_resolved(event, resolutions)
+        incidents.append({
+            "ip": event.gateway_ip,
+            "detected_at": serialize_datetime(event.timestamp),
+            "resolved": resolved,
+            "resolved_at": serialize_datetime(resolved_at),
+            "details": event.details,
+            "gateway": gateways_by_ip.get(event.gateway_ip),
+        })
+    return incidents
 
 # ============ C-2: AUTENTICACIÓN POR API KEY ============
 # Header esperado: X-API-Key: <clave>
@@ -374,18 +419,16 @@ async def get_dashboard_data(db: Session = Depends(get_db), _auth: bool = Depend
         sin_relay = db.query(Gateway).filter(Gateway.has_relay == False).count()
         relay_null = db.query(Gateway).filter(Gateway.has_relay == None).count()
 
-        diagnostic_rows = db.query(GatewayDiagnosticEvent.event_type, GatewayDiagnosticEvent.gateway_ip)\
-            .filter(GatewayDiagnosticEvent.event_type.in_(["MONO_NO_SPACE", "FROZEN_CARD"]))\
+        mono_incidents = get_mono_incidents(db)
+        active_mono_ips = {item["ip"] for item in mono_incidents if not item["resolved"]}
+        frozen_event_ips = {ip for (ip,) in db.query(GatewayDiagnosticEvent.gateway_ip)\
+            .filter(GatewayDiagnosticEvent.event_type == "FROZEN_CARD")\
             .distinct()\
-            .all()
-        diagnostic_ips = {"MONO_NO_SPACE": set(), "FROZEN_CARD": set()}
-        for event_type, gateway_ip in diagnostic_rows:
-            if event_type in diagnostic_ips and gateway_ip:
-                diagnostic_ips[event_type].add(gateway_ip)
+            .all() if ip}
         current_frozen_ips = {ip for (ip,) in db.query(Gateway.ip).filter(Gateway.status == "FROZEN_CARD").all()}
-        frozen_ips = diagnostic_ips["FROZEN_CARD"] | current_frozen_ips
+        frozen_ips = frozen_event_ips | current_frozen_ips
         diagnostic_counts = {
-            "MONO_NO_SPACE": len(diagnostic_ips["MONO_NO_SPACE"] - frozen_ips),
+            "MONO_NO_SPACE": len(active_mono_ips - frozen_ips),
             "FROZEN_CARD": len(frozen_ips),
         }
 
@@ -696,15 +739,18 @@ async def get_diagnostic_affected(event_type: str, db: Session = Depends(get_db)
     if event_type not in allowed:
         raise HTTPException(404, "Diagnóstico no soportado")
 
-    events = db.query(GatewayDiagnosticEvent)\
-        .filter(GatewayDiagnosticEvent.event_type == event_type)\
-        .order_by(GatewayDiagnosticEvent.timestamp.desc())\
-        .all()
-
-    latest_by_ip = {}
-    for event in events:
-        if event.gateway_ip not in latest_by_ip:
-            latest_by_ip[event.gateway_ip] = event
+    if event_type == "MONO_NO_SPACE":
+        incidents = [item for item in get_mono_incidents(db) if not item["resolved"]]
+        latest_by_ip = {item["ip"]: item for item in incidents}
+    else:
+        events = db.query(GatewayDiagnosticEvent)\
+            .filter(GatewayDiagnosticEvent.event_type == event_type)\
+            .order_by(GatewayDiagnosticEvent.timestamp.desc())\
+            .all()
+        latest_by_ip = {}
+        for event in events:
+            if event.gateway_ip not in latest_by_ip:
+                latest_by_ip[event.gateway_ip] = event
 
     frozen_event_ips = {ip for (ip,) in db.query(GatewayDiagnosticEvent.gateway_ip)\
         .filter(GatewayDiagnosticEvent.event_type == "FROZEN_CARD")\
@@ -729,6 +775,7 @@ async def get_diagnostic_affected(event_type: str, db: Session = Depends(get_db)
         gateway = gateways_by_ip.get(ip)
         cliente = clientes.get(gateway.cliente_id) if gateway and gateway.cliente_id else None
         unidad = unidades.get(gateway.unidad_id) if gateway and gateway.unidad_id else None
+        incident = event if isinstance(event, dict) else None
         afectados.append({
             "ip": ip,
             "cliente_id": cliente.id if cliente else None,
@@ -741,8 +788,8 @@ async def get_diagnostic_affected(event_type: str, db: Session = Depends(get_db)
             "has_relay": gateway.has_relay if gateway else None,
             "last_scan": serialize_datetime(gateway.last_scan) if gateway else None,
             "last_update": serialize_datetime(gateway.last_update) if gateway else None,
-            "event_ts": serialize_datetime(event.timestamp) if event else None,
-            "details": event.details if event else None,
+            "event_ts": incident["detected_at"] if incident else (serialize_datetime(event.timestamp) if event else None),
+            "details": incident["details"] if incident else (event.details if event else None),
         })
 
     afectados.sort(key=lambda item: (item["cliente"] or "", item["unidad"] or "", item["ip"]))
@@ -793,6 +840,7 @@ async def get_cliente_detalle(cliente_id: int, db: Session = Depends(get_db), _a
     hist = db.query(UpdateHistory).join(Gateway, UpdateHistory.gateway_ip == Gateway.ip)\
              .filter(Gateway.cliente_id == cliente_id)\
              .order_by(UpdateHistory.timestamp.desc()).limit(8).all()
+    mono_incidents = get_mono_incidents(db, cliente_id)
 
     return {
         "id": cliente.id, "nombre": cliente.nombre, "cultivo": cliente.tipo_cultivo, "subred": cliente.subred,
@@ -801,6 +849,10 @@ async def get_cliente_detalle(cliente_id: int, db: Session = Depends(get_db), _a
         "por_so": por_so, "unidades": detalle_unidades, "pines": pines,
         "historial": [{"ip": h.gateway_ip, "op": h.old_version, "detalle": h.new_version,
                        "status": h.status, "ts": serialize_datetime(h.timestamp), "duracion": h.duration_seconds} for h in hist],
+        "historial_mono": [{
+            "ip": item["ip"], "detectado": item["detected_at"], "resuelto": item["resolved"],
+            "fecha_resolucion": item["resolved_at"],
+        } for item in mono_incidents[:12]],
     }
 
 @app.get("/api/unidad/{unidad_id}/detalle")

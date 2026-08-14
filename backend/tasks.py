@@ -95,6 +95,12 @@ def cleanup_runtime_artifacts(ip: str) -> dict:
         free_after = 0
     if crash_count > 0:
         save_diagnostic_event(ip, "MONO_NO_SPACE", f"Se encontraron {crash_count} mono_crash; espacio libre despues: {free_after} MB")
+        if data.get("success") and free_after > 100:
+            save_diagnostic_event(
+                ip,
+                "MONO_SPACE_RESOLVED",
+                f"Limpieza de mono_crash completada; espacio libre despues: {free_after} MB",
+            )
     if free_after <= 100:
         save_diagnostic_event(ip, "LOW_DISK_SPACE", f"Solo quedan {free_after} MB libres despues de la limpieza")
     return data
@@ -175,7 +181,7 @@ def scan_and_check_version(self, ip: str, persist_failures: bool = True):
             save_gateway_status(ip, None, "ERROR")
         if not ssh_ok:
             return {"ip": ip, "status": "ERROR", "msg": "SSH Falló (sin conexión al gateway)"}
-        return {"ip": ip, "status": "ERROR", "msg": "El servicio SolinfNet no respondió tras 3 intentos (¿reiniciándose?)"}
+        return {"ip": ip, "status": "ERROR", "msg": "Gateway accesible, pero SolinfNet no devolvió la versión tras 3 intentos"}
     current_normalized = normalize_version(current_version)
     
     # 2. 🆕 Extraer datos del SolinfNet.conf

@@ -741,7 +741,7 @@ body::after{
                 <button type="button" onclick="openDiagnosticDetail('MONO_NO_SPACE')" class="card card-interactive p-4 text-left group focus:outline-none focus:ring-2 focus:ring-amber-400">
                     <div class="flex items-start justify-between gap-3">
                         <div>
-                            <div class="text-xs text-slate-500" data-i18n="diag_mono">Problemas Mono / espacio</div>
+                            <div class="text-xs text-slate-500" data-i18n="diag_mono">Incidencias Mono activas</div>
                             <div class="text-[11px] text-slate-400 mt-1" data-i18n="diag_click_help">Clic para ver afectados</div>
                         </div>
                         <span class="text-amber-500 group-hover:scale-110 transition">↗</span>
@@ -946,7 +946,7 @@ body::after{
                 tab_mapa: "Mapa de Gateways", map_title: "Mapa de Gateways",
                 map_total_gps: "Total con GPS", map_offline: "Offline", map_offline_error: "Offline/Error",
                 report_title: "Dashboard Ejecutivo", global_status: "Estado Global de la Flota",
-                diag_mono: "Problemas Mono / espacio", diag_frozen: "Tarjetas congeladas", diag_click_help: "Clic para ver afectados",
+                diag_mono: "Incidencias Mono activas", diag_frozen: "Tarjetas congeladas", diag_click_help: "Clic para ver afectados",
                 by_crop: "Progreso por Tipo de Cultivo", top_failures: "Top 10 Clientes que necesitan atención",
                 btn_export_excel: "Exportar a Excel", btn_export_pdf: "Imprimir / PDF",
                 th_client: "Cliente", th_unity: "Unidad", th_crop: "Cultivo", th_total: "Total", th_offline: "Offline/Error",
@@ -1143,7 +1143,7 @@ body::after{
                 tab_mapa: "Mapa de Gateways", map_title: "Mapa de Gateways",
                 map_total_gps: "Total com GPS", map_offline: "Offline", map_offline_error: "Offline/Erro",
                 report_title: "Dashboard Executivo", global_status: "Status Global da Frota",
-                diag_mono: "Problemas Mono / espaço", diag_frozen: "Cartões congelados", diag_click_help: "Clique para ver afetados",
+                diag_mono: "Incidentes Mono ativos", diag_frozen: "Cartões congelados", diag_click_help: "Clique para ver afetados",
                 by_crop: "Progresso por Tipo de Cultivo", top_failures: "Top 10 Clientes que precisam de atenção",
                 btn_export_excel: "Exportar para Excel", btn_export_pdf: "Imprimir / PDF",
                 th_client: "Cliente", th_unity: "Unidade", th_crop: "Cultivo", th_total: "Total", th_offline: "Offline/Erro",
@@ -3858,6 +3858,20 @@ async function openClienteDetalle(id){
                         <span class="text-slate-400 text-xs truncate flex-1">${esc(h.detalle||'')}</span>
                         <span class="text-slate-400 text-xs whitespace-nowrap">${f}</span></div>`;
                 }).join('')}</div>` : `<p class="text-slate-400 text-sm">${_L('Sin operaciones registradas.','Sem operações registradas.')}</p>`}
+            </div>
+            <div class="dossier-soft p-4 mt-4">
+                <p class="text-[11px] font-bold uppercase tracking-widest text-slate-400 mb-3">💾 ${_L('Historial de espacio y Mono','Histórico de espaço e Mono')}</p>
+                ${d.historial_mono.length ? `<table class="data-table"><thead><tr>
+                    <th>IP</th><th>${_L('Detectado','Detectado')}</th><th>${_L('Estado','Status')}</th><th>${_L('Resuelto','Resolvido')}</th>
+                </tr></thead><tbody>${d.historial_mono.map(item => {
+                    const status = item.resuelto
+                        ? `<span class="badge badge-success">${_L('Resuelto','Resolvido')}</span>`
+                        : `<span class="badge badge-danger">${_L('Revisar','Revisar')}</span>`;
+                    return `<tr><td class="font-mono text-xs">${esc(item.ip)}</td>
+                        <td class="text-xs text-slate-400 whitespace-nowrap">${esc(formatAppDateTime(item.detectado))}</td>
+                        <td>${status}</td>
+                        <td class="text-xs text-slate-400 whitespace-nowrap">${item.fecha_resolucion ? esc(formatAppDateTime(item.fecha_resolucion)) : '—'}</td></tr>`;
+                }).join('')}</tbody></table>` : `<p class="text-slate-400 text-sm">${_L('Sin incidencias de espacio registradas.','Nenhum incidente de espaço registrado.')}</p>`}
             </div>
         </div>`;
 
