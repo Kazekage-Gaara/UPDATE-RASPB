@@ -173,6 +173,10 @@ def scan_and_check_version(self, ip: str, persist_failures: bool = True):
             save_gateway_status(ip, None, "OFFLINE")
         return {"ip": ip, "status": "OFFLINE", "msg": "No responde a Ping"}
 
+    # Libera los crash de Mono antes de consultar SolinfNet: sin espacio el
+    # servicio puede estar caido aunque el gateway siga respondiendo por SSH.
+    cleanup_runtime_artifacts(ip)
+
     # 1. Obtener versión de SolinfNet (con reintentos)
     current_version = read_solinfnet_version(ip)
     if not current_version:
@@ -800,13 +804,23 @@ def update_gateway(self, ip: str, force: bool = False):
         save_gateway_status(ip, None, "OFFLINE")
         save_update_history(ip, None, TARGET_VERSION, "FAILED", 0, "Gateway offline")
         return {"ip": ip, "status": "FAILED", "msg": "Gateway offline"}
-    
-    # 2. 🆕 VERIFICAR VERSIÓN DEL SO ANTES DE ACTUALIZAR
-    update_progress(2, "Verificando versión del sistema operativo...", 10)
+
+    # 2. Limpiar antes de leer la versión. Con la raiz llena, SolinfNet puede
+    # no arrancar y la consulta de about.htm devolveria "Desconocida".
+    update_progress(2, "Liberando espacio y limpiando Mono...", 10)
+    cleanup_info = cleanup_runtime_artifacts(ip)
+    freed_before = cleanup_info.get('free_mb_before', '?')
+    freed_after = cleanup_info.get('free_mb_after', '?')
+    crash_count = cleanup_info.get('mono_crash_count', '0')
+    if crash_count not in ('0', ''):
+        update_progress(2, f"Limpieza Mono: {crash_count} crash file(s), libre {freed_before}->{freed_after} MB", 14)
+
+    # 3. Verificar versión del sistema operativo antes de actualizar.
+    update_progress(3, "Verificando versión del sistema operativo...", 15)
     os_data = extract_os_version(ip)
-    
-    # 3. Leer versión actual
-    update_progress(3, "Leyendo versión actual...", 15)
+
+    # 4. Leer versión actual despues de liberar espacio.
+    update_progress(4, "Leyendo versión actual...", 20)
     old_version = read_solinfnet_version(ip) or "Desconocida"
 
     # 3.5. 🚧 GATE: Debian < 10 requiere Mono suficiente
@@ -816,7 +830,7 @@ def update_gateway(self, ip: str, force: bool = False):
         m = re.search(r'Debian (\d+)', os_data.get('os_version', ''))
         debian_num = int(m.group(1)) if m else 99
         if debian_num < 10:
-            update_progress(3, f"Debian {debian_num}: verificando Mono...", 18)
+            update_progress(4, f"Debian {debian_num}: verificando Mono...", 21)
             mono_res = run_ssh_command(ip, "mono --version 2>/dev/null | head -1", timeout=10)
             mono_ver = mono_res["output"].strip() if mono_res["success"] else ""
             mono_major = 0
@@ -834,16 +848,9 @@ def update_gateway(self, ip: str, force: bool = False):
                 save_update_history(ip, old_version, TARGET_VERSION, "BLOCKED", 0, msg)
                 return {"ip": ip, "status": "BLOCKED", "msg": msg}
             else:
-                update_progress(3, f"Debian {debian_num} con Mono {mono_ver} ✓", 20)
-    
-    cleanup_info = cleanup_runtime_artifacts(ip)
-    freed_before = cleanup_info.get('free_mb_before', '?')
-    freed_after = cleanup_info.get('free_mb_after', '?')
-    crash_count = cleanup_info.get('mono_crash_count', '0')
-    if crash_count not in ('0', ''):
-        update_progress(3, f"Limpieza Mono: {crash_count} crash file(s), libre {freed_before}->{freed_after} MB", 22)
+                update_progress(4, f"Debian {debian_num} con Mono {mono_ver} ✓", 22)
 
-    # 4. Copiar archivos (tolerante a enlaces lentos: compresión + timeout amplio + reintentos)
+    # Copiar archivos (tolerante a enlaces lentos: compresión + timeout amplio + reintentos)
     update_progress(4, "Copiando archivos...", 25)
     for idx, filename in enumerate(Config.UPDATE_FILES):
         local_path = f"{Config.UPDATES_DIR}/{filename}"
