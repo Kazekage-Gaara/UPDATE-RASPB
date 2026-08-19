@@ -548,13 +548,17 @@ PROVISORIO	11.105	Faz. Cristo							user : solinfnet.jcgrossi.fz_belavista.f_100
 	215.69.0.0/24 Santo Aleixo
 		   1.5    Araxá/MG								user : solinfnet.santo_aleixo_araxa
 		   2.5	  Faz. Santa Fé                         user : solinfnet.santo_aleixo_santa_fe
+		   3.105  POSTE Gonçalo (4G)                    user : solinfnet.santo_aleixo_santa_fe_gonçalo
+           4.5    Torre 12 Liberdade                    user : solinfnet.santo_aleixo_t12_liberdade
 
 	215.70.0.0/24 JF Citrus
-			1.5    Pingo D'Água
-			 .105   Gateway Provisório 100000 			user : solinfnet.jf_citrus.fz_pingo_dagua.f_100000
-
-
-
+			0.105   Gateway Provisório 999000 			user : solinfnet.jf_citrus.fz_pingo_dagua.f_999000
+			1.5     Faz. Pingo D'Água 		 			user : solinfnet.jf_citrus.fz_pingo_dagua
+			2.5 	4G
+			2.105	Caixa D´agua Sede 4G				user : solinfnet.jf_citrus.fz_caixa_dagua.f_100001
+              100   Controladora
+            3.5     Faz. Boa Esperança 		 			user : solinfnet.jf_citrus.fz_boa_esperanca
+            4.5     Faz. Santa Angela 		 			user : solinfnet.jf_citrus.fz_santa_angela
 	
 	215.253.0.0/24 LDC BACURI
 			1.105  POSTE X01 GPRS						user : solinfnet.ldc.fz_bacuri_f48000

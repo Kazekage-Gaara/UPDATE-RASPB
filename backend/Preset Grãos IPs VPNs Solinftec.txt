@@ -595,7 +595,7 @@ Rotas IPs VPNs Solinftec
 			4.5 	Faz. Santa Maria 					user : solinfnet.menegol.fz_santa_maria
 			5.5     Faz. Capa Zero 						user : solinfnet.menegol.fz_capazero
 			6.5 	Faz. JB 							user : solinfnet.menegol.fz_jb
-			7.5 	Faz. Carla f21000					user : solinfnet.menegol.fz_carla
+			7.5 	Faz. Carla f21000					user : solinfnet.menegol.fz_carla (gw direto no patchpanel, sem switch)
 			8.5 	Faz. São Joaquim 					user : solinfnet.menegol.fz_sao_joaquim
 
 	220.106.0.0/24	Maurício Bocolli
@@ -892,6 +892,7 @@ Rotas IPs VPNs Solinftec
 
     220.165.0.0/24  Labrustar
     		1.105 	 Torre Secador 10000 				user : solinfnet.labrustar.fz_los_marcos.f_10000
+    		 .100    Controladora
 			
 
     220.166.0.0/24  Grupo Ema
@@ -1177,3 +1178,8 @@ Rotas IPs VPNs Solinftec
 
     220.228.0.0/24 	Royal Grape
     		  1.5 Faz. Royal Grape   			        user : solinfnet.royal_grape.fz_royal
+			  
+	220.229.0.0/24  Agro Fava
+		    1.5     CDA							
+			1.105   CDA Balanca 						user : solinfnet.agro_fava.fz_cda_bacanca
+			1.115	CDA Algodoeria						user : solinfnet.agro_fava.fz_cda_algodoeira
