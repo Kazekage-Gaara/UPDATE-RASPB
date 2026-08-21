@@ -1130,6 +1130,12 @@ Rotas IPs VPNs Solinftec
     220.211.0.0/24  Fazendas Modelo
             1.5	    Faz.Modelo II				        user : solinfnet.fazendasmodelo.faz_modeloII
 
+    220.212.0.0/24  Juparanã
+            1.5	    Faz. Jau						    user : solinfnet.juparana.faz_jau
+
+	220.213.0.0/24  Grupo Webler			
+			1.15	Concentrador Móvel f9000		   user : solinfnet.webler_movel.f_9000		
+
 	220.220.0.0/24  Jequitiba
 			1.5 	Faz. Panteão 						user : solinfnet.jequitiba.fz_panteao
 			2.5  	Faz. Entre Rios 					user : solinfnet.jequitiba.fz_entre_rios
