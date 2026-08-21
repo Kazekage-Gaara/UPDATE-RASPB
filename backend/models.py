@@ -76,3 +76,29 @@ class GatewayDiagnosticEvent(Base):
     event_type = Column(String, index=True, nullable=False)
     details = Column(Text, nullable=True)
     timestamp = Column(DateTime(timezone=True), server_default=func.now())
+
+class ScheduledScanRun(Base):
+    __tablename__ = "scheduled_scan_runs"
+    id = Column(Integer, primary_key=True, index=True)
+    mode = Column(String, nullable=False, default="DAILY")
+    status = Column(String, nullable=False, default="RUNNING")
+    total = Column(Integer, nullable=False, default=0)
+    completed = Column(Integer, nullable=False, default=0)
+    updated = Column(Integer, nullable=False, default=0)
+    pending = Column(Integer, nullable=False, default=0)
+    offline = Column(Integer, nullable=False, default=0)
+    errors = Column(Integer, nullable=False, default=0)
+    skipped = Column(Integer, nullable=False, default=0)
+    started_at = Column(DateTime(timezone=True), nullable=False)
+    finished_at = Column(DateTime(timezone=True), nullable=True)
+    details = Column(Text, nullable=True)
+
+class ScheduledScanGatewayResult(Base):
+    __tablename__ = "scheduled_scan_gateway_results"
+    id = Column(Integer, primary_key=True, index=True)
+    run_id = Column(Integer, ForeignKey("scheduled_scan_runs.id"), nullable=False, index=True)
+    gateway_ip = Column(String, nullable=False, index=True)
+    status = Column(String, nullable=False)
+    message = Column(Text, nullable=True)
+    duration_seconds = Column(Integer, nullable=True)
+    finished_at = Column(DateTime(timezone=True), nullable=False)

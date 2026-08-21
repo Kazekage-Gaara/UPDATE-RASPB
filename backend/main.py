@@ -5,10 +5,10 @@ from fastapi.templating import Jinja2Templates
 from sqlalchemy.orm import Session
 from sqlalchemy import func, case, desc
 from tasks import scan_and_check_version, update_gateway
-from database import get_db, init_db
-from models import Gateway, UpdateHistory, GatewayDiagnosticEvent, Cliente, Unidad
+from database import get_db, init_db, SessionLocal
+from models import Gateway, UpdateHistory, GatewayDiagnosticEvent, Cliente, Unidad, ScheduledScanRun, ScheduledScanGatewayResult
 from config import Config
-from datetime import datetime
+from datetime import datetime, timedelta
 from zoneinfo import ZoneInfo
 import os, io, xlsxwriter, secrets, ipaddress, threading, time, sqlite3, re
 
@@ -111,6 +111,17 @@ async def get_server_time(_auth: bool = Depends(verify_api_key)):
 
 _client_import_scheduler_started = False
 _database_backup_scheduler_started = False
+_scheduled_scan_scheduler_started = False
+_scheduled_scan_lock = threading.Lock()
+
+
+def next_client_import_at(now: datetime | None = None) -> datetime:
+    """Importa los TXT antes del escaneo diario para que las unidades ya existan."""
+    hour = min(max(Config.PRESET_IMPORT_HOUR, 0), 23)
+    minute = min(max(Config.PRESET_IMPORT_MINUTE, 0), 59)
+    now = now or app_now()
+    candidate = now.replace(hour=hour, minute=minute, second=0, microsecond=0)
+    return candidate if now < candidate else candidate + timedelta(days=1)
 
 def import_clients_from_presets():
     try:
@@ -128,7 +139,8 @@ def start_client_import_scheduler():
 
     def loop():
         while True:
-            time.sleep(24 * 60 * 60)
+            next_run = next_client_import_at()
+            time.sleep(max((next_run - app_now()).total_seconds(), 1))
             import_clients_from_presets()
 
     threading.Thread(target=loop, daemon=True, name="client-preset-importer").start()
@@ -198,12 +210,195 @@ def start_database_backup_scheduler():
 
     threading.Thread(target=loop, daemon=True, name="database-backup-scheduler").start()
 
+
+def next_scheduled_scan_at(now: datetime | None = None) -> datetime:
+    """Calcula la siguiente ejecucion diaria usando la hora central del panel."""
+    hour = min(max(Config.SCHEDULED_SCAN_HOUR, 0), 23)
+    minute = min(max(Config.SCHEDULED_SCAN_MINUTE, 0), 59)
+    now = now or app_now()
+    candidate = now.replace(hour=hour, minute=minute, second=0, microsecond=0)
+    return candidate if now < candidate else candidate + timedelta(days=1)
+
+
+def active_manual_update_ips() -> set[str]:
+    """No mezcla escaneos automáticos con actualizaciones iniciadas por un operador."""
+    return {
+        info["ip"] for task_id, info in update_tasks.items()
+        if update_gateway.AsyncResult(task_id).state not in ("SUCCESS", "FAILURE", "REVOKED")
+    }
+
+
+def update_scheduled_scan_run(run_id: int, **values):
+    db = SessionLocal()
+    try:
+        db.query(ScheduledScanRun).filter(ScheduledScanRun.id == run_id).update(values)
+        db.commit()
+    except Exception as e:
+        db.rollback()
+        print(f"[AUTO-SCAN] Error guardando estado: {e}")
+    finally:
+        db.close()
+
+
+def save_scheduled_scan_gateway_result(run_id: int, ip: str, status: str, message: str, duration_seconds: int):
+    db = SessionLocal()
+    try:
+        db.add(ScheduledScanGatewayResult(
+            run_id=run_id,
+            gateway_ip=ip,
+            status=status,
+            message=(message or "")[:500],
+            duration_seconds=max(duration_seconds, 0),
+            finished_at=app_now(),
+        ))
+        db.commit()
+    except Exception as e:
+        db.rollback()
+        print(f"[AUTO-SCAN] Error guardando resultado de {ip}: {e}")
+    finally:
+        db.close()
+
+
+def serialize_scheduled_scan_run(run: ScheduledScanRun) -> dict:
+    run_end = run.finished_at or app_now()
+    return {
+        "id": run.id,
+        "mode": run.mode,
+        "status": run.status,
+        "total": run.total,
+        "completed": run.completed,
+        "updated": run.updated,
+        "pending": run.pending,
+        "offline": run.offline,
+        "errors": run.errors,
+        "skipped": run.skipped,
+        "started_at": serialize_datetime(run.started_at),
+        "finished_at": serialize_datetime(run.finished_at),
+        "duration_seconds": max(int((run_end - run.started_at).total_seconds()), 0),
+        "details": run.details,
+    }
+
+
+def run_scheduled_inventory_scan(mode: str = "DAILY"):
+    """Escanea el inventario en lotes limitados, sin actualizar ni reiniciar gateways."""
+    db = SessionLocal()
+    try:
+        ips = [ip for (ip,) in db.query(Gateway.ip).order_by(Gateway.ip).all() if ip]
+        run = ScheduledScanRun(mode=mode, status="RUNNING", total=len(ips), started_at=app_now())
+        db.add(run)
+        db.commit()
+        run_id = run.id
+    finally:
+        db.close()
+
+    counters = {"completed": 0, "updated": 0, "pending": 0, "offline": 0, "errors": 0, "skipped": 0}
+    batch_size = max(1, min(Config.SCHEDULED_SCAN_BATCH_SIZE, 5))
+    pause_seconds = max(Config.SCHEDULED_SCAN_BATCH_PAUSE_SECONDS, 0)
+    timeout_seconds = max(Config.SCHEDULED_SCAN_TASK_TIMEOUT_SECONDS, 60)
+    final_status = "COMPLETED"
+    details = None
+
+    try:
+        for offset in range(0, len(ips), batch_size):
+            candidates = ips[offset:offset + batch_size]
+            batch = [ip for ip in candidates if ip not in active_manual_update_ips()]
+            counters["skipped"] += len(candidates) - len(batch)
+            for ip in set(candidates) - set(batch):
+                save_scheduled_scan_gateway_result(run_id, ip, "SKIPPED", "Actualizacion manual en curso", 0)
+            if not batch:
+                update_scheduled_scan_run(run_id, **counters)
+                continue
+
+            tasks = {scan_and_check_version.delay(ip): ip for ip in batch}
+            task_started_at = {task: time.monotonic() for task in tasks}
+            waiting = set(tasks)
+            deadline = time.monotonic() + timeout_seconds
+            while waiting and time.monotonic() < deadline:
+                for task in list(waiting):
+                    if not task.ready():
+                        continue
+                    waiting.remove(task)
+                    result = task.result if isinstance(task.result, dict) else {}
+                    status = result.get("status", "ERROR")
+                    message = result.get("msg") or str(task.result or "Error sin detalle")
+                    duration_seconds = round(time.monotonic() - task_started_at[task])
+                    save_scheduled_scan_gateway_result(run_id, tasks[task], status, message, duration_seconds)
+                    counters["completed"] += 1
+                    if status == "UPDATED":
+                        counters["updated"] += 1
+                    elif status == "PENDING":
+                        counters["pending"] += 1
+                    elif status == "OFFLINE":
+                        counters["offline"] += 1
+                    else:
+                        counters["errors"] += 1
+                if waiting:
+                    time.sleep(2)
+
+            if waiting:
+                final_status = "PARTIAL"
+                counters["errors"] += len(waiting)
+                details = f"{len(waiting)} gateway(s) excedieron el tiempo maximo por lote"
+                for task in waiting:
+                    save_scheduled_scan_gateway_result(
+                        run_id,
+                        tasks[task],
+                        "TIMEOUT",
+                        "Tiempo maximo excedido en el lote automatico",
+                        round(time.monotonic() - task_started_at[task]),
+                    )
+                update_scheduled_scan_run(run_id, status=final_status, finished_at=app_now(), details=details, **counters)
+                print(f"[AUTO-SCAN] Lote detenido: {details}")
+                return
+
+            update_scheduled_scan_run(run_id, **counters)
+            if offset + batch_size < len(ips) and pause_seconds:
+                time.sleep(pause_seconds)
+
+        update_scheduled_scan_run(run_id, status=final_status, finished_at=app_now(), details=details, **counters)
+        print(f"[AUTO-SCAN] Finalizado: {counters}")
+    except Exception as e:
+        details = str(e)[:500]
+        update_scheduled_scan_run(run_id, status="FAILED", finished_at=app_now(), details=details, **counters)
+        print(f"[AUTO-SCAN] Error: {details}")
+
+
+def start_scheduled_inventory_scan(mode: str = "DAILY") -> bool:
+    if not _scheduled_scan_lock.acquire(blocking=False):
+        return False
+
+    def runner():
+        try:
+            run_scheduled_inventory_scan(mode)
+        finally:
+            _scheduled_scan_lock.release()
+
+    threading.Thread(target=runner, daemon=True, name="scheduled-inventory-scan").start()
+    return True
+
+
+def start_scheduled_scan_scheduler():
+    global _scheduled_scan_scheduler_started
+    if _scheduled_scan_scheduler_started:
+        return
+    _scheduled_scan_scheduler_started = True
+
+    def loop():
+        while True:
+            next_run = next_scheduled_scan_at()
+            time.sleep(max((next_run - app_now()).total_seconds(), 1))
+            if not start_scheduled_inventory_scan("DAILY"):
+                print("[AUTO-SCAN] Se omitio la ejecucion diaria: ya hay un escaneo automatico en curso")
+
+    threading.Thread(target=loop, daemon=True, name="scheduled-scan-scheduler").start()
+
 @app.on_event("startup")
 def startup():
     init_db()
     import_clients_from_presets()
     start_client_import_scheduler()
     start_database_backup_scheduler()
+    start_scheduled_scan_scheduler()
 
 @app.get("/", response_class=HTMLResponse)
 async def read_root(request: Request):
@@ -244,6 +439,61 @@ async def get_status(task_id: str, _auth: bool = Depends(verify_api_key)):
     if t.state == 'PENDING': return {"state": t.state, "status": "Procesando..."}
     elif t.state != 'FAILURE': return {"state": t.state, "result": t.result}
     else: return {"state": t.state, "error": str(t.info)}
+
+
+@app.get("/api/scheduled-scan/status")
+async def get_scheduled_scan_status(db: Session = Depends(get_db), _auth: bool = Depends(verify_api_key)):
+    """Estado persistente del escaneo diario y su siguiente ejecucion prevista."""
+    last_run = db.query(ScheduledScanRun).order_by(ScheduledScanRun.started_at.desc()).first()
+    recent_runs = db.query(ScheduledScanRun).order_by(ScheduledScanRun.started_at.desc()).limit(7).all()
+    return {
+        "enabled": True,
+        "hour": min(max(Config.SCHEDULED_SCAN_HOUR, 0), 23),
+        "minute": min(max(Config.SCHEDULED_SCAN_MINUTE, 0), 59),
+        "batch_size": max(1, min(Config.SCHEDULED_SCAN_BATCH_SIZE, 5)),
+        "running": _scheduled_scan_lock.locked(),
+        "next_run": serialize_datetime(next_scheduled_scan_at()),
+        "last_run": serialize_scheduled_scan_run(last_run) if last_run else None,
+        "recent_runs": [serialize_scheduled_scan_run(run) for run in recent_runs],
+    }
+
+
+@app.get("/api/scheduled-scan/{run_id}/details")
+async def get_scheduled_scan_details(run_id: int, db: Session = Depends(get_db), _auth: bool = Depends(verify_api_key)):
+    """Detalle por gateway de una ejecucion para revisar demoras y fallos."""
+    run = db.query(ScheduledScanRun).filter(ScheduledScanRun.id == run_id).first()
+    if not run:
+        raise HTTPException(status_code=404, detail="Ejecucion automatica no encontrada")
+
+    rows = db.query(ScheduledScanGatewayResult, Gateway, Cliente, Unidad).outerjoin(
+        Gateway, ScheduledScanGatewayResult.gateway_ip == Gateway.ip
+    ).outerjoin(
+        Cliente, Gateway.cliente_id == Cliente.id
+    ).outerjoin(
+        Unidad, Gateway.unidad_id == Unidad.id
+    ).filter(
+        ScheduledScanGatewayResult.run_id == run_id
+    ).order_by(
+        ScheduledScanGatewayResult.duration_seconds.desc(), ScheduledScanGatewayResult.gateway_ip.asc()
+    ).all()
+    return {
+        "run": serialize_scheduled_scan_run(run),
+        "gateways": [{
+            "ip": result.gateway_ip,
+            "status": result.status,
+            "message": result.message,
+            "duration_seconds": result.duration_seconds,
+            "finished_at": serialize_datetime(result.finished_at),
+            "cliente": cliente.nombre if cliente else None,
+            "unidad": unidad.nombre if unidad else None,
+        } for result, gateway, cliente, unidad in rows],
+    }
+@app.post("/api/scheduled-scan/run")
+async def start_scheduled_scan_now(_auth: bool = Depends(verify_api_key)):
+    """Permite iniciar manualmente la misma revision segura que se ejecuta a las 04:30."""
+    if not start_scheduled_inventory_scan("MANUAL"):
+        raise HTTPException(status_code=409, detail="Ya hay un escaneo automatico en curso")
+    return {"started": True, "message": "Escaneo automatico iniciado"}
 
 @app.get("/api/gateways")
 async def get_gateways(db: Session = Depends(get_db), _auth: bool = Depends(verify_api_key)):

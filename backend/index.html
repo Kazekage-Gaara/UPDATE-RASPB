@@ -515,6 +515,39 @@ body::after{
                 </div>
             </div>
 
+            <!-- Scheduled Inventory Scan -->
+            <div class="card p-5 mb-5 border border-sky-100 dark:border-sky-900/50" id="scheduledScanPanel">
+                <div class="flex items-start justify-between gap-4 flex-wrap">
+                    <div>
+                        <div class="section-header mb-1">
+                            <div class="section-icon bg-sky-50 dark:bg-sky-900/20">
+                                <svg class="w-5 h-5 text-sky-600 dark:text-sky-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
+                            </div>
+                            <h2 class="text-base font-semibold" data-i18n="scheduled_scan_title">Escaneo automático del inventario</h2>
+                        </div>
+                        <p class="text-xs text-slate-400 dark:text-slate-500" data-i18n="scheduled_scan_help">Revisa versión, Relay, GPS y estado; no actualiza ni reinicia gateways.</p>
+                    </div>
+                    <div class="flex gap-2">
+                        <button id="btnScheduledScanDetails" onclick="openScheduledScanDetails()" class="border border-sky-200 dark:border-sky-800 text-sky-700 dark:text-sky-300 hover:bg-sky-50 dark:hover:bg-sky-900/20 px-4 py-2 rounded-lg font-medium text-sm transition disabled:opacity-50 disabled:cursor-not-allowed" data-i18n="scheduled_scan_details" disabled>Ver detalles</button>
+                        <button id="btnRunScheduledScan" onclick="runScheduledScanNow()" class="bg-sky-600 hover:bg-sky-700 text-white px-4 py-2 rounded-lg font-medium text-sm transition disabled:opacity-50 disabled:cursor-not-allowed" data-i18n="scheduled_scan_run_now">Ejecutar ahora</button>
+                    </div>
+                </div>
+                <div class="grid grid-cols-1 sm:grid-cols-3 gap-3 mt-4 text-sm">
+                    <div class="rounded-lg bg-slate-50 dark:bg-slate-800/70 px-3 py-2">
+                        <div class="text-xs text-slate-400 dark:text-slate-500" data-i18n="scheduled_scan_next">Próxima ejecución</div>
+                        <div id="scheduledScanNext" class="font-semibold mt-1">--</div>
+                    </div>
+                    <div class="rounded-lg bg-slate-50 dark:bg-slate-800/70 px-3 py-2">
+                        <div class="text-xs text-slate-400 dark:text-slate-500" data-i18n="scheduled_scan_last">Última ejecución</div>
+                        <div id="scheduledScanLast" class="font-semibold mt-1">--</div>
+                    </div>
+                    <div class="rounded-lg bg-slate-50 dark:bg-slate-800/70 px-3 py-2">
+                        <div class="text-xs text-slate-400 dark:text-slate-500" data-i18n="scheduled_scan_result">Resultado</div>
+                        <div id="scheduledScanResult" class="font-semibold mt-1">--</div>
+                    </div>
+                </div>
+            </div>
+
             <!-- Verify Device -->
             <div class="card p-5 mb-5">
                 <div class="section-header">
@@ -857,6 +890,35 @@ body::after{
                 stat_updated: "Actualizados",
                 stat_pending: "Pendientes",
                 stat_offline: "Offline/Errores",
+                scheduled_scan_title: "Escaneo automático del inventario",
+                scheduled_scan_help: "Revisa versión, Relay, GPS y estado; no actualiza ni reinicia gateways.",
+                scheduled_scan_run_now: "Ejecutar ahora",
+                scheduled_scan_details: "Ver detalles",
+                scheduled_scan_next: "Próxima ejecución",
+                scheduled_scan_last: "Última ejecución",
+                scheduled_scan_result: "Resultado",
+                scheduled_scan_never: "Aún no se ejecutó",
+                scheduled_scan_running: "Escaneo en curso",
+                scheduled_scan_completed: "Completado",
+                scheduled_scan_partial: "Finalizado con revisión",
+                scheduled_scan_failed: "Error",
+                scheduled_scan_summary: "{completed}/{total} revisados · {updated} OK · {pending} pendientes · {offline} offline · {errors} errores",
+                scheduled_scan_started: "Escaneo automático iniciado",
+                scheduled_scan_already_running: "Ya hay un escaneo automático en curso",
+                scheduled_scan_duration: "Duración",
+                scheduled_scan_gateway: "Gateway",
+                scheduled_scan_client: "Cliente",
+                scheduled_scan_unit: "Unidad",
+                scheduled_scan_status: "Estado",
+                scheduled_scan_message: "Detalle",
+                scheduled_scan_gateway_duration: "Tiempo",
+                scheduled_scan_no_details: "Aún no hay resultados para esta ejecución.",
+                scheduled_scan_status_updated: "OK",
+                scheduled_scan_status_pending: "Pendiente",
+                scheduled_scan_status_offline: "Offline",
+                scheduled_scan_status_error: "Error",
+                scheduled_scan_status_timeout: "Timeout",
+                scheduled_scan_status_skipped: "Omitido",
                 progress_title: "Actualizaciones en Progreso",
                 verify_device: "Verificar Dispositivo",
                 ip_placeholder: "Ej: 220.30.22.105 (Ctrl+Enter para actualizar)",
@@ -1054,6 +1116,35 @@ body::after{
                 stat_updated: "Atualizados",
                 stat_pending: "Pendentes",
                 stat_offline: "Offline/Erros",
+                scheduled_scan_title: "Escaneamento automático do inventário",
+                scheduled_scan_help: "Verifica versão, Relay, GPS e status; não atualiza nem reinicia gateways.",
+                scheduled_scan_run_now: "Executar agora",
+                scheduled_scan_details: "Ver detalhes",
+                scheduled_scan_next: "Próxima execução",
+                scheduled_scan_last: "Última execução",
+                scheduled_scan_result: "Resultado",
+                scheduled_scan_never: "Ainda não foi executado",
+                scheduled_scan_running: "Escaneamento em andamento",
+                scheduled_scan_completed: "Concluído",
+                scheduled_scan_partial: "Finalizado com revisão necessária",
+                scheduled_scan_failed: "Erro",
+                scheduled_scan_summary: "{completed}/{total} verificados · {updated} OK · {pending} pendentes · {offline} offline · {errors} erros",
+                scheduled_scan_started: "Escaneamento automático iniciado",
+                scheduled_scan_already_running: "Já existe um escaneamento automático em andamento",
+                scheduled_scan_duration: "Duração",
+                scheduled_scan_gateway: "Gateway",
+                scheduled_scan_client: "Cliente",
+                scheduled_scan_unit: "Unidade",
+                scheduled_scan_status: "Status",
+                scheduled_scan_message: "Detalhe",
+                scheduled_scan_gateway_duration: "Tempo",
+                scheduled_scan_no_details: "Ainda não há resultados para esta execução.",
+                scheduled_scan_status_updated: "OK",
+                scheduled_scan_status_pending: "Pendente",
+                scheduled_scan_status_offline: "Offline",
+                scheduled_scan_status_error: "Erro",
+                scheduled_scan_status_timeout: "Timeout",
+                scheduled_scan_status_skipped: "Ignorado",
                 progress_title: "Atualizações em Progresso",
                 verify_device: "Verificar Dispositivo",
                 ip_placeholder: "Ex: 220.30.22.105 (Ctrl+Enter para atualizar)",
@@ -1499,6 +1590,7 @@ body::after{
         let currentPage = 1;
         let itemsPerPage = 50;
         let filteredGatewaysList = [];
+        let scheduledScanRecentRuns = [];
         const APP_TIMEZONE = 'America/Sao_Paulo';
         let serverClockOffsetMs = 0;
 
@@ -1535,6 +1627,8 @@ body::after{
             clearMultipleOperationState();
             await syncServerClock();
             loadGateways();
+            loadScheduledScanStatus();
+            setInterval(loadScheduledScanStatus, 30000);
             showToast(t('toast_welcome'), 'success');
             updateSyncTime();
         };
@@ -1558,6 +1652,137 @@ body::after{
                 el.textContent = formatAppDateTime(appNow(), { hour: '2-digit', minute: '2-digit' });
             }
         }
+
+        function scheduledScanStatusLabel(status, running) {
+            if (running || status === 'RUNNING') return t('scheduled_scan_running');
+            if (status === 'PARTIAL') return t('scheduled_scan_partial');
+            if (status === 'FAILED') return t('scheduled_scan_failed');
+            return t('scheduled_scan_completed');
+        }
+
+        function scheduledGatewayStatusLabel(status) {
+            const keys = {
+                UPDATED: 'scheduled_scan_status_updated',
+                PENDING: 'scheduled_scan_status_pending',
+                OFFLINE: 'scheduled_scan_status_offline',
+                ERROR: 'scheduled_scan_status_error',
+                TIMEOUT: 'scheduled_scan_status_timeout',
+                SKIPPED: 'scheduled_scan_status_skipped',
+            };
+            return t(keys[status] || 'scheduled_scan_status_error');
+        }
+
+        function formatScheduledScanDuration(seconds) {
+            const total = Math.max(Number(seconds) || 0, 0);
+            const hours = Math.floor(total / 3600);
+            const minutes = Math.floor((total % 3600) / 60);
+            const remainder = total % 60;
+            if (hours) return `${hours}h ${minutes}m ${remainder}s`;
+            if (minutes) return `${minutes}m ${remainder}s`;
+            return `${remainder}s`;
+        }
+
+        async function loadScheduledScanStatus() {
+            try {
+                const response = await fetch('/api/scheduled-scan/status');
+                if (!response.ok) return;
+                const data = await response.json();
+                scheduledScanRecentRuns = data.recent_runs || [];
+                const next = document.getElementById('scheduledScanNext');
+                const last = document.getElementById('scheduledScanLast');
+                const result = document.getElementById('scheduledScanResult');
+                const button = document.getElementById('btnRunScheduledScan');
+                const detailsButton = document.getElementById('btnScheduledScanDetails');
+                if (next) next.textContent = data.next_run ? formatAppDateTime(data.next_run) : '--';
+                if (button) button.disabled = Boolean(data.running);
+
+                const run = data.last_run;
+                if (!run) {
+                    if (last) last.textContent = t('scheduled_scan_never');
+                    if (result) result.textContent = '--';
+                    if (detailsButton) detailsButton.disabled = true;
+                    return;
+                }
+
+                if (last) last.textContent = run.started_at ? formatAppDateTime(run.started_at) : '--';
+                if (result) {
+                    result.textContent = `${scheduledScanStatusLabel(run.status, data.running)} · ${formatScheduledScanDuration(run.duration_seconds)} · ${t('scheduled_scan_summary', run)}`;
+                    if (run.details) result.title = run.details;
+                }
+                if (detailsButton) detailsButton.disabled = !run.id;
+            } catch (error) {
+                console.warn('No se pudo cargar el estado del escaneo automático:', error);
+            }
+        }
+
+        async function runScheduledScanNow() {
+            const button = document.getElementById('btnRunScheduledScan');
+            if (button) button.disabled = true;
+            try {
+                const response = await fetch('/api/scheduled-scan/run', { method: 'POST' });
+                if (response.status === 409) {
+                    showToast(t('scheduled_scan_already_running'), 'warning');
+                    return;
+                }
+                if (!response.ok) throw new Error('No se pudo iniciar el escaneo automático');
+                showToast(t('scheduled_scan_started'), 'success');
+                await loadScheduledScanStatus();
+            } catch (error) {
+                console.error(error);
+                showToast(t('toast_update_error'), 'error');
+            } finally {
+                if (button) button.disabled = false;
+            }
+        }
+        window.runScheduledScanNow = runScheduledScanNow;
+
+        function closeScheduledScanDetails() {
+            document.getElementById('scheduledScanDetailsModal')?.remove();
+        }
+
+        async function openScheduledScanDetails(runId = null) {
+            try {
+                if (!runId && !scheduledScanRecentRuns.length) {
+                    const statusResponse = await fetch('/api/scheduled-scan/status');
+                    const statusData = await statusResponse.json();
+                    scheduledScanRecentRuns = statusData.recent_runs || [];
+                }
+                const selectedRunId = runId || scheduledScanRecentRuns[0]?.id;
+                if (!selectedRunId) return;
+                const response = await fetch(`/api/scheduled-scan/${selectedRunId}/details`);
+                if (!response.ok) throw new Error('No se pudo cargar el detalle del escaneo');
+                const data = await response.json();
+                const rows = data.gateways || [];
+                const modal = document.createElement('div');
+                modal.id = 'scheduledScanDetailsModal';
+                modal.className = 'modal-backdrop';
+                modal.style.zIndex = '90';
+                modal.onclick = event => { if (event.target === modal) closeScheduledScanDetails(); };
+                modal.innerHTML = `
+                    <div class="modal-content" style="max-width:min(1180px,96vw);width:96vw;">
+                        <div class="flex items-center justify-between gap-4 p-4 border-b border-slate-200 dark:border-slate-700">
+                            <div>
+                                <h3 class="font-bold">${esc(t('scheduled_scan_title'))}</h3>
+                                <p class="text-xs text-slate-400 mt-1">${esc(formatAppDateTime(data.run.started_at))} · ${esc(t('scheduled_scan_duration'))}: ${esc(formatScheduledScanDuration(data.run.duration_seconds))}</p>
+                            </div>
+                            <div class="flex items-center gap-3">
+                                ${scheduledScanRecentRuns.length > 1 ? `<select onchange="closeScheduledScanDetails(); openScheduledScanDetails(this.value)" class="text-xs bg-slate-100 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-lg px-2 py-1.5">${scheduledScanRecentRuns.map(run => `<option value="${run.id}" ${Number(run.id) === Number(data.run.id) ? 'selected' : ''}>${esc(formatAppDateTime(run.started_at))} · ${esc(formatScheduledScanDuration(run.duration_seconds))}</option>`).join('')}</select>` : ''}
+                                <button type="button" onclick="closeScheduledScanDetails()" class="text-slate-400 hover:text-slate-700 dark:hover:text-white text-2xl leading-none" aria-label="Fechar">&times;</button>
+                            </div>
+                        </div>
+                        <div class="overflow-auto max-h-[70vh] p-4">
+                            ${rows.length ? `<table class="w-full text-sm"><thead class="text-left text-xs uppercase text-slate-400"><tr><th class="pb-3">${esc(t('scheduled_scan_gateway'))}</th><th class="pb-3">${esc(t('scheduled_scan_client'))}</th><th class="pb-3">${esc(t('scheduled_scan_unit'))}</th><th class="pb-3">${esc(t('scheduled_scan_status'))}</th><th class="pb-3">${esc(t('scheduled_scan_gateway_duration'))}</th><th class="pb-3">${esc(t('scheduled_scan_message'))}</th></tr></thead><tbody>${rows.map(row => `<tr class="border-t border-slate-100 dark:border-slate-700"><td class="py-3 font-mono font-semibold text-xs">${esc(row.ip)}</td><td class="py-3">${esc(row.cliente || '-')}</td><td class="py-3">${esc(row.unidad || '-')}</td><td class="py-3 font-medium">${esc(scheduledGatewayStatusLabel(row.status))}</td><td class="py-3 whitespace-nowrap">${esc(formatScheduledScanDuration(row.duration_seconds))}</td><td class="py-3 text-xs text-slate-500 dark:text-slate-400">${esc(tProgress(row.message) || row.message || '-')}</td></tr>`).join('')}</tbody></table>` : `<p class="text-sm text-slate-400">${esc(t('scheduled_scan_no_details'))}</p>`}
+                        </div>
+                    </div>`;
+                document.body.appendChild(modal);
+                linkGatewayIPs(modal);
+            } catch (error) {
+                console.error(error);
+                showToast(t('toast_load_error'), 'error');
+            }
+        }
+        window.openScheduledScanDetails = openScheduledScanDetails;
+        window.closeScheduledScanDetails = closeScheduledScanDetails;
 
         // ============ KEYBOARD SHORTCUTS ============
         function handleKeyPress(event) {

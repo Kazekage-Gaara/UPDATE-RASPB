@@ -1,7 +1,7 @@
 import re
 import os
 from database import SessionLocal
-from models import Cliente, Unidad
+from models import Cliente, Gateway, Unidad
 
 def _limpiar_nombre(raw):
     # Toma lo que hay antes del primer tabulador y/o antes de "user :"
@@ -9,6 +9,36 @@ def _limpiar_nombre(raw):
     nombre = re.split(r'user\s*:', nombre, flags=re.IGNORECASE)[0]
     nombre = nombre.strip()
     return nombre
+
+
+def reasociar_gateways_importados(db):
+    """Aplica de inmediato los cambios de cliente/unidad de los TXT al inventario."""
+    clientes_por_prefijo = {}
+    for cliente in db.query(Cliente).all():
+        octetos = (cliente.subred or '').split('.')
+        if len(octetos) >= 2:
+            clientes_por_prefijo[(octetos[0], octetos[1])] = cliente
+
+    unidades_por_cliente_red = {}
+    for unidad in db.query(Unidad).all():
+        octetos = (unidad.ip or '').split('.')
+        if len(octetos) >= 3:
+            unidades_por_cliente_red[(unidad.cliente_id, octetos[2])] = unidad.id
+
+    actualizados = 0
+    for gateway in db.query(Gateway).all():
+        octetos = (gateway.ip or '').split('.')
+        if len(octetos) < 3:
+            continue
+        cliente = clientes_por_prefijo.get((octetos[0], octetos[1]))
+        if not cliente:
+            continue
+        unidad_id = unidades_por_cliente_red.get((cliente.id, octetos[2]))
+        if gateway.cliente_id != cliente.id or gateway.unidad_id != unidad_id:
+            gateway.cliente_id = cliente.id
+            gateway.unidad_id = unidad_id
+            actualizados += 1
+    return actualizados
 
 def parse_clientes_file(filepath, tipo_cultivo):
     db = SessionLocal()
@@ -133,7 +163,12 @@ def importar_todos_los_clientes(limpiar_previo=False):
 
     db = SessionLocal()
     try:
-        print(f"\n🎉 Clientes: {db.query(Cliente).count()} | Unidades: {db.query(Unidad).count()}")
+        reasociados = reasociar_gateways_importados(db)
+        db.commit()
+        print(f"\n🎉 Clientes: {db.query(Cliente).count()} | Unidades: {db.query(Unidad).count()} | Gateways reasociados: {reasociados}")
+    except Exception as e:
+        db.rollback()
+        print(f"⚠️ Error reasociando gateways tras importar presets: {e}")
     finally:
         db.close()
     return total
