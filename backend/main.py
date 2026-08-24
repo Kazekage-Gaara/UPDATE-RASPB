@@ -6,7 +6,7 @@ from sqlalchemy.orm import Session
 from sqlalchemy import func, case, desc
 from tasks import scan_and_check_version, update_gateway
 from database import get_db, init_db, SessionLocal
-from models import Gateway, UpdateHistory, GatewayDiagnosticEvent, Cliente, Unidad, ScheduledScanRun, ScheduledScanGatewayResult
+from models import Gateway, UpdateHistory, GatewayDiagnosticEvent, Cliente, Unidad, ScheduledScanRun, ScheduledScanGatewayResult, ScheduledScanBatch
 from config import Config
 from datetime import datetime, timedelta
 from zoneinfo import ZoneInfo
@@ -220,12 +220,24 @@ def next_scheduled_scan_at(now: datetime | None = None) -> datetime:
     return candidate if now < candidate else candidate + timedelta(days=1)
 
 
+def next_scheduled_recheck_at(now: datetime | None = None) -> datetime:
+    hour = min(max(Config.SCHEDULED_RECHECK_HOUR, 0), 23)
+    minute = min(max(Config.SCHEDULED_RECHECK_MINUTE, 0), 59)
+    now = now or app_now()
+    candidate = now.replace(hour=hour, minute=minute, second=0, microsecond=0)
+    return candidate if now < candidate else candidate + timedelta(days=1)
+
+
 def active_manual_update_ips() -> set[str]:
     """No mezcla escaneos automáticos con actualizaciones iniciadas por un operador."""
     return {
         info["ip"] for task_id, info in update_tasks.items()
         if update_gateway.AsyncResult(task_id).state not in ("SUCCESS", "FAILURE", "REVOKED")
     }
+
+
+def is_scheduled_scan_failure(status: str | None) -> bool:
+    return status in {"OFFLINE", "ERROR", "TIMEOUT"}
 
 
 def update_scheduled_scan_run(run_id: int, **values):
@@ -240,21 +252,91 @@ def update_scheduled_scan_run(run_id: int, **values):
         db.close()
 
 
-def save_scheduled_scan_gateway_result(run_id: int, ip: str, status: str, message: str, duration_seconds: int):
+def save_scheduled_scan_batch(run_id: int, number: int, total: int, counters: dict, started_at: datetime):
     db = SessionLocal()
     try:
+        db.add(ScheduledScanBatch(
+            run_id=run_id, batch_number=number, total=total,
+            completed=counters["completed"], offline=counters["offline"],
+            errors=counters["errors"], skipped=counters["skipped"],
+            started_at=started_at, finished_at=app_now(),
+        ))
+        db.commit()
+    finally:
+        db.close()
+
+
+def save_scheduled_scan_gateway_result(
+    run_id: int,
+    ip: str,
+    status: str,
+    message: str,
+    duration_seconds: int,
+    maintenance: bool = False,
+) -> dict:
+    """Guarda un snapshot y calcula cambios frente al ultimo escaneo del IP."""
+    db = SessionLocal()
+    try:
+        gateway = db.query(Gateway).filter(Gateway.ip == ip).first()
+        previous_results = db.query(ScheduledScanGatewayResult).filter(
+            ScheduledScanGatewayResult.gateway_ip == ip,
+            ScheduledScanGatewayResult.run_id != run_id,
+        ).order_by(
+            ScheduledScanGatewayResult.finished_at.desc(),
+            ScheduledScanGatewayResult.id.desc(),
+        ).all()
+        previous = previous_results[0] if previous_results else None
+
+        previous_status = previous.status if previous else None
+        consecutive_failures = 0
+        if is_scheduled_scan_failure(status):
+            consecutive_failures = 1
+            for prior_result in previous_results:
+                if not is_scheduled_scan_failure(prior_result.status):
+                    break
+                consecutive_failures += 1
+        change_types = []
+        if previous:
+            if is_scheduled_scan_failure(status) and not is_scheduled_scan_failure(previous_status):
+                change_types.append("NEW_ISSUE")
+            elif not is_scheduled_scan_failure(status) and is_scheduled_scan_failure(previous_status):
+                change_types.append("RECOVERED")
+            if gateway and previous.version and gateway.version and previous.version != gateway.version:
+                change_types.append("VERSION_CHANGED")
+            if gateway and previous.has_relay is not None and gateway.has_relay is not None and previous.has_relay != gateway.has_relay:
+                change_types.append("RELAY_CHANGED")
+
+        threshold = max(Config.SCHEDULED_SCAN_FAILURE_ALERT_THRESHOLD, 1)
+        is_alert = is_scheduled_scan_failure(status) and consecutive_failures >= threshold
+        if is_alert:
+            change_types.append("REPEATED_FAILURE")
+
         db.add(ScheduledScanGatewayResult(
             run_id=run_id,
             gateway_ip=ip,
             status=status,
             message=(message or "")[:500],
             duration_seconds=max(duration_seconds, 0),
+            version=gateway.version if gateway else None,
+            has_relay=gateway.has_relay if gateway else None,
+            previous_status=previous_status,
+            change_types=",".join(change_types) or None,
+            consecutive_failures=consecutive_failures,
+            maintenance=maintenance,
             finished_at=app_now(),
         ))
         db.commit()
+        return {
+            "new_issue": "NEW_ISSUE" in change_types,
+            "recovered": "RECOVERED" in change_types,
+            "version_changed": "VERSION_CHANGED" in change_types,
+            "relay_changed": "RELAY_CHANGED" in change_types,
+            "alert": is_alert,
+        }
     except Exception as e:
         db.rollback()
         print(f"[AUTO-SCAN] Error guardando resultado de {ip}: {e}")
+        return {"new_issue": False, "recovered": False, "version_changed": False, "relay_changed": False, "alert": False}
     finally:
         db.close()
 
@@ -272,6 +354,13 @@ def serialize_scheduled_scan_run(run: ScheduledScanRun) -> dict:
         "offline": run.offline,
         "errors": run.errors,
         "skipped": run.skipped,
+        "maintenance": run.maintenance,
+        "new_issues": run.new_issues,
+        "recovered": run.recovered,
+        "version_changes": run.version_changes,
+        "relay_changes": run.relay_changes,
+        "alerts": run.alerts,
+        "source_run_id": run.source_run_id,
         "started_at": serialize_datetime(run.started_at),
         "finished_at": serialize_datetime(run.finished_at),
         "duration_seconds": max(int((run_end - run.started_at).total_seconds()), 0),
@@ -279,33 +368,68 @@ def serialize_scheduled_scan_run(run: ScheduledScanRun) -> dict:
     }
 
 
-def run_scheduled_inventory_scan(mode: str = "DAILY"):
+def run_scheduled_inventory_scan(mode: str = "DAILY", target_ips: list[str] | None = None, source_run_id: int | None = None, retry_failures: bool = False):
     """Escanea el inventario en lotes limitados, sin actualizar ni reiniciar gateways."""
     db = SessionLocal()
     try:
-        ips = [ip for (ip,) in db.query(Gateway.ip).order_by(Gateway.ip).all() if ip]
-        run = ScheduledScanRun(mode=mode, status="RUNNING", total=len(ips), started_at=app_now())
+        gateway_rows = db.query(
+            Gateway.ip, Gateway.maintenance_enabled, Gateway.maintenance_reason, Gateway.status
+        ).order_by(Gateway.ip).all()
+        available_ips = {ip for ip, _, _, _ in gateway_rows if ip}
+        ips = [ip for ip, _, _, _ in gateway_rows if ip] if target_ips is None else [ip for ip in target_ips if ip in available_ips]
+        maintenance_by_ip = {
+            ip: reason for ip, enabled, reason, _ in gateway_rows if enabled and ip
+        }
+        frozen_ips = {ip for ip, _, _, status in gateway_rows if status == "FROZEN_CARD" and ip}
+        run = ScheduledScanRun(mode=mode, status="RUNNING", total=len(ips), started_at=app_now(), source_run_id=source_run_id)
         db.add(run)
         db.commit()
         run_id = run.id
     finally:
         db.close()
 
-    counters = {"completed": 0, "updated": 0, "pending": 0, "offline": 0, "errors": 0, "skipped": 0}
+    counters = {
+        "completed": 0, "updated": 0, "pending": 0, "offline": 0,
+        "errors": 0, "skipped": 0, "maintenance": 0, "new_issues": 0,
+        "recovered": 0, "version_changes": 0, "relay_changes": 0, "alerts": 0,
+    }
     batch_size = max(1, min(Config.SCHEDULED_SCAN_BATCH_SIZE, 5))
     pause_seconds = max(Config.SCHEDULED_SCAN_BATCH_PAUSE_SECONDS, 0)
     timeout_seconds = max(Config.SCHEDULED_SCAN_TASK_TIMEOUT_SECONDS, 60)
     final_status = "COMPLETED"
     details = None
+    failed_ips = set()
 
     try:
         for offset in range(0, len(ips), batch_size):
             candidates = ips[offset:offset + batch_size]
-            batch = [ip for ip in candidates if ip not in active_manual_update_ips()]
-            counters["skipped"] += len(candidates) - len(batch)
-            for ip in set(candidates) - set(batch):
-                save_scheduled_scan_gateway_result(run_id, ip, "SKIPPED", "Actualizacion manual en curso", 0)
+            batch_started_at = app_now()
+            batch_counters = {"completed": 0, "offline": 0, "errors": 0, "skipped": 0}
+            active_updates = active_manual_update_ips()
+            batch = []
+            for ip in candidates:
+                if ip in frozen_ips:
+                    counters["skipped"] += 1
+                    batch_counters["skipped"] += 1
+                    save_scheduled_scan_gateway_result(
+                        run_id, ip, "SKIPPED",
+                        "Tarjeta congelada: requiere sustitucion antes de revisar", 0,
+                    )
+                elif ip in maintenance_by_ip:
+                    counters["skipped"] += 1
+                    batch_counters["skipped"] += 1
+                    counters["maintenance"] += 1
+                    reason = maintenance_by_ip[ip]
+                    message = "Mantenimiento programado" + (f": {reason}" if reason else "")
+                    save_scheduled_scan_gateway_result(run_id, ip, "SKIPPED", message, 0, maintenance=True)
+                elif ip in active_updates:
+                    counters["skipped"] += 1
+                    batch_counters["skipped"] += 1
+                    save_scheduled_scan_gateway_result(run_id, ip, "SKIPPED", "Actualizacion manual en curso", 0)
+                else:
+                    batch.append(ip)
             if not batch:
+                save_scheduled_scan_batch(run_id, (offset // batch_size) + 1, len(candidates), batch_counters, batch_started_at)
                 update_scheduled_scan_run(run_id, **counters)
                 continue
 
@@ -322,54 +446,95 @@ def run_scheduled_inventory_scan(mode: str = "DAILY"):
                     status = result.get("status", "ERROR")
                     message = result.get("msg") or str(task.result or "Error sin detalle")
                     duration_seconds = round(time.monotonic() - task_started_at[task])
-                    save_scheduled_scan_gateway_result(run_id, tasks[task], status, message, duration_seconds)
+                    metrics = save_scheduled_scan_gateway_result(run_id, tasks[task], status, message, duration_seconds)
                     counters["completed"] += 1
+                    batch_counters["completed"] += 1
                     if status == "UPDATED":
                         counters["updated"] += 1
                     elif status == "PENDING":
                         counters["pending"] += 1
                     elif status == "OFFLINE":
                         counters["offline"] += 1
+                        batch_counters["offline"] += 1
                     else:
                         counters["errors"] += 1
+                        batch_counters["errors"] += 1
+                    if is_scheduled_scan_failure(status):
+                        failed_ips.add(tasks[task])
+                    counters["new_issues"] += int(metrics["new_issue"])
+                    counters["recovered"] += int(metrics["recovered"])
+                    counters["version_changes"] += int(metrics["version_changed"])
+                    counters["relay_changes"] += int(metrics["relay_changed"])
+                    counters["alerts"] += int(metrics["alert"])
                 if waiting:
                     time.sleep(2)
 
             if waiting:
                 final_status = "PARTIAL"
                 counters["errors"] += len(waiting)
+                batch_counters["errors"] += len(waiting)
                 details = f"{len(waiting)} gateway(s) excedieron el tiempo maximo por lote"
                 for task in waiting:
-                    save_scheduled_scan_gateway_result(
+                    metrics = save_scheduled_scan_gateway_result(
                         run_id,
                         tasks[task],
                         "TIMEOUT",
                         "Tiempo maximo excedido en el lote automatico",
                         round(time.monotonic() - task_started_at[task]),
                     )
+                    counters["new_issues"] += int(metrics["new_issue"])
+                    counters["alerts"] += int(metrics["alert"])
+                    failed_ips.add(tasks[task])
+                save_scheduled_scan_batch(run_id, (offset // batch_size) + 1, len(candidates), batch_counters, batch_started_at)
                 update_scheduled_scan_run(run_id, status=final_status, finished_at=app_now(), details=details, **counters)
                 print(f"[AUTO-SCAN] Lote detenido: {details}")
                 return
 
+            save_scheduled_scan_batch(run_id, (offset // batch_size) + 1, len(candidates), batch_counters, batch_started_at)
             update_scheduled_scan_run(run_id, **counters)
             if offset + batch_size < len(ips) and pause_seconds:
                 time.sleep(pause_seconds)
 
         update_scheduled_scan_run(run_id, status=final_status, finished_at=app_now(), details=details, **counters)
         print(f"[AUTO-SCAN] Finalizado: {counters}")
+        if retry_failures and failed_ips:
+            delay = max(Config.SCHEDULED_SCAN_RETRY_DELAY_SECONDS, 0)
+            if delay:
+                time.sleep(delay)
+            run_scheduled_inventory_scan("RETRY", sorted(failed_ips), run_id, retry_failures=False)
     except Exception as e:
         details = str(e)[:500]
         update_scheduled_scan_run(run_id, status="FAILED", finished_at=app_now(), details=details, **counters)
         print(f"[AUTO-SCAN] Error: {details}")
 
 
-def start_scheduled_inventory_scan(mode: str = "DAILY") -> bool:
+def get_recheck_targets() -> tuple[list[str], int | None]:
+    """Toma solo fallos de la ejecucion nocturna o de su reintento del mismo dia."""
+    db = SessionLocal()
+    try:
+        today = app_now().replace(hour=0, minute=0, second=0, microsecond=0)
+        daily = db.query(ScheduledScanRun).filter(ScheduledScanRun.mode == "DAILY", ScheduledScanRun.started_at >= today).order_by(ScheduledScanRun.started_at.desc()).first()
+        if not daily:
+            return [], None
+        retry = db.query(ScheduledScanRun).filter(ScheduledScanRun.mode == "RETRY", ScheduledScanRun.source_run_id == daily.id).order_by(ScheduledScanRun.started_at.desc()).first()
+        source = retry or daily
+        rows = db.query(ScheduledScanGatewayResult.gateway_ip).filter(
+            ScheduledScanGatewayResult.run_id == source.id,
+            ScheduledScanGatewayResult.status.in_(["OFFLINE", "ERROR", "TIMEOUT"]),
+            ScheduledScanGatewayResult.maintenance == False,
+        ).all()
+        return [ip for (ip,) in rows], source.id
+    finally:
+        db.close()
+
+
+def start_scheduled_inventory_scan(mode: str = "DAILY", target_ips: list[str] | None = None, source_run_id: int | None = None, retry_failures: bool = False) -> bool:
     if not _scheduled_scan_lock.acquire(blocking=False):
         return False
 
     def runner():
         try:
-            run_scheduled_inventory_scan(mode)
+            run_scheduled_inventory_scan(mode, target_ips, source_run_id, retry_failures)
         finally:
             _scheduled_scan_lock.release()
 
@@ -385,10 +550,17 @@ def start_scheduled_scan_scheduler():
 
     def loop():
         while True:
-            next_run = next_scheduled_scan_at()
+            daily_at = next_scheduled_scan_at()
+            recheck_at = next_scheduled_recheck_at()
+            next_run = min(daily_at, recheck_at)
             time.sleep(max((next_run - app_now()).total_seconds(), 1))
-            if not start_scheduled_inventory_scan("DAILY"):
-                print("[AUTO-SCAN] Se omitio la ejecucion diaria: ya hay un escaneo automatico en curso")
+            if next_run == daily_at:
+                started = start_scheduled_inventory_scan("DAILY", retry_failures=True)
+            else:
+                targets, source_run_id = get_recheck_targets()
+                started = not targets or start_scheduled_inventory_scan("RECHECK", targets, source_run_id)
+            if not started:
+                print("[AUTO-SCAN] Se omitio la ejecucion programada: ya hay un escaneo en curso")
 
     threading.Thread(target=loop, daemon=True, name="scheduled-scan-scheduler").start()
 
@@ -451,8 +623,10 @@ async def get_scheduled_scan_status(db: Session = Depends(get_db), _auth: bool =
         "hour": min(max(Config.SCHEDULED_SCAN_HOUR, 0), 23),
         "minute": min(max(Config.SCHEDULED_SCAN_MINUTE, 0), 59),
         "batch_size": max(1, min(Config.SCHEDULED_SCAN_BATCH_SIZE, 5)),
+        "failure_alert_threshold": max(Config.SCHEDULED_SCAN_FAILURE_ALERT_THRESHOLD, 1),
         "running": _scheduled_scan_lock.locked(),
         "next_run": serialize_datetime(next_scheduled_scan_at()),
+        "next_recheck": serialize_datetime(next_scheduled_recheck_at()),
         "last_run": serialize_scheduled_scan_run(last_run) if last_run else None,
         "recent_runs": [serialize_scheduled_scan_run(run) for run in recent_runs],
     }
@@ -476,14 +650,34 @@ async def get_scheduled_scan_details(run_id: int, db: Session = Depends(get_db),
     ).order_by(
         ScheduledScanGatewayResult.duration_seconds.desc(), ScheduledScanGatewayResult.gateway_ip.asc()
     ).all()
+    batches = db.query(ScheduledScanBatch).filter(
+        ScheduledScanBatch.run_id == run_id
+    ).order_by(ScheduledScanBatch.batch_number).all()
     return {
         "run": serialize_scheduled_scan_run(run),
+        "batches": [{
+            "number": batch.batch_number,
+            "total": batch.total,
+            "completed": batch.completed,
+            "offline": batch.offline,
+            "errors": batch.errors,
+            "skipped": batch.skipped,
+            "started_at": serialize_datetime(batch.started_at),
+            "finished_at": serialize_datetime(batch.finished_at),
+            "duration_seconds": max(int((batch.finished_at - batch.started_at).total_seconds()), 0),
+        } for batch in batches],
         "gateways": [{
             "ip": result.gateway_ip,
             "status": result.status,
             "message": result.message,
             "duration_seconds": result.duration_seconds,
             "finished_at": serialize_datetime(result.finished_at),
+            "version": result.version,
+            "has_relay": result.has_relay,
+            "previous_status": result.previous_status,
+            "change_types": (result.change_types or "").split(",") if result.change_types else [],
+            "consecutive_failures": result.consecutive_failures or 0,
+            "maintenance": bool(result.maintenance),
             "cliente": cliente.nombre if cliente else None,
             "unidad": unidad.nombre if unidad else None,
         } for result, gateway, cliente, unidad in rows],
@@ -494,6 +688,26 @@ async def start_scheduled_scan_now(_auth: bool = Depends(verify_api_key)):
     if not start_scheduled_inventory_scan("MANUAL"):
         raise HTTPException(status_code=409, detail="Ya hay un escaneo automatico en curso")
     return {"started": True, "message": "Escaneo automatico iniciado"}
+
+
+@app.put("/api/gateway/{ip}/maintenance")
+async def set_gateway_maintenance(ip: str, request: Request, db: Session = Depends(get_db), _auth: bool = Depends(verify_api_key)):
+    """Excluye un gateway del escaneo nocturno, sin bloquear acciones manuales."""
+    ip = validate_ipv4(ip)
+    body = await request.json()
+    enabled = bool(body.get("enabled"))
+    reason = str(body.get("reason") or "").strip()[:200] or None
+    gateway = db.query(Gateway).filter(Gateway.ip == ip).first()
+    if not gateway:
+        raise HTTPException(status_code=404, detail="Gateway no encontrado")
+    gateway.maintenance_enabled = enabled
+    gateway.maintenance_reason = reason if enabled else None
+    db.commit()
+    return {
+        "ip": gateway.ip,
+        "maintenance_enabled": gateway.maintenance_enabled,
+        "maintenance_reason": gateway.maintenance_reason,
+    }
 
 @app.get("/api/gateways")
 async def get_gateways(db: Session = Depends(get_db), _auth: bool = Depends(verify_api_key)):
@@ -523,6 +737,8 @@ async def get_gateways(db: Session = Depends(get_db), _auth: bool = Depends(veri
         "hardware_type": g.hardware_type,
         "use_gps": g.use_gps,
         "has_relay": g.has_relay,  # 🆕 NUEVO
+        "maintenance_enabled": bool(g.maintenance_enabled),
+        "maintenance_reason": g.maintenance_reason,
         "os_version": g.os_version,
         "os_codename": g.os_codename
     } for g, c, u in gateways]

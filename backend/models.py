@@ -57,6 +57,8 @@ class Gateway(Base):
     
     # 🆕 NUEVO CAMPO - Relay LPWAN
     has_relay = Column(Boolean, nullable=True)  # True si tiene bloque Hardware=Relay
+    maintenance_enabled = Column(Boolean, nullable=False, default=False)
+    maintenance_reason = Column(String, nullable=True)
 
 class UpdateHistory(Base):
     __tablename__ = "update_history"
@@ -89,6 +91,13 @@ class ScheduledScanRun(Base):
     offline = Column(Integer, nullable=False, default=0)
     errors = Column(Integer, nullable=False, default=0)
     skipped = Column(Integer, nullable=False, default=0)
+    maintenance = Column(Integer, nullable=False, default=0)
+    new_issues = Column(Integer, nullable=False, default=0)
+    recovered = Column(Integer, nullable=False, default=0)
+    version_changes = Column(Integer, nullable=False, default=0)
+    relay_changes = Column(Integer, nullable=False, default=0)
+    alerts = Column(Integer, nullable=False, default=0)
+    source_run_id = Column(Integer, ForeignKey("scheduled_scan_runs.id"), nullable=True, index=True)
     started_at = Column(DateTime(timezone=True), nullable=False)
     finished_at = Column(DateTime(timezone=True), nullable=True)
     details = Column(Text, nullable=True)
@@ -101,4 +110,23 @@ class ScheduledScanGatewayResult(Base):
     status = Column(String, nullable=False)
     message = Column(Text, nullable=True)
     duration_seconds = Column(Integer, nullable=True)
+    version = Column(String, nullable=True)
+    has_relay = Column(Boolean, nullable=True)
+    previous_status = Column(String, nullable=True)
+    change_types = Column(String, nullable=True)
+    consecutive_failures = Column(Integer, nullable=False, default=0)
+    maintenance = Column(Boolean, nullable=False, default=False)
+    finished_at = Column(DateTime(timezone=True), nullable=False)
+
+class ScheduledScanBatch(Base):
+    __tablename__ = "scheduled_scan_batches"
+    id = Column(Integer, primary_key=True, index=True)
+    run_id = Column(Integer, ForeignKey("scheduled_scan_runs.id"), nullable=False, index=True)
+    batch_number = Column(Integer, nullable=False)
+    total = Column(Integer, nullable=False, default=0)
+    completed = Column(Integer, nullable=False, default=0)
+    offline = Column(Integer, nullable=False, default=0)
+    errors = Column(Integer, nullable=False, default=0)
+    skipped = Column(Integer, nullable=False, default=0)
+    started_at = Column(DateTime(timezone=True), nullable=False)
     finished_at = Column(DateTime(timezone=True), nullable=False)

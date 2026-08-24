@@ -532,7 +532,7 @@ body::after{
                         <button id="btnRunScheduledScan" onclick="runScheduledScanNow()" class="bg-sky-600 hover:bg-sky-700 text-white px-4 py-2 rounded-lg font-medium text-sm transition disabled:opacity-50 disabled:cursor-not-allowed" data-i18n="scheduled_scan_run_now">Ejecutar ahora</button>
                     </div>
                 </div>
-                <div class="grid grid-cols-1 sm:grid-cols-3 gap-3 mt-4 text-sm">
+                <div class="grid grid-cols-1 sm:grid-cols-4 gap-3 mt-4 text-sm">
                     <div class="rounded-lg bg-slate-50 dark:bg-slate-800/70 px-3 py-2">
                         <div class="text-xs text-slate-400 dark:text-slate-500" data-i18n="scheduled_scan_next">Próxima ejecución</div>
                         <div id="scheduledScanNext" class="font-semibold mt-1">--</div>
@@ -545,7 +545,12 @@ body::after{
                         <div class="text-xs text-slate-400 dark:text-slate-500" data-i18n="scheduled_scan_result">Resultado</div>
                         <div id="scheduledScanResult" class="font-semibold mt-1">--</div>
                     </div>
+                    <div class="rounded-lg bg-amber-50 dark:bg-amber-900/10 px-3 py-2">
+                        <div class="text-xs text-amber-700 dark:text-amber-300" data-i18n="scheduled_scan_recheck">Revisión de recuperación</div>
+                        <div id="scheduledScanRecheck" class="font-semibold mt-1">--</div>
+                    </div>
                 </div>
+                <div id="scheduledScanChanges" class="mt-3 text-xs text-slate-500 dark:text-slate-400">--</div>
             </div>
 
             <!-- Verify Device -->
@@ -680,6 +685,11 @@ body::after{
                         <option value="" data-i18n="opt_all_relay">Todos los Relay</option>
                         <option value="true" data-i18n="opt_relay_with">✅ Con Relay LPWAN</option>
                         <option value="false" data-i18n="opt_relay_without">❌ Sin Relay LPWAN</option>
+                    </select>
+                    <select id="filterMaintenance" onchange="applyFilters()" class="bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-600 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-brand-500 transition w-auto">
+                        <option value="" data-i18n="opt_all_maintenance">Filtrar mantenimiento</option>
+                        <option value="true" data-i18n="opt_maintenance_active">En mantenimiento</option>
+                        <option value="false" data-i18n="opt_maintenance_inactive">Fuera de mantenimiento</option>
                     </select>
                     <div class="flex-1"></div>
                     <span class="text-xs text-slate-400 dark:text-slate-500 font-medium">
@@ -897,12 +907,22 @@ body::after{
                 scheduled_scan_next: "Próxima ejecución",
                 scheduled_scan_last: "Última ejecución",
                 scheduled_scan_result: "Resultado",
+                scheduled_scan_recheck: "Revisión de recuperación",
+                scheduled_scan_mode_daily: "Escaneo nocturno",
+                scheduled_scan_mode_retry: "Reintento nocturno",
+                scheduled_scan_mode_recheck: "Revisión de recuperación",
+                scheduled_scan_mode_manual: "Escaneo manual",
+                scheduled_scan_batches: "Rendimiento por lote",
+                scheduled_scan_batch: "Lote {number}",
+                scheduled_scan_batch_summary: "{completed}/{total} revisados · {offline} offline · {errors} errores · {skipped} omitidos · {duration}",
                 scheduled_scan_never: "Aún no se ejecutó",
                 scheduled_scan_running: "Escaneo en curso",
                 scheduled_scan_completed: "Completado",
                 scheduled_scan_partial: "Finalizado con revisión",
                 scheduled_scan_failed: "Error",
                 scheduled_scan_summary: "{completed}/{total} revisados · {updated} OK · {pending} pendientes · {offline} offline · {errors} errores",
+                scheduled_scan_changes: "{new_issues} problemas nuevos · {recovered} recuperados · {version_changes} cambios de versión · {relay_changes} cambios de Relay · {maintenance} en mantenimiento",
+                scheduled_scan_alerts: "{count} con fallos repetidos",
                 scheduled_scan_started: "Escaneo automático iniciado",
                 scheduled_scan_already_running: "Ya hay un escaneo automático en curso",
                 scheduled_scan_duration: "Duración",
@@ -919,6 +939,23 @@ body::after{
                 scheduled_scan_status_error: "Error",
                 scheduled_scan_status_timeout: "Timeout",
                 scheduled_scan_status_skipped: "Omitido",
+                scheduled_scan_maintenance: "Mantenimiento",
+                scheduled_scan_change_new_issue: "Problema nuevo",
+                scheduled_scan_change_recovered: "Recuperado",
+                scheduled_scan_change_version_changed: "Versión cambió",
+                scheduled_scan_change_relay_changed: "Relay cambió",
+                scheduled_scan_change_repeated_failure: "Fallo repetido ({count})",
+                maintenance_title: "Mantenimiento programado",
+                maintenance_enable: "Activar mantenimiento",
+                maintenance_disable: "Finalizar mantenimiento",
+                maintenance_reason: "Motivo (opcional)",
+                maintenance_help: "El escaneo nocturno omitirá este gateway. Las acciones manuales seguirán disponibles.",
+                maintenance_active: "En mantenimiento",
+                maintenance_saved: "Mantenimiento actualizado",
+                maintenance_action_title: "Gestionar mantenimiento",
+                opt_all_maintenance: "Filtrar mantenimiento",
+                opt_maintenance_active: "En mantenimiento",
+                opt_maintenance_inactive: "Fuera de mantenimiento",
                 progress_title: "Actualizaciones en Progreso",
                 verify_device: "Verificar Dispositivo",
                 ip_placeholder: "Ej: 220.30.22.105 (Ctrl+Enter para actualizar)",
@@ -1123,12 +1160,22 @@ body::after{
                 scheduled_scan_next: "Próxima execução",
                 scheduled_scan_last: "Última execução",
                 scheduled_scan_result: "Resultado",
+                scheduled_scan_recheck: "Revisão de recuperação",
+                scheduled_scan_mode_daily: "Escaneamento noturno",
+                scheduled_scan_mode_retry: "Nova tentativa noturna",
+                scheduled_scan_mode_recheck: "Revisão de recuperação",
+                scheduled_scan_mode_manual: "Escaneamento manual",
+                scheduled_scan_batches: "Desempenho por lote",
+                scheduled_scan_batch: "Lote {number}",
+                scheduled_scan_batch_summary: "{completed}/{total} verificados · {offline} offline · {errors} erros · {skipped} ignorados · {duration}",
                 scheduled_scan_never: "Ainda não foi executado",
                 scheduled_scan_running: "Escaneamento em andamento",
                 scheduled_scan_completed: "Concluído",
                 scheduled_scan_partial: "Finalizado com revisão necessária",
                 scheduled_scan_failed: "Erro",
                 scheduled_scan_summary: "{completed}/{total} verificados · {updated} OK · {pending} pendentes · {offline} offline · {errors} erros",
+                scheduled_scan_changes: "{new_issues} problemas novos · {recovered} recuperados · {version_changes} mudanças de versão · {relay_changes} mudanças de Relay · {maintenance} em manutenção",
+                scheduled_scan_alerts: "{count} com falhas repetidas",
                 scheduled_scan_started: "Escaneamento automático iniciado",
                 scheduled_scan_already_running: "Já existe um escaneamento automático em andamento",
                 scheduled_scan_duration: "Duração",
@@ -1145,6 +1192,23 @@ body::after{
                 scheduled_scan_status_error: "Erro",
                 scheduled_scan_status_timeout: "Timeout",
                 scheduled_scan_status_skipped: "Ignorado",
+                scheduled_scan_maintenance: "Manutenção",
+                scheduled_scan_change_new_issue: "Problema novo",
+                scheduled_scan_change_recovered: "Recuperado",
+                scheduled_scan_change_version_changed: "Versão mudou",
+                scheduled_scan_change_relay_changed: "Relay mudou",
+                scheduled_scan_change_repeated_failure: "Falha repetida ({count})",
+                maintenance_title: "Manutenção programada",
+                maintenance_enable: "Ativar manutenção",
+                maintenance_disable: "Finalizar manutenção",
+                maintenance_reason: "Motivo (opcional)",
+                maintenance_help: "O escaneamento noturno ignorará este gateway. As ações manuais continuarão disponíveis.",
+                maintenance_active: "Em manutenção",
+                maintenance_saved: "Manutenção atualizada",
+                maintenance_action_title: "Gerenciar manutenção",
+                opt_all_maintenance: "Filtrar manutenção",
+                opt_maintenance_active: "Em manutenção",
+                opt_maintenance_inactive: "Fora de manutenção",
                 progress_title: "Atualizações em Progresso",
                 verify_device: "Verificar Dispositivo",
                 ip_placeholder: "Ex: 220.30.22.105 (Ctrl+Enter para atualizar)",
@@ -1395,6 +1459,7 @@ body::after{
             if (document.getElementById('gatewayTable').children.length > 0) {
                 loadGateways();
             }
+            loadScheduledScanStatus();
         }
 
         function changeLanguage(lang) {
@@ -1660,6 +1725,16 @@ body::after{
             return t('scheduled_scan_completed');
         }
 
+        function scheduledScanModeLabel(mode) {
+            const keys = {
+                DAILY: 'scheduled_scan_mode_daily',
+                RETRY: 'scheduled_scan_mode_retry',
+                RECHECK: 'scheduled_scan_mode_recheck',
+                MANUAL: 'scheduled_scan_mode_manual',
+            };
+            return t(keys[mode] || 'scheduled_scan_title');
+        }
+
         function scheduledGatewayStatusLabel(status) {
             const keys = {
                 UPDATED: 'scheduled_scan_status_updated',
@@ -1670,6 +1745,18 @@ body::after{
                 SKIPPED: 'scheduled_scan_status_skipped',
             };
             return t(keys[status] || 'scheduled_scan_status_error');
+        }
+
+        function scheduledScanChangeLabels(row) {
+            if (row.maintenance) return [t('scheduled_scan_maintenance')];
+            const labels = {
+                NEW_ISSUE: t('scheduled_scan_change_new_issue'),
+                RECOVERED: t('scheduled_scan_change_recovered'),
+                VERSION_CHANGED: t('scheduled_scan_change_version_changed'),
+                RELAY_CHANGED: t('scheduled_scan_change_relay_changed'),
+                REPEATED_FAILURE: t('scheduled_scan_change_repeated_failure', { count: row.consecutive_failures || 0 }),
+            };
+            return (row.change_types || []).map(type => labels[type]).filter(Boolean);
         }
 
         function formatScheduledScanDuration(seconds) {
@@ -1691,23 +1778,31 @@ body::after{
                 const next = document.getElementById('scheduledScanNext');
                 const last = document.getElementById('scheduledScanLast');
                 const result = document.getElementById('scheduledScanResult');
+                const changes = document.getElementById('scheduledScanChanges');
+                const recheck = document.getElementById('scheduledScanRecheck');
                 const button = document.getElementById('btnRunScheduledScan');
                 const detailsButton = document.getElementById('btnScheduledScanDetails');
                 if (next) next.textContent = data.next_run ? formatAppDateTime(data.next_run) : '--';
+                if (recheck) recheck.textContent = data.next_recheck ? formatAppDateTime(data.next_recheck) : '--';
                 if (button) button.disabled = Boolean(data.running);
 
                 const run = data.last_run;
                 if (!run) {
                     if (last) last.textContent = t('scheduled_scan_never');
                     if (result) result.textContent = '--';
+                    if (changes) changes.textContent = '--';
                     if (detailsButton) detailsButton.disabled = true;
                     return;
                 }
 
                 if (last) last.textContent = run.started_at ? formatAppDateTime(run.started_at) : '--';
                 if (result) {
-                    result.textContent = `${scheduledScanStatusLabel(run.status, data.running)} · ${formatScheduledScanDuration(run.duration_seconds)} · ${t('scheduled_scan_summary', run)}`;
+                    result.textContent = `${scheduledScanModeLabel(run.mode)} · ${scheduledScanStatusLabel(run.status, data.running)} · ${formatScheduledScanDuration(run.duration_seconds)} · ${t('scheduled_scan_summary', run)}`;
                     if (run.details) result.title = run.details;
+                }
+                if (changes) {
+                    const summary = t('scheduled_scan_changes', run);
+                    changes.textContent = run.alerts ? `${summary} · ${t('scheduled_scan_alerts', { count: run.alerts })}` : summary;
                 }
                 if (detailsButton) detailsButton.disabled = !run.id;
             } catch (error) {
@@ -1753,6 +1848,7 @@ body::after{
                 if (!response.ok) throw new Error('No se pudo cargar el detalle del escaneo');
                 const data = await response.json();
                 const rows = data.gateways || [];
+                const batches = data.batches || [];
                 const modal = document.createElement('div');
                 modal.id = 'scheduledScanDetailsModal';
                 modal.className = 'modal-backdrop';
@@ -1762,7 +1858,7 @@ body::after{
                     <div class="modal-content" style="max-width:min(1180px,96vw);width:96vw;">
                         <div class="flex items-center justify-between gap-4 p-4 border-b border-slate-200 dark:border-slate-700">
                             <div>
-                                <h3 class="font-bold">${esc(t('scheduled_scan_title'))}</h3>
+                                <h3 class="font-bold">${esc(scheduledScanModeLabel(data.run.mode))}</h3>
                                 <p class="text-xs text-slate-400 mt-1">${esc(formatAppDateTime(data.run.started_at))} · ${esc(t('scheduled_scan_duration'))}: ${esc(formatScheduledScanDuration(data.run.duration_seconds))}</p>
                             </div>
                             <div class="flex items-center gap-3">
@@ -1771,7 +1867,8 @@ body::after{
                             </div>
                         </div>
                         <div class="overflow-auto max-h-[70vh] p-4">
-                            ${rows.length ? `<table class="w-full text-sm"><thead class="text-left text-xs uppercase text-slate-400"><tr><th class="pb-3">${esc(t('scheduled_scan_gateway'))}</th><th class="pb-3">${esc(t('scheduled_scan_client'))}</th><th class="pb-3">${esc(t('scheduled_scan_unit'))}</th><th class="pb-3">${esc(t('scheduled_scan_status'))}</th><th class="pb-3">${esc(t('scheduled_scan_gateway_duration'))}</th><th class="pb-3">${esc(t('scheduled_scan_message'))}</th></tr></thead><tbody>${rows.map(row => `<tr class="border-t border-slate-100 dark:border-slate-700"><td class="py-3 font-mono font-semibold text-xs">${esc(row.ip)}</td><td class="py-3">${esc(row.cliente || '-')}</td><td class="py-3">${esc(row.unidad || '-')}</td><td class="py-3 font-medium">${esc(scheduledGatewayStatusLabel(row.status))}</td><td class="py-3 whitespace-nowrap">${esc(formatScheduledScanDuration(row.duration_seconds))}</td><td class="py-3 text-xs text-slate-500 dark:text-slate-400">${esc(tProgress(row.message) || row.message || '-')}</td></tr>`).join('')}</tbody></table>` : `<p class="text-sm text-slate-400">${esc(t('scheduled_scan_no_details'))}</p>`}
+                            ${batches.length ? `<div class="mb-5"><h4 class="text-sm font-semibold mb-2">${esc(t('scheduled_scan_batches'))}</h4><div class="grid gap-2 sm:grid-cols-2 lg:grid-cols-3">${batches.map(batch => `<div class="rounded-lg border border-slate-200 dark:border-slate-700 px-3 py-2 text-xs"><div class="font-semibold">${esc(t('scheduled_scan_batch', { number: batch.number }))}</div><div class="text-slate-500 dark:text-slate-400 mt-1">${esc(t('scheduled_scan_batch_summary', { ...batch, duration: formatScheduledScanDuration(batch.duration_seconds) }))}</div></div>`).join('')}</div></div>` : ''}
+                            ${rows.length ? `<table class="w-full text-sm"><thead class="text-left text-xs uppercase text-slate-400"><tr><th class="pb-3">${esc(t('scheduled_scan_gateway'))}</th><th class="pb-3">${esc(t('scheduled_scan_client'))}</th><th class="pb-3">${esc(t('scheduled_scan_unit'))}</th><th class="pb-3">${esc(t('scheduled_scan_status'))}</th><th class="pb-3">${esc(t('scheduled_scan_gateway_duration'))}</th><th class="pb-3">${esc(t('scheduled_scan_message'))}</th></tr></thead><tbody>${rows.map(row => { const changes = scheduledScanChangeLabels(row); return `<tr class="border-t border-slate-100 dark:border-slate-700"><td class="py-3 font-mono font-semibold text-xs">${esc(row.ip)}</td><td class="py-3">${esc(row.cliente || '-')}</td><td class="py-3">${esc(row.unidad || '-')}</td><td class="py-3 font-medium">${esc(row.maintenance ? t('scheduled_scan_maintenance') : scheduledGatewayStatusLabel(row.status))}${changes.length && !row.maintenance ? `<div class="text-[11px] text-amber-600 dark:text-amber-400 mt-0.5">${esc(changes.join(' · '))}</div>` : ''}</td><td class="py-3 whitespace-nowrap">${esc(formatScheduledScanDuration(row.duration_seconds))}</td><td class="py-3 text-xs text-slate-500 dark:text-slate-400">${esc(tProgress(row.message) || row.message || '-')}</td></tr>`; }).join('')}</tbody></table>` : `<p class="text-sm text-slate-400">${esc(t('scheduled_scan_no_details'))}</p>`}
                         </div>
                     </div>`;
                 document.body.appendChild(modal);
@@ -2496,6 +2593,7 @@ body::after{
             const cultivo = document.getElementById('filterCultivo').value;
             const estado = document.getElementById('filterEstado').value;
             const os = document.getElementById('filterOS') ? document.getElementById('filterOS').value : '';
+            const maintenance = document.getElementById('filterMaintenance') ? document.getElementById('filterMaintenance').value : '';
 
             const filtered = allGateways.filter(g => {
                 if (search) {
@@ -2506,6 +2604,7 @@ body::after{
                 if (cultivo && g.cultivo !== cultivo) return false;
                 if (estado && g.status !== estado) return false;
                 if (os && g.os_codename !== os) return false;
+                if (maintenance !== '' && Boolean(g.maintenance_enabled) !== (maintenance === 'true')) return false;
 
                 const relay = document.getElementById('filterRelay') ? document.getElementById('filterRelay').value : '';
                 if (relay !== '') {
@@ -2530,6 +2629,7 @@ body::after{
             document.getElementById('filterEstado').value = '';
             if (document.getElementById('filterOS')) document.getElementById('filterOS').value = '';
             if (document.getElementById('filterRelay')) document.getElementById('filterRelay').value = '';
+            if (document.getElementById('filterMaintenance')) document.getElementById('filterMaintenance').value = '';
             applyFilters();
         }
 
@@ -2591,7 +2691,11 @@ body::after{
             tbody.innerHTML = gateways.map(g => {
                 let statusBadge = '', canUpdate = false;
                 if (isInventoryUpdateSelectable(g.status)) canUpdate = true;
+                const autoUpdateCandidate = isInventoryBulkUpdateCandidate(g);
                 statusBadge = renderInventoryStatusBadge(g.status);
+                const maintenanceBadge = g.maintenance_enabled
+                    ? `<div class="mt-1 text-[10px] font-semibold text-amber-700 dark:text-amber-300" title="${esc(g.maintenance_reason || '')}">⚑ ${esc(t('maintenance_active'))}</div>`
+                    : '';
                 const lastScan = g.last_scan ? formatAppDateTime(g.last_scan) : '-';
                 const isChecked = selectedGateways.has(g.ip) ? 'checked' : '';
                 let relayBadge = '<span class="badge badge-neutral">?</span>';
@@ -2606,7 +2710,7 @@ body::after{
                     ? `<button type="button" onclick="clickUnidad(${g.unidad_id != null ? g.unidad_id : 'null'}, '${esc(g.ip)}')" class="text-left hover:text-brand-600 dark:hover:text-brand-400 underline decoration-dotted decoration-brand-500/40 underline-offset-2 cursor-pointer">${esc(g.unidad)}</button>`
                     : '<span class="text-slate-400">-</span>';
                 return `<tr class="${canUpdate ? '' : 'opacity-70'}">
-<td><input type="checkbox" value="${esc(g.ip)}" ${isChecked} ${canUpdate ? '' : 'disabled'} onchange="toggleGateway('${esc(g.ip)}')" class="rounded w-4 h-4 accent-brand-600"></td>
+<td><input type="checkbox" value="${esc(g.ip)}" data-bulk-update="${autoUpdateCandidate}" ${isChecked} ${canUpdate ? '' : 'disabled'} onchange="toggleGateway('${esc(g.ip)}')" class="rounded w-4 h-4 accent-brand-600"></td>
 <td class="font-mono font-semibold text-xs">${esc(g.ip)}</td>
 <td class="font-medium">${clienteCell}</td>
 <td>${unidadCell}</td>
@@ -2615,12 +2719,13 @@ body::after{
 <td class="text-center">${relayBadge}</td>
 <td class="font-semibold">${g.version ? esc(g.version) : '-'}</td>
 <td class="text-center">${osBadge}</td>
-<td class="text-center">${statusBadge}</td>
+<td class="text-center">${statusBadge}${maintenanceBadge}</td>
 <td class="text-xs text-slate-400">${lastScan}</td>
 <td>
 <div class="flex gap-1">
 <button onclick="viewHistory('${esc(g.ip)}')" class="action-btn" title="${esc(t('btn_history_tooltip'))}"><svg class="text-blue-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"/></svg></button>
 <button onclick="configureGateway('${esc(g.ip)}')" class="action-btn" title="${esc(t('btn_configure_tooltip'))}"><svg class="text-sky-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20 16.58A5 5 0 0018 7h-1.26A8 8 0 103 16.25"/><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 19v1m4-2v2m4-1v1"/></svg></button>
+<button onclick="manageGatewayMaintenance('${esc(g.ip)}')" class="action-btn" title="${esc(t('maintenance_action_title'))}"><svg class="${g.maintenance_enabled ? 'text-amber-500' : 'text-slate-400'}" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14.7 6.3a1 1 0 01-1.4 1.4l-2.6-2.6a4 4 0 00-5 5l2.6 2.6a1 1 0 01-1.4 1.4l-2.6-2.6a6 6 0 008.3 8.3l5.3-5.3a6 6 0 00-5.3-10.4z"/></svg></button>
 ${(g.os_codename === 'jessie' || g.os_codename === 'stretch') ? `<button onclick="installMono('${esc(g.ip)}', '${esc(g.os_version)}')" class="action-btn" title="${esc(t('mono_install_title'))}"><svg class="text-red-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20 7l-8-4-8 4m16 0l-8 4m8-4v10l-8 4m0-10L4 7m8 4v10M4 7v10l8 4"/></svg></button>` : ''}
 </div>
 </td>
@@ -2639,6 +2744,66 @@ ${(g.os_codename === 'jessie' || g.os_codename === 'stretch') ? `<button onclick
         }
         window.clickCliente = clickCliente;
         window.clickUnidad = clickUnidad;
+
+        function closeMaintenanceModal() {
+            document.getElementById('maintenanceModal')?.remove();
+        }
+
+        async function manageGatewayMaintenance(ip) {
+            const gateway = allGateways.find(item => item.ip === ip);
+            if (!gateway) return;
+            const enabled = Boolean(gateway.maintenance_enabled);
+            const modal = document.createElement('div');
+            modal.id = 'maintenanceModal';
+            modal.className = 'modal-backdrop';
+            modal.style.zIndex = '90';
+            modal.onclick = event => { if (event.target === modal) closeMaintenanceModal(); };
+            modal.innerHTML = `
+                <div class="modal-content" style="max-width:500px;">
+                    <div class="p-5">
+                        <div class="flex items-start justify-between gap-3 mb-4">
+                            <div>
+                                <h3 class="font-bold text-lg">${esc(t('maintenance_title'))}</h3>
+                                <p class="font-mono text-xs text-slate-500 dark:text-slate-400 mt-1">${esc(ip)}</p>
+                            </div>
+                            <button type="button" class="text-slate-400 hover:text-slate-700 dark:hover:text-white text-2xl leading-none" aria-label="Fechar">&times;</button>
+                        </div>
+                        <p class="text-sm text-slate-500 dark:text-slate-400 mb-4">${esc(t('maintenance_help'))}</p>
+                        <label class="block text-sm font-medium mb-1.5" for="maintenanceReason">${esc(t('maintenance_reason'))}</label>
+                        <textarea id="maintenanceReason" rows="3" class="w-full bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-600 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-brand-500" maxlength="200">${esc(gateway.maintenance_reason || '')}</textarea>
+                        <div class="flex justify-end gap-2 mt-5">
+                            <button type="button" class="maintenance-cancel px-4 py-2 rounded-lg text-sm border border-slate-200 dark:border-slate-600">${esc(t('btn_cancel'))}</button>
+                            <button type="button" class="maintenance-save px-4 py-2 rounded-lg text-sm font-medium text-white ${enabled ? 'bg-emerald-600 hover:bg-emerald-700' : 'bg-amber-600 hover:bg-amber-700'}">${esc(enabled ? t('maintenance_disable') : t('maintenance_enable'))}</button>
+                        </div>
+                    </div>
+                </div>`;
+            document.body.appendChild(modal);
+            modal.querySelector('button[aria-label="Fechar"]').onclick = closeMaintenanceModal;
+            modal.querySelector('.maintenance-cancel').onclick = closeMaintenanceModal;
+            modal.querySelector('.maintenance-save').onclick = async () => {
+                const saveButton = modal.querySelector('.maintenance-save');
+                saveButton.disabled = true;
+                try {
+                    const response = await fetch(`/api/gateway/${encodeURIComponent(ip)}/maintenance`, {
+                        method: 'PUT',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify({
+                            enabled: !enabled,
+                            reason: modal.querySelector('#maintenanceReason').value,
+                        }),
+                    });
+                    if (!response.ok) throw new Error('No se pudo actualizar el mantenimiento');
+                    closeMaintenanceModal();
+                    showToast(t('maintenance_saved'), 'success');
+                    await loadGateways();
+                } catch (error) {
+                    console.error(error);
+                    showToast(t('toast_update_error'), 'error');
+                    saveButton.disabled = false;
+                }
+            };
+        }
+        window.manageGatewayMaintenance = manageGatewayMaintenance;
 
         function populateClientFilter(gateways) {
             const select = document.getElementById('filterCliente');
@@ -2709,8 +2874,26 @@ ${(g.os_codename === 'jessie' || g.os_codename === 'stretch') ? `<button onclick
             return getVisibleGatewayCheckboxes().filter(cb => !cb.disabled);
         }
 
+        function normalizeInventoryVersion(version) {
+            const match = String(version || '').match(/\d+(?:\.\d+)+/);
+            if (!match) return '';
+            const parts = match[0].split('.');
+            return parts.length >= 2 ? `${parts[0]}.${parts[1]}` : match[0];
+        }
+
         function isInventoryUpdateSelectable(status) {
             return ['PENDING', 'OFFLINE', 'ERROR'].includes(status);
+        }
+
+        function isInventoryBulkUpdateCandidate(gateway) {
+            if (gateway.maintenance_enabled) return false;
+            if (gateway.status === 'PENDING') return true;
+            if (!['OFFLINE', 'ERROR'].includes(gateway.status)) return false;
+            return normalizeInventoryVersion(gateway.version) !== normalizeInventoryVersion(TARGET_VERSION);
+        }
+
+        function getBulkUpdateVisibleGatewayCheckboxes() {
+            return getSelectableVisibleGatewayCheckboxes().filter(cb => cb.dataset.bulkUpdate === 'true');
         }
 
         function pruneSelectedGateways() {
@@ -2725,7 +2908,7 @@ ${(g.os_codename === 'jessie' || g.os_codename === 'stretch') ? `<button onclick
         function syncSelectAllCheckbox() {
             const selectAll = document.getElementById('selectAll');
             if (!selectAll) return;
-            const visible = getSelectableVisibleGatewayCheckboxes();
+            const visible = getBulkUpdateVisibleGatewayCheckboxes();
             const selectedVisible = visible.filter(cb => selectedGateways.has(cb.value));
             selectAll.checked = visible.length > 0 && selectedVisible.length === visible.length;
             selectAll.indeterminate = selectedVisible.length > 0 && selectedVisible.length < visible.length;
@@ -2734,7 +2917,7 @@ ${(g.os_codename === 'jessie' || g.os_codename === 'stretch') ? `<button onclick
         function toggleGateway(ip) { selectedGateways.has(ip) ? selectedGateways.delete(ip) : selectedGateways.add(ip); updateSelectedCount(); }
         function toggleSelectAll() {
             const selectAll = document.getElementById('selectAll').checked;
-            getSelectableVisibleGatewayCheckboxes().forEach(cb => {
+            getBulkUpdateVisibleGatewayCheckboxes().forEach(cb => {
                 cb.checked = selectAll;
                 selectAll ? selectedGateways.add(cb.value) : selectedGateways.delete(cb.value);
             });

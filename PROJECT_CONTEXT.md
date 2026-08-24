@@ -334,3 +334,36 @@ Prioriza siempre:
 - 2026-08-21: Se agrego el escaneo automatico diario del inventario a las 04:30 en `America/Sao_Paulo`. Solo verifica conectividad, version, Relay, GPS y estado; no actualiza ni reinicia gateways. Procesa lotes configurables de 3 IPs con pausa, evita equipos en actualizacion manual, conserva el resultado en SQLite y expone en la interfaz ES/PT-BR la proxima ejecucion, ultimo resultado y un boton de ejecucion manual.
 - 2026-08-21: La importacion de TXT de clientes/unidades ahora se ejecuta al iniciar la aplicacion y diariamente a las 04:00, antes del escaneo automatico. Al terminar, reasocia de inmediato los gateways existentes por red y tercer octeto, por lo que los cambios de nombre/unidad no esperan al siguiente escaneo nocturno.
 - 2026-08-21: Se amplio el informe del escaneo automatico: cada ejecucion conserva inicio, fin, duracion total y contadores; ademas guarda por gateway la IP, cliente, unidad, resultado, mensaje y duracion individual. El panel incluye `Ver detalles`, ordenado por los gateways que mas demoraron, y permite elegir entre las siete ejecuciones recientes para comparar los resultados del fin de semana.
+- 2026-08-24: Se ajusto la seleccion masiva de inventario para no incluir automaticamente gateways `OFFLINE/ERROR` que ya tienen la version objetivo confirmada. Sus checkboxes individuales siguen disponibles para intervenciones manuales; la seleccion masiva prioriza pendientes y equipos sin version confirmada o con version anterior.
+- 2026-08-24: Se creo `DEVELOPMENT_PLAN.md` como backlog de mejoras futuras.
+  La prioridad actual es crear un historial operativo unificado por gateway;
+  incluye tambien propuestas de alertas, exportacion de acciones pendientes,
+  configuracion visual de automatizaciones y auditoria.
+- 2026-08-24: Se creo `PROJECT_KNOWLEDGE.md` como base de conocimiento
+  reutilizable. Reune aprendizajes validados sobre inventario, escaneos,
+  Mono/espacio, tarjetas congeladas, Relay, GPS, traducciones y verificaciones
+  de despliegue, sin incluir informacion sensible.
+- 2026-08-24: Se mejoro el escaneo automatico con comparacion contra la
+  ejecucion anterior por gateway. Cada resultado conserva version, Relay,
+  cambios detectados y contador de fallos consecutivos; con dos fallos seguidos
+  genera alerta operativa. Tambien se agrego mantenimiento programado por
+  gateway con motivo opcional: el escaneo nocturno lo omite y no genera alertas,
+  pero las acciones manuales siguen habilitadas. La migracion SQLite fue
+  verificada y el contenedor `app` fue reconstruido correctamente.
+- 2026-08-24: Se agrego un reintento controlado al terminar el escaneo
+  nocturno para los resultados `OFFLINE`, `ERROR` y `TIMEOUT`, con pausa
+  configurable de 60 segundos. Tambien se programo una revision de
+  recuperacion diaria a las 13:30 (America/Sao_Paulo): revisa solo los fallos
+  que persisten despues del escaneo nocturno/reintento, sin actualizar ni
+  reiniciar. Cada ejecucion ahora guarda metricas por lote (duracion, revisados,
+  offline, errores y omitidos) visibles en el detalle. Se verificaron la nueva
+  tabla SQLite, los endpoints de horario y el contenedor `app`.
+- 2026-08-24: El escaneo automatico ahora omite los gateways con estado
+  `FROZEN_CARD`. Los registra como omitidos con el motivo de sustitucion y no
+  ejecuta tareas de escaneo que puedan sobrescribir el estado operativo hasta
+  que una accion manual lo cambie.
+- 2026-08-24: Se corrigio la traduccion inmediata del resumen dinamico del
+  escaneo. Al alternar ES/PT-BR, la interfaz vuelve a cargar el estado del
+  escaneo para traducir sin demora los modos nocturno, reintento y revision de
+  recuperacion, en vez de conservar el texto anterior hasta el siguiente ciclo
+  de 30 segundos.
