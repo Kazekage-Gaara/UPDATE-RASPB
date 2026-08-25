@@ -88,6 +88,9 @@ guardar contrasenas, tokens, llaves ni datos sensibles.
 - Los gateways con estado `FROZEN_CARD` se excluyen de escaneos automaticos,
   reintentos y revisiones de recuperacion. Solo una accion manual puede volver
   a evaluarlos y cambiar su estado operativo.
+- Los escaneos manuales normales tambien deben conservar `FROZEN_CARD`: la SD
+  puede responder por red y aparentar estar sana. Solo una reinstalacion forzada
+  debe volver a comprobar la persistencia tras reemplazar la tarjeta.
 
 ## Relay LPWAN y GPS
 
@@ -116,6 +119,15 @@ guardar contrasenas, tokens, llaves ni datos sensibles.
 - Los mapas de dossier de unidad deben incluir solo gateways de esa unidad; el
   dossier de cliente puede incluir todas sus unidades. Mantener siempre una
   opcion de vista ampliada para ubicaciones de campo.
+- Para acciones globales que se necesitan durante paginas largas, usar una
+  navegacion `sticky` con fondo opaco y z-index propio. En movil, el contenedor
+  de pestañas debe permitir scroll horizontal en vez de comprimir etiquetas.
+- Los KPIs extensos pueden conservarse en una franja fija compacta al salir de
+  pantalla. Debe alimentarse del mismo snapshot de datos, ocultarse fuera de
+  su pestaña y excluirse expresamente de la vista de impresion.
+- Para recuperar rapidamente el encabezado en paginas largas, usar un boton
+  fijo de regreso al inicio con aparicion condicionada por el desplazamiento,
+  texto localizado y exclusion de la impresion.
 
 ## Verificacion Reutilizable
 

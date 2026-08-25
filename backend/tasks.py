@@ -116,6 +116,15 @@ def save_diagnostic_event(ip: str, event_type: str, details: str):
     finally:
         db.close()
 
+def get_frozen_gateway(ip: str):
+    """Evita que un escaneo normal borre el diagnostico de una SD congelada."""
+    db = SessionLocal()
+    try:
+        gateway = db.query(Gateway).filter(Gateway.ip == ip).first()
+        return gateway if gateway and gateway.status == "FROZEN_CARD" else None
+    finally:
+        db.close()
+
 def prepare_persistence_probe(ip: str) -> str:
     token = f"{int(time.time())}_{os.getpid()}"
     cmd = f"printf '%s\n' '{token}' > /home/solinfnet/.update_persistence_probe && sync"
@@ -168,6 +177,18 @@ def scan_and_check_version(self, ip: str, persist_failures: bool = True):
     TARGET_VERSION = Config.TARGET_VERSION
     TARGET_NORMALIZED = normalize_version(TARGET_VERSION)
     
+    # Una SD congelada puede seguir respondiendo por SSH y parecer sana.
+    # Solo una reinstalacion forzada debe volver a comprobar su persistencia.
+    frozen_gateway = get_frozen_gateway(ip)
+    if frozen_gateway:
+        return {
+            "ip": ip,
+            "status": "FROZEN_CARD",
+            "msg": "Cartao congelado - necessario substituir",
+            "current_version": frozen_gateway.version,
+            "diagnostic": "FROZEN_CARD",
+        }
+
     if not ping_host(ip):
         if persist_failures:
             save_gateway_status(ip, None, "OFFLINE")

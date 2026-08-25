@@ -531,6 +531,7 @@ Rotas IPs VPNs Solinftec
             1.165 	 Concentrador 1012  			user : solinfnet.coruripe.fz_alagoas.f_1012
             1.175 	 Concentrador 1013  			user : solinfnet.coruripe.fz_alagoas.f_1013
             1.185 	 Concentrador 1009  			user : solinfnet.coruripe.fz_alagoas.f_1009
+            1.195    Concentrador 1014 				user : solinfnet.coruripe.fz_alagoas.f_1014
 
 	210.35.0.0/24	Estivas
 			1.105	 Concentrador 01				user : solinfnet.estivas.usi_estivas.f_1004
@@ -776,17 +777,18 @@ Rotas IPs VPNs Solinftec
 			4.45     Concentrador Móvel 4013 		user : solinfnet.usi_sta_terezinha.f_4013
 			4.55     Concentrador Móvel 4014		user : solinfnet.usi_sta_terezinha.f_4014
 			4.105    Torre Faz. Monjolinho - 60M    user : solinfnet.usi_sta_terezinha.f_4000
-			4.115    Torre Arest - 60M				user : solinfnet.usi_sta_terezinha.f_4001
+			4.115    PREAMBULO IGT 10010			user : solinfnet.usi_sta_terezinha.f_4001
 			4.125    Torre Estrela Dalva - 60M		user : solinfnet.usi_sta_terezinha.f_4002
 			5.5		 Cidade Gaúcha (CGA)
 			5.15	 Concentrador Móvel 5010		user : solinfnet.usi_sta_terezinha.f_5010
-			5.25	 Concentrador Móvel 5011		user : solinfnet.usi_sta_terezinha.f_5011
+			5.25	 Concentrador Móvel 15010		user : solinfnet.usi_sta_terezinha.f_5011
 			5.35	 Concentrador Móvel 5012		user : solinfnet.usi_sta_terezinha.f_5012
 			5.45	 Concentrador Móvel 5013		user : solinfnet.usi_sta_terezinha.f_5013
 			5.105	 Torre Posto Combustível		user : solinfnet.usi_sta_terezinha.f_5000
 			5.115	 Torre São Manoel 				user : solinfnet.usi_sta_terezinha.f_5001
 			5.125	 Torre Fazenda Danilo			user : solinfnet.usi_sta_terezinha.f_5002
 			5.135	 Torre Fazenda Caturra			user : solinfnet.usi_sta_terezinha.f_5003
+            5.145    Preambulo Cidade Gaucha        user : solinfnet.usi_sta_terezinha.f_16010
 			6.5		 Rondon
 			6.15	 Concentrador Móvel 6010		user : solinfnet.usi_sta_terezinha.f_6010	
 			6.25	 Concentrador Móvel 6011		user : solinfnet.usi_sta_terezinha.f_6011
@@ -796,7 +798,7 @@ Rotas IPs VPNs Solinftec
 			6.115	 Torre Maria das Neves			user : solinfnet.usi_sta_terezinha.f_6001
 			6.125	 Torre Brigão					user : solinfnet.usi_sta_terezinha.f_6002
 			6.135	 Torre Roderjan					user : solinfnet.usi_sta_terezinha.f_6003
-			7.5		 Ivaté
+            7.5		 Ivaté
 			7.15 	 Concentrador Móvel 7010		user : solinfnet.usi_sta_terezinha.f_7010
 			7.25	 Concentrador Movel 7011		user : solinfnet.usi_sta_terezinha.f_7011
 			7.35	 Concentrador Móvel 7012		user : solinfnet.usi_sta_terezinha.f_7012
@@ -808,7 +810,7 @@ Rotas IPs VPNs Solinftec
 			7.125	 Torre URP						user : solinfnet.usi_sta_terezinha.f_7002
 			7.135	 Torre de Umuarama				user : solinfnet.usi_sta_terezinha.f_7003
 			7.145	 Torre Jerusalem				user : solinfnet.usi_sta_terezinha.f_7004
-			7.155	 Torre Eldorado					user : solinfnet.usi_sta_terezinha.f_7005
+			7.155	 PREAMBULO IVATÉ 40010          user : solinfnet.usi_sta_terezinha.f_7005
 
 	210.51.0.0/24 	USM 	
 			1.105	Gateway Movel 10000				user : solinfnet.usina_usm.f_10000

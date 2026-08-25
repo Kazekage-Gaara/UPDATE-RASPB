@@ -687,7 +687,7 @@ Rotas IPs VPNs Solinftec
 
 	220.126.0.0/24 	Manica
 			1.5 	 Faz. Vale Verde f4000 				user : solinfnet.manica.fz_vale_verde
-			2.5 	 Faz. Vivendas (Santo Antonio)  	user : solinfnet.manica.fz_sto_antonio (Ajustar depois, passaram o nome da unidade errado)
+			2.5 	 Faz. Vale Verde 2 (Vivendas)	  	user : solinfnet.manica.fz_vale_verde2
 			3.5		 Faz. Paraiso						user : solinfnet.manica.fz_paraiso
 			4.5		 Faz. Lote 31 f7000					user : solinfnet.manica.fz_lote31
 			4.135    Faz. Poste x3						user : solinfnet.manica.faz_lote31.f_7003
@@ -852,6 +852,8 @@ Rotas IPs VPNs Solinftec
 			10.0.2.1 RouterBoard						user : solinftec | SolinfNet (solinfnet.net0farm)
 			10.0.2.2 eNodeB								user : admin | pw: admin
 			10.0.2.3 Gateway Farm
+	CABO DO LINK TOWER-FARM LIGADO NA ETHER10 DA MIKROTIK NO TOWER, RADIO NO TERRAÇO DO PREDIO
+
 
 	220.158.0.0/24  L2 Agronegócios
             1.5      Fazenda Boi Gordo        			user : solinfnet.l2_agro.fz_boi_gordo 	

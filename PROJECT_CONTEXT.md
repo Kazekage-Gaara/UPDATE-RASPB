@@ -367,3 +367,20 @@ Prioriza siempre:
   escaneo para traducir sin demora los modos nocturno, reintento y revision de
   recuperacion, en vez de conservar el texto anterior hasta el siguiente ciclo
   de 30 segundos.
+- 2026-08-25: Se fijo la barra de navegacion principal de la web. Las pestañas
+  de Operaciones, Reportes y Mapa permanecen disponibles al desplazarse por
+  paginas largas; en movil admiten desplazamiento horizontal y mantienen fondo
+  con contraste en ambos temas.
+- 2026-08-25: Se fijo tambien el encabezado con la hora y se agrego una franja
+  compacta animada para los KPIs de Operaciones. Al dejar atras los cuadros
+  grandes, muestra Total, Actualizados, Pendientes y Offline/Errores debajo de
+  la navegacion; se oculta al volver arriba o cambiar de pestaña y no aparece
+  en impresion/PDF.
+- 2026-08-25: Los escaneos normales ahora conservan `FROZEN_CARD` para que un
+  gateway con tarjeta congelada no vuelva a aparecer como pendiente. La tarjeta
+  individual cierra todos sus pasos en rojo al detectar ese resultado y no
+  inicia una actualizacion normal; la reinstalacion forzada sigue disponible
+  para reevaluar una SD reemplazada.
+- 2026-08-25: Se agrego un boton flotante de regreso al inicio para paginas
+  largas. Aparece con una animacion suave despues de desplazarse y se adapta a
+  ES/PT-BR y a movil, sin incluirse en PDF/impresion.

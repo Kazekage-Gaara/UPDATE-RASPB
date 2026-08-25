@@ -559,7 +559,8 @@ PROVISORIO	11.105	Faz. Cristo							user : solinfnet.jcgrossi.fz_belavista.f_100
               100   Controladora
             3.5     Faz. Boa Esperança 		 			user : solinfnet.jf_citrus.fz_boa_esperanca
             4.5     Faz. Santa Angela 		 			user : solinfnet.jf_citrus.fz_santa_angela
-	
+            5.5     Faz. São Jerônimo 		 			user : solinfnet.jf_citrus.fz_sao_jeronimo
+
 	215.253.0.0/24 LDC BACURI
 			1.105  POSTE X01 GPRS						user : solinfnet.ldc.fz_bacuri_f48000
 			1.100  Controladora de carga
@@ -574,6 +575,4 @@ PROVISORIO	11.105	Faz. Cristo							user : solinfnet.jcgrossi.fz_belavista.f_100
 			3.105 	 Bom Retiro							user : solinfnet.ldc.fz_bom_retiro.f_28001
 			4.105 	 Morrinhos							user : solinfnet.ldc.fz_morrinhos.f_14003
 			5.105	 Pedra Branca						user : solinfnet.ldc.fz_pedrabranca.f_22000
-
-    
 

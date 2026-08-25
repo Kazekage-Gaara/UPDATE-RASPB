@@ -125,6 +125,33 @@
         .dark .tab-btn:hover { color: #e2e8f0; }
         .tab-btn.active { color: #15803d; border-color: #15803d; }
         .dark .tab-btn.active { color: #4ade80; border-color: #4ade80; }
+        .tab-navigation-sticky { position: sticky; top: 0; z-index: 50; background: rgba(248, 250, 252, 0.96); backdrop-filter: blur(14px); -webkit-backdrop-filter: blur(14px); border-bottom: 1px solid rgba(226, 232, 240, 0.9); box-shadow: 0 10px 24px -22px rgba(15, 23, 42, 0.5); }
+        .dark .tab-navigation-sticky { background: rgba(15, 23, 42, 0.96); border-color: rgba(51, 65, 85, 0.9); box-shadow: 0 10px 24px -22px rgba(0, 0, 0, 0.85); }
+        .tab-navigation-scroll { overflow-x: auto; scrollbar-width: none; }
+        .tab-navigation-scroll::-webkit-scrollbar { display: none; }
+        .top-navigation-shell { position: sticky; top: 0; z-index: 60; }
+        .top-navigation-shell .tab-navigation-sticky { position: relative; }
+        #compactStatsBar { position: fixed; top: calc(var(--top-shell-height, 0px) + 0.5rem); left: 50%; z-index: 55; width: min(calc(100% - 2rem), 1400px); transform: translate(-50%, -130%); opacity: 0; pointer-events: none; transition: transform 0.28s cubic-bezier(0.16, 1, 0.3, 1), opacity 0.2s ease; }
+        body.show-compact-stats #compactStatsBar { transform: translate(-50%, 0); opacity: 1; pointer-events: auto; }
+        #backToTopButton { position: fixed; right: 1.5rem; bottom: 1.5rem; z-index: 58; display: inline-flex; align-items: center; gap: 0.5rem; padding: 0.7rem 0.95rem; border: 1px solid rgba(148, 163, 184, 0.45); border-radius: 999px; background: rgba(15, 23, 42, 0.94); color: #f8fafc; box-shadow: 0 16px 32px -16px rgba(15, 23, 42, 0.75); transform: translateY(1rem) scale(0.94); opacity: 0; pointer-events: none; transition: transform 0.22s cubic-bezier(0.16, 1, 0.3, 1), opacity 0.18s ease, background 0.18s ease; }
+        #backToTopButton:hover { background: #0f766e; }
+        #backToTopButton:focus-visible { outline: 3px solid #5eead4; outline-offset: 3px; }
+        #backToTopButton.is-visible { transform: translateY(0) scale(1); opacity: 1; pointer-events: auto; }
+        .dark #backToTopButton { background: rgba(5, 46, 22, 0.96); border-color: rgba(74, 222, 128, 0.35); }
+        .dark #backToTopButton:hover { background: #047857; }
+        .compact-stat { min-width: 0; border-left: 3px solid transparent; }
+        .compact-stat-total { border-left-color: #3b82f6; }
+        .compact-stat-updated { border-left-color: #10b981; }
+        .compact-stat-pending { border-left-color: #f59e0b; }
+        .compact-stat-offline { border-left-color: #ef4444; }
+        @media (max-width: 640px) {
+            .tab-btn { flex: 0 0 auto; padding: 0.7rem 0.9rem; }
+            .tab-navigation-sticky .max-w-\[1400px\] { padding-left: 1rem; padding-right: 1rem; }
+            #compactStatsBar { width: calc(100% - 1rem); top: calc(var(--top-shell-height, 0px) + 0.35rem); }
+            .compact-stat { padding: 0.45rem 0.35rem; }
+            #backToTopButton { right: 1rem; bottom: 1rem; padding: 0.75rem; }
+            #backToTopButton span { display: none; }
+        }
 
         /* Table styles */
         .data-table { width: 100%; font-size: 0.8125rem; }
@@ -212,7 +239,7 @@
         /* ============ PRINT STYLES ============ */
         @media print {
             @page { margin: 12mm; size: auto; }
-            header, #tab-btn-operaciones, #tab-btn-reportes, #tab-btn-mapa, .toast-container, button, footer, .pagination-controls, [id$="ChartTypeControl"], .report-print-hint { display: none !important; }
+            header, #tab-btn-operaciones, #tab-btn-reportes, #tab-btn-mapa, #compactStatsBar, #backToTopButton, .toast-container, button, footer, .pagination-controls, [id$="ChartTypeControl"], .report-print-hint { display: none !important; }
             #tab-operaciones { display: none !important; }
             #tab-reportes { display: block !important; }
             body, #tab-reportes { background: white !important; color: #0f172a !important; }
@@ -352,6 +379,10 @@ body::after{
 <body class="bg-slate-50 dark:bg-slate-900 text-slate-900 dark:text-slate-100 font-sans min-h-screen">
 
     <div id="toastContainer" class="toast-container"></div>
+    <button id="backToTopButton" type="button" onclick="scrollToPageTop()" data-i18n-title="back_to_top" data-i18n-aria-label="back_to_top" title="Subir al inicio" aria-label="Subir al inicio">
+        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="m5 15 7-7 7 7"/></svg>
+        <span data-i18n="back_to_top">Subir al inicio</span>
+    </button>
 
     <!-- ============ CUSTOM MODAL ============ -->
     <div id="customModal" class="modal-backdrop hidden" onclick="if(event.target===this)closeModal()">
@@ -374,6 +405,8 @@ body::after{
         </div>
     </div>
 
+    <!-- ============ STICKY GLOBAL NAVIGATION ============ -->
+    <div id="topNavigationShell" class="top-navigation-shell">
     <!-- ============ HEADER ============ -->
     <header class="gradient-header text-white shadow-lg">
         <div class="max-w-[1400px] mx-auto px-6 py-3.5">
@@ -433,8 +466,9 @@ body::after{
     </header>
 
     <!-- ============ TAB NAVIGATION ============ -->
-    <div class="max-w-[1400px] mx-auto px-6 pt-4">
-        <div class="flex border-b border-slate-200 dark:border-slate-700">
+    <div class="tab-navigation-sticky">
+        <div class="max-w-[1400px] mx-auto px-6 pt-2">
+        <div class="tab-navigation-scroll flex border-b border-slate-200 dark:border-slate-700">
             <button onclick="switchTab('operaciones')" id="tab-btn-operaciones" class="tab-btn active">
                 <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 3v2m6-2v2M9 19v2m6-2v2M5 9H3m2 6H3m18-6h-2m2 6h-2M7 19h10a2 2 0 002-2V7a2 2 0 00-2-2H7a2 2 0 00-2 2v10a2 2 0 002 2zM9 9h6v6H9V9z"/></svg>
                 <span data-i18n="tab_operaciones">Panel de Operaciones</span>
@@ -448,6 +482,8 @@ body::after{
                 <span data-i18n="tab_mapa">Mapa de Gateways</span>
             </button>
         </div>
+        </div>
+    </div>
     </div>
 
     <!-- ============ MAIN CONTENT ============ -->
@@ -457,7 +493,7 @@ body::after{
         <div id="tab-operaciones">
 
             <!-- Stat Cards -->
-            <div class="grid grid-cols-2 lg:grid-cols-4 gap-4 mb-6">
+            <div id="statsOverview" class="grid grid-cols-2 lg:grid-cols-4 gap-4 mb-6">
                 <!-- Total -->
                 <div class="card card-interactive stat-card stat-card-total p-5">
                     <div class="flex items-center justify-between mb-3">
@@ -501,6 +537,15 @@ body::after{
                     </div>
                     <div class="text-3xl font-extrabold text-red-600 dark:text-red-400 count-up" id="statOffline">0</div>
                     <div class="text-xs text-slate-400 dark:text-slate-500 mt-1 font-medium" data-i18n="stat_offline">Offline/Errores</div>
+                </div>
+            </div>
+
+            <div id="compactStatsBar" aria-live="polite">
+                <div class="grid grid-cols-4 gap-1.5 rounded-xl border border-slate-200 dark:border-slate-700 bg-white/95 dark:bg-slate-800/95 backdrop-blur px-2 py-1.5 shadow-xl shadow-slate-900/10 dark:shadow-black/30">
+                    <div class="compact-stat compact-stat-total px-2 py-1"><div class="text-[10px] uppercase tracking-wide text-slate-400 truncate" data-i18n="stat_total">Total</div><div id="compactStatTotal" class="text-base font-extrabold text-slate-900 dark:text-white">0</div></div>
+                    <div class="compact-stat compact-stat-updated px-2 py-1"><div class="text-[10px] uppercase tracking-wide text-slate-400 truncate" data-i18n="stat_updated">Actualizados</div><div id="compactStatUpdated" class="text-base font-extrabold text-emerald-600 dark:text-emerald-400">0</div></div>
+                    <div class="compact-stat compact-stat-pending px-2 py-1"><div class="text-[10px] uppercase tracking-wide text-slate-400 truncate" data-i18n="stat_pending">Pendientes</div><div id="compactStatPending" class="text-base font-extrabold text-amber-600 dark:text-amber-400">0</div></div>
+                    <div class="compact-stat compact-stat-offline px-2 py-1"><div class="text-[10px] uppercase tracking-wide text-slate-400 truncate" data-i18n="stat_offline">Offline/Errores</div><div id="compactStatOffline" class="text-base font-extrabold text-red-600 dark:text-red-400">0</div></div>
                 </div>
             </div>
 
@@ -900,6 +945,7 @@ body::after{
                 stat_updated: "Actualizados",
                 stat_pending: "Pendientes",
                 stat_offline: "Offline/Errores",
+                back_to_top: "Subir al inicio",
                 scheduled_scan_title: "Escaneo automático del inventario",
                 scheduled_scan_help: "Revisa versión, Relay, GPS y estado; no actualiza ni reinicia gateways.",
                 scheduled_scan_run_now: "Ejecutar ahora",
@@ -1153,6 +1199,7 @@ body::after{
                 stat_updated: "Atualizados",
                 stat_pending: "Pendentes",
                 stat_offline: "Offline/Erros",
+                back_to_top: "Voltar ao início",
                 scheduled_scan_title: "Escaneamento automático do inventário",
                 scheduled_scan_help: "Verifica versão, Relay, GPS e status; não atualiza nem reinicia gateways.",
                 scheduled_scan_run_now: "Executar agora",
@@ -1454,6 +1501,10 @@ body::after{
                 const key = el.getAttribute('data-i18n-title');
                 if (translations[currentLang][key]) el.title = translations[currentLang][key];
             });
+            document.querySelectorAll('[data-i18n-aria-label]').forEach(el => {
+                const key = el.getAttribute('data-i18n-aria-label');
+                if (translations[currentLang][key]) el.setAttribute('aria-label', translations[currentLang][key]);
+            });
             document.getElementById('lang-es').classList.toggle('active', currentLang === 'es');
             document.getElementById('lang-pt').classList.toggle('active', currentLang === 'pt');
             if (document.getElementById('gatewayTable').children.length > 0) {
@@ -1691,6 +1742,13 @@ body::after{
             applyTranslations();
             clearMultipleOperationState();
             await syncServerClock();
+            updateTopNavigationHeight();
+            updateScrollControls();
+            window.addEventListener('scroll', updateScrollControls, { passive: true });
+            window.addEventListener('resize', () => {
+                updateTopNavigationHeight();
+                updateScrollControls();
+            });
             loadGateways();
             loadScheduledScanStatus();
             setInterval(loadScheduledScanStatus, 30000);
@@ -1709,6 +1767,30 @@ body::after{
             if (clearResults && results) results.innerHTML = '';
             subnetCandidateIPs.clear();
             lastDiscoveredGatewayStatus.clear();
+        }
+
+        function updateTopNavigationHeight() {
+            const shell = document.getElementById('topNavigationShell');
+            if (shell) document.documentElement.style.setProperty('--top-shell-height', `${shell.offsetHeight}px`);
+        }
+
+        function updateCompactStatsVisibility() {
+            const overview = document.getElementById('statsOverview');
+            const shell = document.getElementById('topNavigationShell');
+            const operations = document.getElementById('tab-operaciones');
+            if (!overview || !shell || !operations) return;
+            const isOperationsVisible = !operations.classList.contains('hidden');
+            const shouldShow = isOperationsVisible && overview.getBoundingClientRect().bottom <= shell.offsetHeight + 16;
+            document.body.classList.toggle('show-compact-stats', shouldShow);
+        }
+
+        function updateScrollControls() {
+            updateCompactStatsVisibility();
+            document.getElementById('backToTopButton')?.classList.toggle('is-visible', window.scrollY > 500);
+        }
+
+        function scrollToPageTop() {
+            window.scrollTo({ top: 0, behavior: 'smooth' });
         }
 
         function updateSyncTime() {
@@ -2040,6 +2122,15 @@ body::after{
                     setTimeout(() => { resultsDiv.innerHTML = ''; const input = document.getElementById('ipInput'); if (input) input.value = ''; }, 3000);
                     return;
                 }
+                if (scanResult.result.status === 'FROZEN_CARD' || scanResult.result.diagnostic === 'FROZEN_CARD') {
+                    updateStep(tempId, 'step1', `❌ ${t('status_frozen')}`, 'red');
+                    updateStep(tempId, 'step2', t('step_no_action'), 'red');
+                    updateStep(tempId, 'step3', t('step_no_action'), 'red');
+                    showToast(t('status_frozen'), 'error');
+                    await loadGateways();
+                    clearOperationInputLater();
+                    return;
+                }
                 if (scanResult.result.status === 'OFFLINE') {
                     updateStep(tempId, 'step1', `❌ ${scanResult.result.msg}`, 'red');
                     updateStep(tempId, 'step2', t('step_no_action'), 'red');
@@ -2076,7 +2167,8 @@ body::after{
                 const taskId = updateData.tasks[0].task_id;
                 const updateResult = await waitForTask(taskId, true);
                 const finalStatus = updateResult.result?.status || updateResult.state;
-                const updateOk = updateResult.state === 'SUCCESS' && !["FAILED", "BLOCKED", "ERROR"].includes(finalStatus);
+                const updateFrozen = finalStatus === 'FROZEN_CARD' || updateResult.result?.diagnostic === 'FROZEN_CARD';
+                const updateOk = updateResult.state === 'SUCCESS' && !["FAILED", "BLOCKED", "ERROR", "FROZEN_CARD"].includes(finalStatus) && !updateFrozen;
 
                 if (updateOk) {
                     updateStep(tempId, 'step2', t('step_files_copied'), 'green');
@@ -2086,8 +2178,9 @@ body::after{
                     setTimeout(() => loadGateways(), 2000);
                     setTimeout(() => { resultsDiv.innerHTML = ''; const input = document.getElementById('ipInput'); if (input) input.value = ''; }, 3000);
                 } else {
-                    updateStep(tempId, 'step3', updateResult.result?.msg || t('step_error_update'), 'red');
-                    showToast(updateResult.result?.msg || t('toast_update_error'), 'error');
+                    updateStep(tempId, 'step2', updateFrozen ? `❌ ${t('status_frozen')}` : t('step_error_update'), 'red');
+                    updateStep(tempId, 'step3', updateFrozen ? t('step_no_action') : (updateResult.result?.msg || t('step_error_update')), 'red');
+                    showToast(updateFrozen ? t('status_frozen') : (updateResult.result?.msg || t('toast_update_error')), 'error');
                     clearOperationInputLater();
                 }
             } catch (err) {
@@ -2145,7 +2238,8 @@ body::after{
                 const taskId = updateData.tasks[0].task_id;
                 const updateResult = await waitForTask(taskId, true);
                 const finalStatus = updateResult.result?.status || updateResult.state;
-                const updateOk = updateResult.state === 'SUCCESS' && !["FAILED", "BLOCKED", "ERROR"].includes(finalStatus);
+                const updateFrozen = finalStatus === 'FROZEN_CARD' || updateResult.result?.diagnostic === 'FROZEN_CARD';
+                const updateOk = updateResult.state === 'SUCCESS' && !["FAILED", "BLOCKED", "ERROR", "FROZEN_CARD"].includes(finalStatus) && !updateFrozen;
 
                 if (updateOk) {
                     updateStep(tempId, 'step2', t('step_files_copied'), 'green');
@@ -2155,8 +2249,9 @@ body::after{
                     setTimeout(() => loadGateways(), 2000);
                     setTimeout(() => { resultsDiv.innerHTML = ''; const input = document.getElementById('ipInput'); if (input) input.value = ''; }, 3000);
                 } else {
-                    updateStep(tempId, 'step3', updateResult.result?.msg || t('step_error_update'), 'red');
-                    showToast(updateResult.result?.msg || t('toast_update_error'), 'error');
+                    updateStep(tempId, 'step2', updateFrozen ? `❌ ${t('status_frozen')}` : t('step_error_update'), 'red');
+                    updateStep(tempId, 'step3', updateFrozen ? t('step_no_action') : (updateResult.result?.msg || t('step_error_update')), 'red');
+                    showToast(updateFrozen ? t('status_frozen') : (updateResult.result?.msg || t('toast_update_error')), 'error');
                     clearOperationInputLater();
                 }
             } catch (err) {
@@ -2829,11 +2924,21 @@ ${(g.os_codename === 'jessie' || g.os_codename === 'stretch') ? `<button onclick
                 allGateways = gateways;
                 pruneSelectedGateways();
 
-                // Animate stats
-                animateCounter('statTotal', gateways.length);
-                animateCounter('statUpdated', gateways.filter(g => g.status === 'UPDATED').length);
-                animateCounter('statPending', gateways.filter(g => g.status === 'PENDING').length);
-                animateCounter('statOffline', gateways.filter(g => g.status === 'OFFLINE' || g.status === 'ERROR').length);
+                // Full and compact stats always use the same inventory snapshot.
+                const stats = {
+                    total: gateways.length,
+                    updated: gateways.filter(g => g.status === 'UPDATED').length,
+                    pending: gateways.filter(g => g.status === 'PENDING').length,
+                    offline: gateways.filter(g => g.status === 'OFFLINE' || g.status === 'ERROR').length,
+                };
+                animateCounter('statTotal', stats.total);
+                animateCounter('statUpdated', stats.updated);
+                animateCounter('statPending', stats.pending);
+                animateCounter('statOffline', stats.offline);
+                document.getElementById('compactStatTotal').textContent = stats.total;
+                document.getElementById('compactStatUpdated').textContent = stats.updated;
+                document.getElementById('compactStatPending').textContent = stats.pending;
+                document.getElementById('compactStatOffline').textContent = stats.offline;
 
                 document.getElementById('totalCount').textContent = gateways.length;
 
@@ -3286,6 +3391,7 @@ ${(g.os_codename === 'jessie' || g.os_codename === 'stretch') ? `<button onclick
 
             document.querySelectorAll('.tab-btn').forEach(btn => btn.classList.remove('active'));
             document.getElementById(`tab-btn-${tabName}`).classList.add('active');
+            updateCompactStatsVisibility();
 
             if (tabName === 'reportes') {
                 loadDashboard();
