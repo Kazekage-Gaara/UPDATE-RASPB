@@ -381,6 +381,26 @@ Prioriza siempre:
   individual cierra todos sus pasos en rojo al detectar ese resultado y no
   inicia una actualizacion normal; la reinstalacion forzada sigue disponible
   para reevaluar una SD reemplazada.
+- 2026-08-26: Se agrego una sonda pasiva de persistencia en cada scan. Guarda
+  un marcador y el `boot_id` actual sin reiniciar; si el siguiente scan detecta
+  un reboot natural y el marcador anterior desaparecio, marca `FROZEN_CARD`.
+  La verificacion de actualizacion conserva su reboot controlado y sigue siendo
+  la comprobacion definitiva.
+- 2026-08-26: Se agrego el modo individual LDC por RouterBoard. El operador
+  selecciona la unidad/RB del catalogo local, informa temporalmente la IP
+  interna destino del NAT y el puerto NAT SSH; la tarea redirige SSH, SCP y la
+  espera de reboot por ese NAT sin guardar puertos ni alterar escaneos
+  automaticos, inventario o actualizaciones normales.
+  Requiere que el host Ubuntu de la aplicacion tenga ruta y permiso TCP hacia
+  la RB/NAT; el acceso desde la PC del operador no sustituye esa conectividad.
+  La interfaz queda bajo `Accesos especiales`, cerrada por defecto al final de
+  Operaciones, para no distraer del flujo habitual. Los registros marcados
+  `LDC_RB` se excluyen del inventario general y aparecen en la tabla LDC propia.
+  El catalogo de unidades/RB vive solo en `data/ldc_routerboards.json` y esta
+  ignorado por Git, para no publicar direcciones operativas del cliente.
+  Para NAT encadenado se selecciona siempre la RB destino (que define unidad e
+  inventario) y se informa opcionalmente una RB de entrada; SSH/SCP usan la
+  entrada, mientras el registro conserva la unidad y RB destino correctas.
 - 2026-08-25: Se agrego un boton flotante de regreso al inicio para paginas
   largas. Aparece con una animacion suave despues de desplazarse y se adapta a
   ES/PT-BR y a movil, sin incluirse en PDF/impresion.

@@ -34,6 +34,13 @@ def init_db():
         for name, definition in {
             "maintenance_enabled": "BOOLEAN NOT NULL DEFAULT 0",
             "maintenance_reason": "VARCHAR",
+            "persistence_probe_token": "VARCHAR",
+            "persistence_probe_boot_id": "VARCHAR",
+            "persistence_probe_written_at": "DATETIME",
+            "persistence_last_verified_at": "DATETIME",
+            "access_mode": "VARCHAR",
+            "ldc_unit": "VARCHAR",
+            "ldc_rb_ip": "VARCHAR",
         }.items():
             if name not in existing_gateway_columns:
                 conn.exec_driver_sql(f"ALTER TABLE gateways ADD COLUMN {name} {definition}")

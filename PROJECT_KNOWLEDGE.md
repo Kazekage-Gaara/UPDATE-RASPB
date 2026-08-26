@@ -91,6 +91,24 @@ guardar contrasenas, tokens, llaves ni datos sensibles.
 - Los escaneos manuales normales tambien deben conservar `FROZEN_CARD`: la SD
   puede responder por red y aparentar estar sana. Solo una reinstalacion forzada
   debe volver a comprobar la persistencia tras reemplazar la tarjeta.
+- La deteccion pasiva usa un marcador unico y `/proc/sys/kernel/random/boot_id`:
+  cada scan prepara la prueba para el siguiente reinicio natural. Solo si cambia
+  el boot id y desaparece el marcador anterior se confirma `FROZEN_CARD`; no se
+  deben reiniciar gateways durante un scan solo para esta comprobacion.
+- Los accesos temporales por RouterBoard deben ser individuales y efimeros: la
+  IP logica del gateway se conserva para inventario/historial, mientras SSH y
+  SCP usan `IP_RB:puerto_NAT` solo dentro de la tarea. No guardar esos puertos
+  ni usarlos en automatizaciones, porque el NAT se crea manualmente y se reutiliza.
+- Los gateways gestionados por este modo deben llevar `access_mode=LDC_RB` y
+  consultarse desde su tabla dedicada. No deben mezclarse con el inventario
+  general ni sus filtros, para evitar acciones masivas con accesos temporales.
+- El catalogo LDC de unidades y RouterBoards se mantiene localmente en
+  `data/ldc_routerboards.json`, ignorado por Git. La IP interna del gateway se
+  conoce al crear el NAT temporal y queda asociada a la unidad/RB despues de
+  su primer scan o actualizacion.
+- En NAT encadenado, no confundir la RB de entrada con la RB destino: la
+  primera se usa solo para establecer `IP:puerto` temporal; la segunda se
+  selecciona en el catalogo y determina la unidad que queda registrada.
 
 ## Relay LPWAN y GPS
 

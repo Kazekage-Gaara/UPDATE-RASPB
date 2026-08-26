@@ -2,10 +2,13 @@ import os
 import time
 import subprocess
 import re
+import uuid
+from contextvars import ContextVar
+from functools import wraps
 from datetime import datetime
 from zoneinfo import ZoneInfo
 from celery import Celery
-from ssh_utils import run_ssh_command, ping_host
+from ssh_utils import run_ssh_command as raw_run_ssh_command, ping_host as raw_ping_host
 from database import SessionLocal
 from models import Gateway, UpdateHistory, GatewayDiagnosticEvent, Cliente, Unidad
 from config import Config
@@ -13,6 +16,39 @@ from config import Config
 redis_url = os.getenv('REDIS_URL', 'redis://redis:6379/0')
 app = Celery('tasks', broker=redis_url, backend=redis_url)
 APP_TIMEZONE = ZoneInfo("America/Sao_Paulo")
+active_gateway_access = ContextVar("active_gateway_access", default=None)
+
+
+def get_active_gateway_access():
+    return active_gateway_access.get()
+
+
+def run_ssh_command(ip: str, cmd: str, timeout: int = 15) -> dict:
+    """Usa el NAT temporal solo dentro de una tarea LDC individual."""
+    access = get_active_gateway_access()
+    if access:
+        return raw_run_ssh_command(access["rb_ip"], cmd, timeout=timeout, port=access["ssh_port"])
+    return raw_run_ssh_command(ip, cmd, timeout=timeout)
+
+
+def ping_host(ip: str) -> bool:
+    access = get_active_gateway_access()
+    if access:
+        return raw_ping_host(access["rb_ip"], port=access["ssh_port"])
+    return raw_ping_host(ip)
+
+
+def with_gateway_access(func):
+    """Aisla un acceso LDC temporal para que no afecte otras tareas Celery."""
+    @wraps(func)
+    def wrapped(self, ip: str, *args, **kwargs):
+        access = kwargs.pop("access", None)
+        token = active_gateway_access.set(access)
+        try:
+            return func(self, ip, *args, **kwargs)
+        finally:
+            active_gateway_access.reset(token)
+    return wrapped
 
 
 def app_now() -> datetime:
@@ -143,6 +179,103 @@ def verify_persistence_probe(ip: str, token: str) -> str:
     save_diagnostic_event(ip, "FROZEN_CARD", "El marcador no sobrevivio al reinicio; posible cartao congelado")
     return "FROZEN"
 
+PASSIVE_PERSISTENCE_PROBE_PATH = "/home/solinfnet/.scan_persistence_probe"
+
+def get_passive_persistence_state(ip: str) -> dict:
+    db = SessionLocal()
+    try:
+        gateway = db.query(Gateway).filter(Gateway.ip == ip).first()
+        if not gateway:
+            return {}
+        return {
+            "token": gateway.persistence_probe_token,
+            "boot_id": gateway.persistence_probe_boot_id,
+        }
+    finally:
+        db.close()
+
+def read_passive_persistence_probe(ip: str) -> dict:
+    """Lee el boot actual y el marcador sin alterar el gateway."""
+    cmd = f"""
+    BOOT_ID=$(cat /proc/sys/kernel/random/boot_id 2>/dev/null || true)
+    MARKER=$(cat {PASSIVE_PERSISTENCE_PROBE_PATH} 2>/dev/null || true)
+    printf 'PASSIVE_BOOT_ID:%s\\nPASSIVE_MARKER:%s\\n' "$BOOT_ID" "$MARKER"
+    """
+    res = run_ssh_command(ip, cmd, timeout=15)
+    output = res.get("output") or ""
+    boot_match = re.search(r"PASSIVE_BOOT_ID:([0-9a-f-]+)", output, re.IGNORECASE)
+    marker_match = re.search(r"PASSIVE_MARKER:([^\r\n]*)", output)
+    if not res.get("success") or not boot_match:
+        return {}
+    return {
+        "boot_id": boot_match.group(1).strip(),
+        "marker": marker_match.group(1).strip() if marker_match else "",
+    }
+
+def write_passive_persistence_probe(ip: str) -> str:
+    """Prepara una prueba para el proximo reinicio natural, sin reiniciar ahora."""
+    token = f"scan-{uuid.uuid4().hex}"
+    cmd = f"printf '%s\\n' '{token}' > {PASSIVE_PERSISTENCE_PROBE_PATH} && sync"
+    res = run_ssh_command(ip, cmd, timeout=15)
+    return token if res.get("success") else ""
+
+def save_passive_persistence_state(ip: str, token: str = "", boot_id: str = "", verified: bool = False):
+    if not token or not boot_id:
+        return
+    db = SessionLocal()
+    try:
+        gateway = db.query(Gateway).filter(Gateway.ip == ip).first()
+        if not gateway:
+            return
+        gateway.persistence_probe_token = token
+        gateway.persistence_probe_boot_id = boot_id
+        gateway.persistence_probe_written_at = app_now()
+        if verified:
+            gateway.persistence_last_verified_at = app_now()
+        db.commit()
+    except Exception as e:
+        db.rollback()
+        print(f"[{ip}] Error guardando sonda pasiva de persistencia: {e}")
+    finally:
+        db.close()
+
+def mark_frozen_from_passive_probe(ip: str):
+    db = SessionLocal()
+    try:
+        gateway = db.query(Gateway).filter(Gateway.ip == ip).first()
+        if not gateway:
+            return
+        gateway.status = "FROZEN_CARD"
+        gateway.last_scan = app_now()
+        db.commit()
+    except Exception as e:
+        db.rollback()
+        print(f"[{ip}] Error marcando tarjeta congelada: {e}")
+    finally:
+        db.close()
+
+def run_passive_persistence_probe(ip: str) -> dict:
+    """Detecta reinicios naturales sin añadir reboot al flujo de escaneo."""
+    current = read_passive_persistence_probe(ip)
+    if not current:
+        return {}
+
+    previous = get_passive_persistence_state(ip)
+    verified = False
+    if previous.get("token") and previous.get("boot_id") and current["boot_id"] != previous["boot_id"]:
+        if current.get("marker") != previous["token"]:
+            save_diagnostic_event(
+                ip,
+                "FROZEN_CARD",
+                "Marcador pasivo desaparecio despues de un reinicio detectado; posible cartao congelado",
+            )
+            mark_frozen_from_passive_probe(ip)
+            return {"frozen": True}
+        verified = True
+
+    token = write_passive_persistence_probe(ip)
+    return {"token": token, "boot_id": current["boot_id"], "verified": verified}
+
 def _pref2(ip):
     p = ip.split('.')
     return f"{p[0]}.{p[1]}" if len(p) >= 2 else None
@@ -172,6 +305,7 @@ def asociar_gateway_a_unidad(ip, cliente_id, db):
     return None
 
 @app.task(bind=True)
+@with_gateway_access
 def scan_and_check_version(self, ip: str, persist_failures: bool = True):
     """Verifica el gateway; en descubrimiento no registra candidatos fallidos."""
     TARGET_VERSION = Config.TARGET_VERSION
@@ -190,9 +324,25 @@ def scan_and_check_version(self, ip: str, persist_failures: bool = True):
         }
 
     if not ping_host(ip):
+        unreachable_message = (
+            "No responde al acceso SSH temporal de la RB"
+            if get_active_gateway_access()
+            else "No responde a Ping"
+        )
         if persist_failures:
             save_gateway_status(ip, None, "OFFLINE")
-        return {"ip": ip, "status": "OFFLINE", "msg": "No responde a Ping"}
+        return {"ip": ip, "status": "OFFLINE", "msg": unreachable_message}
+
+    # La sonda pasiva solo detecta un reboot que ya ocurrio; nunca reinicia ni
+    # modifica la verificacion definitiva usada durante una actualizacion.
+    passive_probe = run_passive_persistence_probe(ip)
+    if passive_probe.get("frozen"):
+        return {
+            "ip": ip,
+            "status": "FROZEN_CARD",
+            "msg": "Cartao congelado detectado tras reinicio",
+            "diagnostic": "FROZEN_CARD",
+        }
 
     # Libera los crash de Mono antes de consultar SolinfNet: sin espacio el
     # servicio puede estar caido aunque el gateway siga respondiendo por SSH.
@@ -204,6 +354,7 @@ def scan_and_check_version(self, ip: str, persist_failures: bool = True):
         ssh_ok = run_ssh_command(ip, "echo OK", timeout=Config.SSH_TIMEOUT).get("success", False)
         if persist_failures:
             save_gateway_status(ip, None, "ERROR")
+            save_passive_persistence_state(ip, **passive_probe)
         if not ssh_ok:
             return {"ip": ip, "status": "ERROR", "msg": "SSH Falló (sin conexión al gateway)"}
         return {"ip": ip, "status": "ERROR", "msg": "Gateway accesible, pero SolinfNet no devolvió la versión tras 3 intentos"}
@@ -218,9 +369,11 @@ def scan_and_check_version(self, ip: str, persist_failures: bool = True):
     # 4. Determinar estado
     if current_normalized == TARGET_NORMALIZED:
         save_gateway_status(ip, current_version, "UPDATED", conf_data, os_data)
+        save_passive_persistence_state(ip, **passive_probe)
         return {"ip": ip, "status": "UPDATED", "msg": f"OK - sin acción necesaria (versión {current_version})", "current_version": current_version}
     else:
         save_gateway_status(ip, current_version, "PENDING", conf_data, os_data)
+        save_passive_persistence_state(ip, **passive_probe)
         return {"ip": ip, "status": "PENDING", "msg": f"🔄 Versión actual: {current_version} (necesita {TARGET_VERSION})", "current_version": current_version}
 
 def _nmea_to_decimal(raw: str, direction: str):
@@ -805,6 +958,7 @@ def configure_gateway(self, ip: str):
 
 
 @app.task(bind=True)
+@with_gateway_access
 def update_gateway(self, ip: str, force: bool = False):
     """Tarea completa de actualización con verificación de SO y actualización de metadatos."""
     TARGET_VERSION = Config.TARGET_VERSION
@@ -822,9 +976,14 @@ def update_gateway(self, ip: str, force: bool = False):
     # 1. Verificar conectividad
     update_progress(1, "Verificando conectividad...", 5)
     if not ping_host(ip):
+        unreachable_message = (
+            "No responde al acceso SSH temporal de la RB"
+            if get_active_gateway_access()
+            else "Gateway offline"
+        )
         save_gateway_status(ip, None, "OFFLINE")
-        save_update_history(ip, None, TARGET_VERSION, "FAILED", 0, "Gateway offline")
-        return {"ip": ip, "status": "FAILED", "msg": "Gateway offline"}
+        save_update_history(ip, None, TARGET_VERSION, "FAILED", 0, unreachable_message)
+        return {"ip": ip, "status": "FAILED", "msg": unreachable_message}
 
     # 2. Limpiar antes de leer la versión. Con la raiz llena, SolinfNet puede
     # no arrancar y la consulta de about.htm devolveria "Desconocida".
@@ -881,6 +1040,7 @@ def update_gateway(self, ip: str, force: bool = False):
             save_gateway_status(ip, old_version, "ERROR", None, os_data)
             return {"ip": ip, "status": "FAILED", "msg": f"Archivo {filename} no existe en servidor"}
 
+        access = get_active_gateway_access()
         scp_cmd = [
             "sshpass", "-p", Config.RASP_PASSWORD, "scp",
             "-C",                                  # compresión (clave en 10-30 kb/s)
@@ -888,8 +1048,12 @@ def update_gateway(self, ip: str, force: bool = False):
             "-o", "ServerAliveInterval=10",
             "-o", "ServerAliveCountMax=3",
             "-o", "StrictHostKeyChecking=no",
-            local_path, f"{Config.SSH_USER}@{ip}:{remote_path}"
         ]
+        if access:
+            scp_cmd.extend(["-P", str(access["ssh_port"])])
+        scp_cmd.extend([
+            local_path, f"{Config.SSH_USER}@{access['rb_ip'] if access else ip}:{remote_path}"
+        ])
 
         ok = False
         last_err = ""
@@ -1112,6 +1276,10 @@ def save_gateway_status(ip: str, version: str, status: str, conf_data: dict = No
             gateway.last_scan = app_now()
             if cliente_id: gateway.cliente_id = cliente_id
             if uid: gateway.unidad_id = uid
+            if get_active_gateway_access():
+                gateway.access_mode = "LDC_RB"
+                gateway.ldc_unit = get_active_gateway_access().get("ldc_unit") or gateway.ldc_unit
+                gateway.ldc_rb_ip = get_active_gateway_access().get("ldc_rb_ip") or get_active_gateway_access().get("rb_ip") or gateway.ldc_rb_ip
             
             # Guardar datos del conf
             if conf_data:
@@ -1146,7 +1314,10 @@ def save_gateway_status(ip: str, version: str, status: str, conf_data: dict = No
                 use_gps=conf_data.get('use_gps') if conf_data else None,
                 has_relay=conf_data.get('has_relay') if conf_data else None,  # 🆕 NUEVO
                 os_version=os_data.get('os_version') if os_data else None,
-                os_codename=os_data.get('os_codename') if os_data else None
+                os_codename=os_data.get('os_codename') if os_data else None,
+                access_mode="LDC_RB" if get_active_gateway_access() else None,
+                ldc_unit=get_active_gateway_access().get("ldc_unit") if get_active_gateway_access() else None,
+                ldc_rb_ip=(get_active_gateway_access().get("ldc_rb_ip") or get_active_gateway_access().get("rb_ip")) if get_active_gateway_access() else None,
             )
             db.add(gateway)
         

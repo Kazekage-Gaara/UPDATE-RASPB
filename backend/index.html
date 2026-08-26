@@ -787,6 +787,42 @@ body::after{
                     <div id="paginationBtns" class="flex items-center gap-1"></div>
                 </div>
             </div>
+
+            <!-- Herramientas puntuales, cerradas para no interferir con el flujo normal. -->
+            <details class="mt-5 rounded-xl border border-slate-200 dark:border-slate-700 bg-white/60 dark:bg-slate-800/40 group">
+                <summary class="cursor-pointer list-none flex items-center justify-between gap-3 px-5 py-4 text-sm font-semibold text-slate-600 dark:text-slate-300 hover:text-cyan-700 dark:hover:text-cyan-300">
+                    <span data-i18n="ldc_special_access">Accesos especiales</span>
+                    <svg class="w-4 h-4 transition-transform group-open:rotate-180" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="m6 9 6 6 6-6"/></svg>
+                </summary>
+                <div class="border-t border-slate-200 dark:border-slate-700 p-5">
+                    <div class="flex items-start gap-3 mb-4">
+                        <div class="section-icon bg-cyan-50 dark:bg-cyan-900/20 shrink-0"><svg class="w-5 h-5 text-cyan-700 dark:text-cyan-300" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 7h16M4 12h16M4 17h10M17 15l3 3-3 3"/></svg></div>
+                        <div><h2 class="text-base font-semibold" data-i18n="ldc_title">LDC · Acceso temporal por RB</h2><p class="text-xs text-slate-400 mt-0.5" data-i18n="ldc_subtitle">Operación individual mediante NAT creado manualmente.</p></div>
+                    </div>
+                    <div class="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-4 gap-3">
+                        <input type="text" id="ldcGatewayIp" data-i18n-placeholder="ldc_gateway_placeholder" placeholder="IP interna destino do NAT" class="bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-600 rounded-lg px-4 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-cyan-500 font-mono">
+                        <select id="ldcRbIp" class="bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-600 rounded-lg px-4 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-cyan-500"><option value="" data-i18n="ldc_select_routerboard">Selecciona la unidad / RouterBoard</option></select>
+                        <input type="text" id="ldcEntryRbIp" data-i18n-placeholder="ldc_entry_rb_placeholder" placeholder="RB de entrada (solo NAT encadenado)" class="bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-600 rounded-lg px-4 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-cyan-500 font-mono">
+                        <input type="number" id="ldcSshPort" min="1" max="65535" data-i18n-placeholder="ldc_port_placeholder" placeholder="Puerto NAT SSH" class="bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-600 rounded-lg px-4 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-cyan-500 font-mono">
+                    </div>
+                    <div class="flex gap-3 flex-wrap mt-3">
+                        <button onclick="scanLdcGateway()" id="btnLdcScan" class="bg-cyan-700 hover:bg-cyan-800 text-white px-4 py-2.5 rounded-lg font-medium text-sm transition disabled:opacity-50"><span data-i18n="btn_scan">Escanear</span></button>
+                        <button onclick="updateLdcGateway()" id="btnLdcUpdate" class="bg-brand-700 hover:bg-brand-800 text-white px-4 py-2.5 rounded-lg font-medium text-sm transition disabled:opacity-50"><span data-i18n="btn_update">Actualizar</span></button>
+                        <button onclick="updateLdcGateway(true)" id="btnLdcForce" class="bg-amber-600 hover:bg-amber-700 text-white px-4 py-2.5 rounded-lg font-medium text-sm transition disabled:opacity-50"><span data-i18n="btn_force_update">Reinstalar</span></button>
+                    </div>
+                    <p class="text-xs text-cyan-700/80 dark:text-cyan-300/80 mt-3" data-i18n="ldc_help">Selecciona la RB de la unidad. Para NAT encadenado, informa la primera RB accesible; si no, déjala vacía. Crea primero el NAT temporal hacia gateway:22.</p>
+                    <div id="ldcResults" class="mt-3 space-y-2"></div>
+                    <div class="mt-5 pt-4 border-t border-slate-200 dark:border-slate-700">
+                        <div class="flex items-center justify-between gap-3 mb-3">
+                            <h3 class="text-sm font-semibold text-slate-700 dark:text-slate-200" data-i18n="ldc_inventory_title">Gateways LDC</h3>
+                            <span id="ldcGatewayCount" class="text-xs text-slate-400">0</span>
+                        </div>
+                        <div class="overflow-x-auto rounded-lg border border-slate-200 dark:border-slate-700">
+                            <table class="data-table min-w-[800px]"><thead><tr><th>IP</th><th data-i18n="th_unit">Unidad</th><th>RB</th><th data-i18n="th_version">Versión</th><th data-i18n="th_status">Estado</th><th data-i18n="th_last_scan">Último Escaneo</th><th data-i18n="th_actions">Acciones</th></tr></thead><tbody id="ldcGatewayTable"><tr><td colspan="7" class="text-center text-slate-400 py-5" data-i18n="loading_inventory">Cargando inventario...</td></tr></tbody></table>
+                        </div>
+                    </div>
+                </div>
+            </details>
         </div><!-- /tab-operaciones -->
 
         <!-- ==================== REPORTS TAB ==================== -->
@@ -946,6 +982,19 @@ body::after{
                 stat_pending: "Pendientes",
                 stat_offline: "Offline/Errores",
                 back_to_top: "Subir al inicio",
+                ldc_title: "LDC · Acceso temporal por RB",
+                ldc_special_access: "Accesos especiales",
+                ldc_subtitle: "Operación individual mediante NAT creado manualmente.",
+                ldc_gateway_placeholder: "IP interna destino del NAT",
+                ldc_select_routerboard: "Selecciona la unidad / RouterBoard",
+                ldc_entry_rb_placeholder: "RB de entrada (solo NAT encadenado)",
+                ldc_port_placeholder: "Puerto NAT SSH",
+                ldc_help: "Selecciona la RB de la unidad. Para NAT encadenado, informa la primera RB accesible; si no, déjala vacía. Crea primero el NAT temporal hacia gateway:22.",
+                ldc_inventory_title: "Gateways LDC",
+                ldc_use_gateway: "Usar",
+                ldc_no_gateways: "Aún no hay gateways LDC registrados.",
+                ldc_access_required: "Completa IP interna del gateway, unidad/RouterBoard y puerto SSH NAT válido.",
+                ldc_confirm: "Usará el NAT temporal {rb}:{port} para acceder al gateway {ip}. Confirma que el NAT hacia SSH (puerto 22) ya está creado.",
                 scheduled_scan_title: "Escaneo automático del inventario",
                 scheduled_scan_help: "Revisa versión, Relay, GPS y estado; no actualiza ni reinicia gateways.",
                 scheduled_scan_run_now: "Ejecutar ahora",
@@ -1200,6 +1249,19 @@ body::after{
                 stat_pending: "Pendentes",
                 stat_offline: "Offline/Erros",
                 back_to_top: "Voltar ao início",
+                ldc_title: "LDC · Acesso temporário por RB",
+                ldc_special_access: "Acessos especiais",
+                ldc_subtitle: "Operação individual usando NAT criado manualmente.",
+                ldc_gateway_placeholder: "IP interno de destino do NAT",
+                ldc_select_routerboard: "Selecione a unidade / RouterBoard",
+                ldc_entry_rb_placeholder: "RB de entrada (somente NAT encadeado)",
+                ldc_port_placeholder: "Porta NAT SSH",
+                ldc_help: "Selecione a RB da unidade. Para NAT encadeado, informe a primeira RB acessível; caso contrário, deixe em branco. Crie primeiro o NAT temporário para gateway:22.",
+                ldc_inventory_title: "Gateways LDC",
+                ldc_use_gateway: "Usar",
+                ldc_no_gateways: "Ainda não há gateways LDC registrados.",
+                ldc_access_required: "Preencha IP interno do gateway, unidade/RouterBoard e uma porta SSH NAT válida.",
+                ldc_confirm: "Será usado o NAT temporário {rb}:{port} para acessar o gateway {ip}. Confirme que o NAT para SSH (porta 22) já foi criado.",
                 scheduled_scan_title: "Escaneamento automático do inventário",
                 scheduled_scan_help: "Verifica versão, Relay, GPS e status; não atualiza nem reinicia gateways.",
                 scheduled_scan_run_now: "Executar agora",
@@ -1750,6 +1812,8 @@ body::after{
                 updateScrollControls();
             });
             loadGateways();
+            await loadLdcRouterboards();
+            loadLdcGateways();
             loadScheduledScanStatus();
             setInterval(loadScheduledScanStatus, 30000);
             showToast(t('toast_welcome'), 'success');
@@ -2070,6 +2134,177 @@ body::after{
                 const input = document.getElementById('ipInput');
                 if (input) input.value = '';
             }, delay);
+        }
+
+        async function loadLdcRouterboards() {
+            const select = document.getElementById('ldcRbIp');
+            if (!select) return;
+            try {
+                const response = await fetch('/api/ldc/routerboards?t=' + Date.now());
+                if (!response.ok) throw new Error('No se pudo cargar el catálogo LDC');
+                const routerboards = await response.json();
+                select.innerHTML = '';
+                const placeholder = document.createElement('option');
+                placeholder.value = '';
+                placeholder.textContent = t('ldc_select_routerboard');
+                select.appendChild(placeholder);
+                routerboards.forEach(routerboard => {
+                    const option = document.createElement('option');
+                    option.value = routerboard.rb_ip;
+                    option.textContent = `${routerboard.unit} · ${routerboard.rb_ip}${routerboard.address_mode ? ` (${routerboard.address_mode})` : ''}`;
+                    select.appendChild(option);
+                });
+            } catch (error) {
+                console.warn('No se pudo cargar el catálogo LDC:', error);
+            }
+        }
+
+        function getLdcAccess() {
+            const gatewayIp = document.getElementById('ldcGatewayIp').value.trim();
+            const rbIp = document.getElementById('ldcRbIp').value.trim();
+            const entryRbIp = document.getElementById('ldcEntryRbIp').value.trim();
+            const sshPort = Number(document.getElementById('ldcSshPort').value);
+            if (!gatewayIp || !rbIp || !Number.isInteger(sshPort) || sshPort < 1 || sshPort > 65535) {
+                showToast(t('ldc_access_required'), 'warning');
+                return null;
+            }
+            return { gateway_ip: gatewayIp, rb_ip: rbIp, entry_rb_ip: entryRbIp || rbIp, ssh_port: sshPort };
+        }
+
+        function setLdcButtons(disabled) {
+            ['btnLdcScan', 'btnLdcUpdate', 'btnLdcForce'].forEach(id => {
+                const button = document.getElementById(id);
+                if (button) button.disabled = disabled;
+            });
+        }
+
+        function updateLdcStep(taskId, step, message, color) {
+            const element = document.getElementById(`${taskId}-${step}`);
+            if (!element) return;
+            const colors = { green: 'text-emerald-600 dark:text-emerald-400', red: 'text-red-600 dark:text-red-400', blue: 'text-blue-600 dark:text-blue-400' };
+            element.className = `${colors[color] || ''} font-medium text-sm`;
+            element.textContent = message;
+        }
+
+        function useLdcGateway(ip, rbIp = '') {
+            const input = document.getElementById('ldcGatewayIp');
+            if (!input) return;
+            input.value = ip;
+            const routerboard = document.getElementById('ldcRbIp');
+            if (routerboard && rbIp) routerboard.value = rbIp;
+            const entryRouterboard = document.getElementById('ldcEntryRbIp');
+            if (entryRouterboard) entryRouterboard.value = '';
+            input.focus();
+        }
+        window.useLdcGateway = useLdcGateway;
+
+        async function loadLdcGateways() {
+            const tbody = document.getElementById('ldcGatewayTable');
+            const count = document.getElementById('ldcGatewayCount');
+            if (!tbody || !count) return;
+            try {
+                const response = await fetch('/api/ldc/gateways?t=' + Date.now());
+                if (!response.ok) throw new Error('No se pudo cargar LDC');
+                const gateways = await response.json();
+                count.textContent = gateways.length;
+                if (!gateways.length) {
+                    tbody.innerHTML = `<tr><td colspan="7" class="text-center text-slate-400 py-5">${esc(t('ldc_no_gateways'))}</td></tr>`;
+                    return;
+                }
+                tbody.innerHTML = gateways.map(gateway => `<tr>
+                    <td class="font-mono text-xs">${esc(gateway.ip)}</td>
+                    <td>${esc(gateway.ldc_unit || gateway.unidad || '-')}</td>
+                    <td class="font-mono text-xs">${esc(gateway.ldc_rb_ip || '-')}</td>
+                    <td class="font-mono text-xs">${esc(gateway.version || '-')}</td>
+                    <td>${renderInventoryStatusBadge(gateway.status)}</td>
+                    <td class="text-xs text-slate-400 whitespace-nowrap">${esc(gateway.last_scan ? formatAppDateTime(gateway.last_scan) : '-')}</td>
+                    <td><button type="button" onclick="useLdcGateway('${esc(gateway.ip)}', '${esc(gateway.ldc_rb_ip || '')}')" class="text-xs font-semibold text-cyan-700 dark:text-cyan-300 hover:underline">${esc(t('ldc_use_gateway'))}</button></td>
+                </tr>`).join('');
+            } catch (error) {
+                tbody.innerHTML = `<tr><td colspan="7" class="text-center text-red-500 py-5">${esc(t('toast_load_error'))}</td></tr>`;
+            }
+        }
+
+        async function scanLdcGateway() {
+            const access = getLdcAccess();
+            if (!access) return;
+            const results = document.getElementById('ldcResults');
+            const taskId = `ldc-scan-${Date.now()}`;
+            setLdcButtons(true);
+            results.innerHTML = `<div id="${taskId}" class="card border-l-4 border-cyan-400 p-3 flex justify-between items-center"><span class="font-mono font-semibold text-sm">${esc(access.gateway_ip)}</span><span class="text-cyan-700 dark:text-cyan-300 text-sm animate-pulse">${esc(t('scan_connecting'))}</span></div>`;
+            try {
+                const response = await fetch('/api/ldc/scan', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(access) });
+                const data = await response.json();
+                if (!response.ok) throw new Error(data.detail || t('toast_scan_error'));
+                const result = await waitForTask(data.task_id);
+                const payload = result.result || {};
+                const failed = result.state !== 'SUCCESS' || ['OFFLINE', 'ERROR', 'FROZEN_CARD'].includes(payload.status) || payload.diagnostic === 'FROZEN_CARD';
+                document.getElementById(taskId).className = `card border-l-4 ${failed ? 'border-red-400' : 'border-emerald-400'} p-3 flex justify-between items-center`;
+                document.getElementById(taskId).innerHTML = `<span class="font-mono font-semibold text-sm">${esc(access.gateway_ip)}</span><span class="${failed ? 'text-red-600 dark:text-red-400' : 'text-emerald-600 dark:text-emerald-400'} font-medium text-sm">${failed ? '❌' : '✅'} ${esc(payload.msg || t('step_error_scan'))}</span>`;
+                await loadGateways();
+                await loadLdcGateways();
+            } catch (error) {
+                document.getElementById(taskId).innerHTML = `<span class="text-red-600 dark:text-red-400 text-sm">❌ ${esc(error.message)}</span>`;
+            } finally {
+                setLdcButtons(false);
+            }
+        }
+
+        async function updateLdcGateway(force = false) {
+            const access = getLdcAccess();
+            if (!access || isUpdating) return;
+            const confirmed = await showModal(
+                t('confirm_title'),
+                `${t('ldc_confirm', { ip: access.gateway_ip, rb: access.entry_rb_ip, port: access.ssh_port })}\n\n${force ? t('confirm_force_update_single', { ip: access.gateway_ip, version: TARGET_VERSION }) : t('confirm_update_single', { ip: access.gateway_ip, version: TARGET_VERSION })}`,
+                force ? t('btn_force_update') : t('btn_update')
+            );
+            if (!confirmed) return;
+
+            const results = document.getElementById('ldcResults');
+            const taskId = `ldc-update-${Date.now()}`;
+            setLdcButtons(true); isUpdating = true;
+            results.innerHTML = `<div class="card border-l-4 border-cyan-400 p-4"><div class="font-mono font-semibold text-sm mb-3">${esc(access.gateway_ip)} <span class="text-slate-400 font-normal">via ${esc(access.rb_ip)}:${esc(access.ssh_port)}</span></div><div class="ml-2 space-y-2 text-sm"><div id="${taskId}-step1" class="text-cyan-700 dark:text-cyan-300 font-medium text-sm">${force ? t('step_force_starting') : t('step_scanning')}</div><div id="${taskId}-step2" class="text-slate-400 dark:text-slate-500">${t('step_pending')}</div><div id="${taskId}-step3" class="text-slate-400 dark:text-slate-500">${t('step_pending')}</div></div></div>`;
+
+            try {
+                if (!force) {
+                    const scanResponse = await fetch('/api/ldc/scan', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(access) });
+                    const scanData = await scanResponse.json();
+                    if (!scanResponse.ok) throw new Error(scanData.detail || t('toast_scan_error'));
+                    const scanResult = await waitForTask(scanData.task_id);
+                    const scanPayload = scanResult.result || {};
+                    if (scanResult.state !== 'SUCCESS' || ['UPDATED', 'OFFLINE', 'FROZEN_CARD'].includes(scanPayload.status) || scanPayload.diagnostic === 'FROZEN_CARD') {
+                        const ok = scanPayload.status === 'UPDATED';
+                        updateLdcStep(taskId, 'step1', `${ok ? '✅' : '❌'} ${scanPayload.msg || t('step_error_scan')}`, ok ? 'green' : 'red');
+                        updateLdcStep(taskId, 'step2', ok ? t('step_already_updated') : t('step_no_action'), ok ? 'green' : 'red');
+                        updateLdcStep(taskId, 'step3', t('step_no_action'), ok ? 'green' : 'red');
+                        await loadGateways();
+                        await loadLdcGateways();
+                        return;
+                    }
+                    updateLdcStep(taskId, 'step1', `✅ ${t('th_version')}: ${scanPayload.current_version || '?'}`, 'green');
+                }
+
+                updateLdcStep(taskId, 'step2', t('step_updating'), 'blue');
+                updateLdcStep(taskId, 'step3', t('step_waiting'), 'blue');
+                const updateResponse = await fetch('/api/ldc/update', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ ...access, force }) });
+                const updateData = await updateResponse.json();
+                if (!updateResponse.ok) throw new Error(updateData.detail || t('toast_update_error'));
+                document.getElementById('updateProgress').classList.remove('hidden');
+                startProgressMonitoring(updateData.tasks);
+                const updateResult = await waitForTask(updateData.tasks[0].task_id, true);
+                const payload = updateResult.result || {};
+                const frozen = payload.diagnostic === 'FROZEN_CARD' || payload.status === 'FROZEN_CARD';
+                const ok = updateResult.state === 'SUCCESS' && !['FAILED', 'BLOCKED', 'ERROR', 'FROZEN_CARD'].includes(payload.status) && !frozen;
+                updateLdcStep(taskId, 'step2', ok ? t('step_files_copied') : (frozen ? `❌ ${t('status_frozen')}` : t('step_error_update')), ok ? 'green' : 'red');
+                updateLdcStep(taskId, 'step3', ok ? (payload.msg || t('step_service_restarted')) : (frozen ? t('step_no_action') : (payload.msg || t('step_error_update'))), ok ? 'green' : 'red');
+                await loadGateways();
+                await loadLdcGateways();
+            } catch (error) {
+                updateLdcStep(taskId, 'step2', `❌ ${error.message}`, 'red');
+                updateLdcStep(taskId, 'step3', t('step_no_action'), 'red');
+            } finally {
+                setLdcButtons(false); isUpdating = false;
+            }
         }
 
         // ============ SCAN AND UPDATE ============

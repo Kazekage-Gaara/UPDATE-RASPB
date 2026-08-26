@@ -59,6 +59,13 @@ class Gateway(Base):
     has_relay = Column(Boolean, nullable=True)  # True si tiene bloque Hardware=Relay
     maintenance_enabled = Column(Boolean, nullable=False, default=False)
     maintenance_reason = Column(String, nullable=True)
+    persistence_probe_token = Column(String, nullable=True)
+    persistence_probe_boot_id = Column(String, nullable=True)
+    persistence_probe_written_at = Column(DateTime(timezone=True), nullable=True)
+    persistence_last_verified_at = Column(DateTime(timezone=True), nullable=True)
+    access_mode = Column(String, nullable=True)
+    ldc_unit = Column(String, nullable=True)
+    ldc_rb_ip = Column(String, nullable=True)
 
 class UpdateHistory(Base):
     __tablename__ = "update_history"

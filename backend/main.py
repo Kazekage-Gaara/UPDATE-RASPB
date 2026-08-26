@@ -3,19 +3,20 @@ from fastapi.security import APIKeyHeader
 from fastapi.responses import HTMLResponse, FileResponse, StreamingResponse
 from fastapi.templating import Jinja2Templates
 from sqlalchemy.orm import Session
-from sqlalchemy import func, case, desc
+from sqlalchemy import func, case, desc, or_
 from tasks import scan_and_check_version, update_gateway
 from database import get_db, init_db, SessionLocal
 from models import Gateway, UpdateHistory, GatewayDiagnosticEvent, Cliente, Unidad, ScheduledScanRun, ScheduledScanGatewayResult, ScheduledScanBatch
 from config import Config
 from datetime import datetime, timedelta
 from zoneinfo import ZoneInfo
-import os, io, xlsxwriter, secrets, ipaddress, threading, time, sqlite3, re
+import os, io, json, xlsxwriter, secrets, ipaddress, threading, time, sqlite3, re
 
 app = FastAPI(title="SolinfNet Control Center")
 templates = Jinja2Templates(directory=".")
 update_tasks = {}
 APP_TIMEZONE = ZoneInfo("America/Sao_Paulo")
+LDC_ROUTERBOARDS_FILE = os.path.join("data", "ldc_routerboards.json")
 
 
 def app_now() -> datetime:
@@ -605,6 +606,60 @@ async def scan_ip(ip: str, discovery: bool = False, _auth: bool = Depends(verify
     t = scan_and_check_version.delay(ip, not discovery)
     return {"task_id": t.id, "ip": ip, "discovery": discovery}
 
+
+def validate_ldc_access(body: dict) -> tuple[str, dict]:
+    """Valida un NAT temporal y separa RB destino de la RB de entrada."""
+    gateway_ip = validate_ipv4(body.get("gateway_ip", ""))
+    target_rb_ip = validate_ipv4(body.get("rb_ip", ""))
+    entry_rb_ip = validate_ipv4(body.get("entry_rb_ip") or target_rb_ip)
+    try:
+        ssh_port = int(body.get("ssh_port"))
+    except (TypeError, ValueError):
+        raise HTTPException(400, "Puerto SSH de la RB inválido")
+    if not 1 <= ssh_port <= 65535:
+        raise HTTPException(400, "Puerto SSH de la RB inválido")
+    routerboard = next((item for item in load_ldc_routerboards() if item["rb_ip"] == target_rb_ip), None)
+    if not routerboard:
+        raise HTTPException(400, "La RouterBoard seleccionada no pertenece al catálogo LDC")
+    return gateway_ip, {
+        "rb_ip": entry_rb_ip,
+        "ssh_port": ssh_port,
+        "ldc_unit": routerboard["unit"],
+        "ldc_rb_ip": target_rb_ip,
+    }
+
+
+def load_ldc_routerboards() -> list[dict]:
+    """Lee el catalogo local de RB LDC, que no se versiona por ser operativo."""
+    try:
+        with open(LDC_ROUTERBOARDS_FILE, "r", encoding="utf-8") as source:
+            raw_items = json.load(source)
+    except (OSError, ValueError):
+        return []
+    items = []
+    for item in raw_items if isinstance(raw_items, list) else []:
+        try:
+            items.append({
+                "unit": str(item["unit"]).strip(),
+                "rb_ip": validate_ipv4(str(item["rb_ip"]).strip()),
+                "address_mode": str(item.get("address_mode") or "").strip(),
+            })
+        except (KeyError, HTTPException):
+            continue
+    return items
+
+
+@app.get("/api/ldc/routerboards")
+async def get_ldc_routerboards(_auth: bool = Depends(verify_api_key)):
+    return load_ldc_routerboards()
+
+
+@app.post("/api/ldc/scan")
+async def scan_ldc_gateway(request: Request, _auth: bool = Depends(verify_api_key)):
+    gateway_ip, access = validate_ldc_access(await request.json())
+    task = scan_and_check_version.delay(gateway_ip, True, access=access)
+    return {"task_id": task.id, "ip": gateway_ip}
+
 @app.get("/api/status/{task_id}")
 async def get_status(task_id: str, _auth: bool = Depends(verify_api_key)):
     t = scan_and_check_version.AsyncResult(task_id)
@@ -709,19 +764,12 @@ async def set_gateway_maintenance(ip: str, request: Request, db: Session = Depen
         "maintenance_reason": gateway.maintenance_reason,
     }
 
-@app.get("/api/gateways")
-async def get_gateways(db: Session = Depends(get_db), _auth: bool = Depends(verify_api_key)):
-    gateways = db.query(Gateway, Cliente, Unidad).outerjoin(
-        Cliente, Gateway.cliente_id == Cliente.id
-    ).outerjoin(
-        Unidad, Gateway.unidad_id == Unidad.id
-    ).order_by(Gateway.last_scan.desc()).all()
-    
-    return [{
-        "id": g.id, 
-        "ip": g.ip, 
-        "version": g.version, 
-        "status": g.status, 
+def serialize_gateway_record(g: Gateway, c: Cliente | None, u: Unidad | None) -> dict:
+    return {
+        "id": g.id,
+        "ip": g.ip,
+        "version": g.version,
+        "status": g.status,
         "last_scan": serialize_datetime(g.last_scan),
         "last_update": serialize_datetime(g.last_update),
         "cliente": c.nombre if c else None,
@@ -736,12 +784,38 @@ async def get_gateways(db: Session = Depends(get_db), _auth: bool = Depends(veri
         "vid": g.vid,
         "hardware_type": g.hardware_type,
         "use_gps": g.use_gps,
-        "has_relay": g.has_relay,  # 🆕 NUEVO
+        "has_relay": g.has_relay,
         "maintenance_enabled": bool(g.maintenance_enabled),
         "maintenance_reason": g.maintenance_reason,
         "os_version": g.os_version,
-        "os_codename": g.os_codename
-    } for g, c, u in gateways]
+        "os_codename": g.os_codename,
+        "access_mode": g.access_mode,
+        "ldc_unit": g.ldc_unit,
+        "ldc_rb_ip": g.ldc_rb_ip,
+    }
+
+
+def gateway_inventory_query(db: Session, ldc_only: bool = False):
+    query = db.query(Gateway, Cliente, Unidad).outerjoin(
+        Cliente, Gateway.cliente_id == Cliente.id
+    ).outerjoin(
+        Unidad, Gateway.unidad_id == Unidad.id
+    )
+    if ldc_only:
+        query = query.filter(Gateway.access_mode == "LDC_RB")
+    else:
+        query = query.filter(or_(Gateway.access_mode.is_(None), Gateway.access_mode != "LDC_RB"))
+    return query.order_by(Gateway.last_scan.desc()).all()
+
+
+@app.get("/api/gateways")
+async def get_gateways(db: Session = Depends(get_db), _auth: bool = Depends(verify_api_key)):
+    return [serialize_gateway_record(g, c, u) for g, c, u in gateway_inventory_query(db)]
+
+
+@app.get("/api/ldc/gateways")
+async def get_ldc_gateways(db: Session = Depends(get_db), _auth: bool = Depends(verify_api_key)):
+    return [serialize_gateway_record(g, c, u) for g, c, u in gateway_inventory_query(db, ldc_only=True)]
 
 @app.get("/api/gateway/{ip}/history")
 async def get_gateway_history(ip: str, db: Session = Depends(get_db), _auth: bool = Depends(verify_api_key)):
@@ -765,6 +839,21 @@ async def start_update(request: Request, db: Session = Depends(get_db), _auth: b
         update_tasks[t.id] = {"ip": ip, "started_at": app_now(), "force": force}
     action = "reinstalación" if force else "actualización"
     return {"message": f"Iniciando {action} de {len(ips)} gateways", "tasks": out, "force": force}
+
+
+@app.post("/api/ldc/update")
+async def start_ldc_update(request: Request, _auth: bool = Depends(verify_api_key)):
+    body = await request.json()
+    gateway_ip, access = validate_ldc_access(body)
+    force = bool(body.get("force", False))
+    task = update_gateway.delay(gateway_ip, force, access=access)
+    update_tasks[task.id] = {
+        "ip": gateway_ip,
+        "started_at": app_now(),
+        "force": force,
+        "access_mode": "LDC_RB",
+    }
+    return {"message": "Iniciando actualización LDC", "tasks": [{"ip": gateway_ip, "task_id": task.id}], "force": force}
 
 @app.get("/api/update/status/{task_id}")
 async def get_update_status(task_id: str, _auth: bool = Depends(verify_api_key)):
