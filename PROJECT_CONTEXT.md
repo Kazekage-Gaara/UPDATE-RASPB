@@ -404,3 +404,37 @@ Prioriza siempre:
 - 2026-08-25: Se agrego un boton flotante de regreso al inicio para paginas
   largas. Aparece con una animacion suave despues de desplazarse y se adapta a
   ES/PT-BR y a movil, sin incluirse en PDF/impresion.
+- 2026-08-27: Se preparo la base de una integracion opcional y estrictamente
+  de solo lectura con Zabbix. El endpoint autenticado `/api/zabbix/status`
+  verifica conectividad, version y permisos sin exponer el token; la conexion
+  validada responde Zabbix 6.4.21 y el usuario de API puede leer grupos y
+  hosts. La URL debe apuntar directamente a `api_jsonrpc.php`; no se ha
+  modificado ningun flujo existente de inventario, GPS, actualizacion o Relay.
+- 2026-08-27: Se corrigio la verificacion de persistencia tras actualizar:
+  ahora extrae un marcador explicito de la salida SSH, tolera banners y
+  reintenta lecturas ambiguas. Solo marca `FROZEN_CARD` si una lectura valida
+  informa que el marcador falta; ante una comprobacion no concluyente conserva
+  el estado operativo. Tambien se hicieron robustas las consultas LPWAN/Relay:
+  diferencian ausencia de antenas de errores SSH, reintentan y verifican la
+  insercion mediante marcadores. Los reportes consideran resuelto un evento
+  antiguo `FROZEN_CARD` cuando existe un `PERSISTENCE_OK` posterior. Se
+  verifico una reinstalacion real: Relay, GPS y SolinfNet 6.5.0 quedaron
+  confirmados y el gateway dejo de aparecer como congelado.
+- 2026-08-27: La integracion Zabbix incorpora descubrimiento de grupos dentro
+  del dossier de cliente. Busca grupos por nombre, los muestra como candidatos
+  de solo lectura con su cantidad de hosts y no guarda asociaciones automaticas.
+  Se confirmo el patron operativo `Cliente/Unidad` y la presencia de gateways,
+  radios y controladoras en los grupos; la siguiente fase es mostrar el detalle
+  del grupo confirmado y sus metricas de energia.
+- 2026-08-27: El detalle de grupo Zabbix ahora clasifica hosts por el ultimo
+  digito de la IP: `.5` RouterBoard, `x5` gateway/concentrador Raspberry, `0` controladora y
+  `1-9` radios. Al abrir un grupo candidato en el dossier se muestran esos
+  conteos, equipos sin respuesta, problemas abiertos y la lista de hosts; se
+  verifico contra una unidad real sin efectuar cambios en Zabbix.
+- 2026-08-27: Se agrego el bloque de solo lectura `Problemas Críticos` al abrir
+  una unidad Zabbix. Analiza tendencias horarias de los ultimos 15 dias para
+  `Tensão Bateria` de controladoras y `Tensao` de gateways, detectando noches
+  con minimo de 10.5 V o menos y cortes nocturnos prolongados con recuperacion
+  matinal. La prueba real identifico correctamente el patron de bateria baja
+  previamente observado en los graficos de Zabbix. No se consultan ni alertan
+  concentradores sin telemetria de tension.

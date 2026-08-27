@@ -168,16 +168,37 @@ def prepare_persistence_probe(ip: str) -> str:
     return token if res.get('success') else ""
 
 def verify_persistence_probe(ip: str, token: str) -> str:
+    """Confirma persistencia tras reboot sin confundir banners SSH con un fallo de SD."""
     if not token:
         return "NOT_VERIFIED"
-    cmd = "test -f /home/solinfnet/.update_persistence_probe && cat /home/solinfnet/.update_persistence_probe; rm -f /home/solinfnet/.update_persistence_probe"
-    res = run_ssh_command(ip, cmd, timeout=15)
-    value = (res.get('output') or '').strip()
-    if value == token:
-        save_diagnostic_event(ip, "PERSISTENCE_OK", "Marcador sobrevivio al reinicio")
-        return "OK"
-    save_diagnostic_event(ip, "FROZEN_CARD", "El marcador no sobrevivio al reinicio; posible cartao congelado")
-    return "FROZEN"
+    cmd = """
+    if [ -f /home/solinfnet/.update_persistence_probe ]; then
+        printf 'PERSISTENCE_PROBE:%s\\n' "$(cat /home/solinfnet/.update_persistence_probe)"
+    else
+        printf 'PERSISTENCE_PROBE:MISSING\\n'
+    fi
+    rm -f /home/solinfnet/.update_persistence_probe
+    """
+    for attempt in range(3):
+        res = run_ssh_command(ip, cmd, timeout=15)
+        output = res.get("output") or ""
+        marker = re.search(r"PERSISTENCE_PROBE:([^\s]+)", output)
+        if res.get("success") and marker:
+            value = marker.group(1)
+            if value == token:
+                save_diagnostic_event(ip, "PERSISTENCE_OK", "Marcador sobrevivio al reinicio")
+                return "OK"
+            if value == "MISSING":
+                save_diagnostic_event(ip, "FROZEN_CARD", "El marcador no sobrevivio al reinicio; posible cartao congelado")
+                return "FROZEN"
+
+            # Un marcador inesperado no demuestra que la tarjeta este congelada.
+            break
+        if attempt < 2:
+            time.sleep(3)
+
+    save_diagnostic_event(ip, "PERSISTENCE_UNVERIFIED", "No fue posible confirmar el marcador tras reboot; requiere nueva verificacion")
+    return "UNVERIFIED"
 
 PASSIVE_PERSISTENCE_PROBE_PATH = "/home/solinfnet/.scan_persistence_probe"
 
@@ -620,17 +641,35 @@ def configurar_relay_lpwan(ip: str) -> dict:
             return {"configurado": False, "error": "Sin espacio libre tras limpiar mono_crash (disco lleno)"}
 
         # 1. Verificar si tiene Hardware RadioLocal (LPWAN)
-        cmd_check = "grep -q 'Hardware = RadioLocal' /home/solinfnet/SolinfNet.conf && echo 'TIENE' || echo 'NO_TIENE'"
-        res = run_ssh_command(ip, cmd_check, timeout=10)
-        if not res["success"] or "NO_TIENE" in res["output"]:
+        cmd_check = "grep -q 'Hardware = RadioLocal' /home/solinfnet/SolinfNet.conf && echo LPWAN_PRESENT || echo LPWAN_ABSENT"
+        lpwan_output = ""
+        for attempt in range(3):
+            res = run_ssh_command(ip, cmd_check, timeout=10)
+            lpwan_output = res.get("output", "") if res.get("success") else ""
+            if res.get("success") and ("LPWAN_PRESENT" in lpwan_output or "LPWAN_ABSENT" in lpwan_output):
+                break
+            if attempt < 2:
+                time.sleep(3)
+        else:
+            return {"configurado": False, "error": "No se pudo verificar LPWAN por SSH"}
+
+        if "LPWAN_ABSENT" in lpwan_output:
             return {"configurado": False, "mensaje": "No tiene antenas LPWAN"}
         
         print(f"[{ip}] ✅ Tiene antenas LPWAN (RadioLocal)")
         
         # 2. Verificar si ya tiene Relay configurado sin confundirse con banners SSH.
         cmd_relay = "grep -q 'Hardware = Relay' /home/solinfnet/SolinfNet.conf && echo RELAY_PRESENT || echo RELAY_ABSENT"
-        res_relay = run_ssh_command(ip, cmd_relay, timeout=10)
-        relay_output = res_relay.get("output", "").strip() if res_relay["success"] else ""
+        relay_output = ""
+        for attempt in range(3):
+            res_relay = run_ssh_command(ip, cmd_relay, timeout=10)
+            relay_output = res_relay.get("output", "") if res_relay.get("success") else ""
+            if res_relay.get("success") and ("RELAY_PRESENT" in relay_output or "RELAY_ABSENT" in relay_output):
+                break
+            if attempt < 2:
+                time.sleep(3)
+        else:
+            return {"configurado": False, "error": "No se pudo verificar Relay existente por SSH"}
         print(f"[{ip}] Verificando Relay existente: '{relay_output}'")
         
         if "RELAY_PRESENT" in relay_output:
@@ -794,12 +833,12 @@ End=
         
         if res_insert["success"] and "INSERTADO" in res_insert["output"]:
             # Verificar que realmente se insertó
-            verify_cmd = "grep -c 'Hardware = Relay' /home/solinfnet/SolinfNet.conf"
+            verify_cmd = "grep -q 'Hardware = Relay' /home/solinfnet/SolinfNet.conf && echo RELAY_VERIFIED || echo RELAY_VERIFY_FAILED"
             verify_res = run_ssh_command(ip, verify_cmd, timeout=10)
             if verify_res["success"]:
-                count_final = verify_res["output"].strip()
-                print(f"[{ip}] ✅ Relay insertado. Total Hardware=Relay ahora: {count_final}")
-                if count_final != "0":
+                verify_output = verify_res.get("output", "")
+                print(f"[{ip}] Verificacion Relay: {verify_output.strip()}")
+                if "RELAY_VERIFIED" in verify_output:
                     return {"configurado": True, "mensaje": f"RELAY LPWAN configurado (Host={host}, Grupo={group})"}
             
             return {"configurado": False, "error": "El bloque no se insertó correctamente"}
@@ -1164,6 +1203,7 @@ CRON
     # 9. Configurar RELAY LPWAN si es necesario
     update_progress(9, "Verificando configuración LPWAN...", 80)
     resultado_lpwan = configurar_relay_lpwan(ip)
+    lpwan_error = resultado_lpwan.get("error")
     
     # Si configuramos relay, reiniciar nuevamente
     if resultado_lpwan.get("configurado"):
@@ -1196,9 +1236,13 @@ CRON
         post_conf_data = extract_conf_data(ip)
         duration = int(time.time() - start_time)
         save_gateway_status(ip, post_reboot_version, "FROZEN_CARD", post_conf_data, os_data)
-        save_update_history(ip, old_version, TARGET_VERSION, "FAILED", duration, "Cartao congelado")
+        history_message = "Cartao congelado"
+        if lpwan_error:
+            history_message += "; Relay LPWAN pendiente"
+            save_diagnostic_event(ip, "RELAY_CONFIGURATION_FAILED", lpwan_error)
+        save_update_history(ip, old_version, TARGET_VERSION, "FAILED", duration, history_message)
         return {"ip": ip, "status": "FAILED",
-                "msg": "⚠️ Cartao congelado detectado",
+                "msg": "⚠️ Cartao congelado detectado" + ("; Relay LPWAN pendiente" if lpwan_error else ""),
                 "duration": duration, "diagnostic": "FROZEN_CARD",
                 "version_after_reboot": post_reboot_version}
 
@@ -1241,7 +1285,9 @@ CRON
             automatizaciones.append(f"Carpetas: {resultado_carpetas.get('carpeta')}")
         if resultado_lpwan.get("configurado"):
             automatizaciones.append("Relay LPWAN")
-        lpwan_warning = resultado_lpwan.get("error")
+        lpwan_warning = lpwan_error
+        if lpwan_warning:
+            save_diagnostic_event(ip, "RELAY_CONFIGURATION_FAILED", lpwan_warning)
         
         msg_extra = f" | 🔧 {', '.join(automatizaciones)}" if automatizaciones else ""
         msg_warning = f" | ⚠️ Relay LPWAN no configurado: {lpwan_warning}" if lpwan_warning else ""

@@ -11,6 +11,13 @@ class Config:
     # Generar con: openssl rand -hex 32
     API_KEY = os.getenv("API_KEY", "").strip()
 
+    # Integracion opcional y exclusivamente de lectura con Zabbix.
+    # El token real se conserva solo en .env, nunca en el repositorio.
+    ZABBIX_ENABLED = os.getenv("ZABBIX_ENABLED", "false").strip().lower() in {"1", "true", "yes", "on"}
+    ZABBIX_URL = os.getenv("ZABBIX_URL", "").strip()
+    ZABBIX_TOKEN = os.getenv("ZABBIX_TOKEN", "").strip()
+    ZABBIX_TIMEOUT_SECONDS = max(int(os.getenv("ZABBIX_TIMEOUT_SECONDS", "10")), 1)
+
     UPDATE_FILES = [
         "SolinfNet.exe",
         "limpar_logs.sh",

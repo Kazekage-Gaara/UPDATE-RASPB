@@ -10,7 +10,9 @@ from models import Gateway, UpdateHistory, GatewayDiagnosticEvent, Cliente, Unid
 from config import Config
 from datetime import datetime, timedelta
 from zoneinfo import ZoneInfo
-import os, io, json, xlsxwriter, secrets, ipaddress, threading, time, sqlite3, re
+import os, io, json, xlsxwriter, secrets, ipaddress, threading, time, sqlite3, re, unicodedata
+from urllib import error as urlerror
+from urllib import request as urlrequest
 
 app = FastAPI(title="SolinfNet Control Center")
 templates = Jinja2Templates(directory=".")
@@ -77,6 +79,28 @@ def get_mono_incidents(db: Session, cliente_id: int | None = None) -> list[dict]
         })
     return incidents
 
+
+def get_active_frozen_event_ips(db: Session) -> set[str]:
+    """Ignora alertas de SD que una comprobacion posterior de persistencia valido."""
+    frozen_events = db.query(GatewayDiagnosticEvent).filter(
+        GatewayDiagnosticEvent.event_type == "FROZEN_CARD"
+    ).all()
+    verified_events = db.query(GatewayDiagnosticEvent).filter(
+        GatewayDiagnosticEvent.event_type == "PERSISTENCE_OK"
+    ).all()
+    latest_frozen = {}
+    latest_verified = {}
+    for event in frozen_events:
+        if event.gateway_ip and (event.gateway_ip not in latest_frozen or event.timestamp > latest_frozen[event.gateway_ip]):
+            latest_frozen[event.gateway_ip] = event.timestamp
+    for event in verified_events:
+        if event.gateway_ip and (event.gateway_ip not in latest_verified or event.timestamp > latest_verified[event.gateway_ip]):
+            latest_verified[event.gateway_ip] = event.timestamp
+    return {
+        ip for ip, frozen_at in latest_frozen.items()
+        if latest_verified.get(ip) is None or latest_verified[ip] < frozen_at
+    }
+
 # ============ C-2: AUTENTICACIÓN POR API KEY ============
 # Header esperado: X-API-Key: <clave>
 # Si Config.API_KEY está vacía → auth deshabilitada (modo dev).
@@ -96,6 +120,263 @@ def verify_api_key(api_key: str = Security(_api_key_header)) -> bool:
         )
     return True
 # ======================================================
+
+
+def zabbix_api_call(method: str, params: dict | list | None = None, *, include_auth: bool = True) -> dict | list | str:
+    """Ejecuta una consulta JSON-RPC de solo lectura contra el Zabbix configurado."""
+    if not Config.ZABBIX_ENABLED:
+        raise RuntimeError("La integración con Zabbix está desactivada")
+    if not Config.ZABBIX_URL or not Config.ZABBIX_TOKEN:
+        raise RuntimeError("Falta configurar ZABBIX_URL o ZABBIX_TOKEN")
+
+    payload = {
+        "jsonrpc": "2.0",
+        "method": method,
+        "params": params if params is not None else {},
+        "id": 1,
+    }
+    if include_auth:
+        payload["auth"] = Config.ZABBIX_TOKEN
+
+    request = urlrequest.Request(
+        Config.ZABBIX_URL,
+        data=json.dumps(payload).encode("utf-8"),
+        headers={"Content-Type": "application/json-rpc"},
+        method="POST",
+    )
+    try:
+        with urlrequest.urlopen(request, timeout=Config.ZABBIX_TIMEOUT_SECONDS) as response:
+            body = json.loads(response.read().decode("utf-8"))
+    except urlerror.HTTPError as exc:
+        raise RuntimeError(f"Zabbix respondió HTTP {exc.code}") from exc
+    except urlerror.URLError as exc:
+        raise RuntimeError(f"No fue posible conectar con Zabbix: {exc.reason}") from exc
+    except (TimeoutError, json.JSONDecodeError) as exc:
+        raise RuntimeError("La respuesta de Zabbix expiró o no es JSON válido") from exc
+
+    if "error" in body:
+        error = body["error"]
+        raise RuntimeError(f"Zabbix API {error.get('code', '')}: {error.get('data') or error.get('message', 'Error desconocido')}")
+    return body.get("result")
+
+
+def zabbix_normalize_name(value: str) -> str:
+    """Compara nombres sin acentos, espacios ni variantes de mayusculas."""
+    normalized = unicodedata.normalize("NFKD", value or "")
+    return "".join(char for char in normalized if not unicodedata.combining(char)).lower().strip()
+
+
+def zabbix_equipment_type(ip: str, name: str) -> str:
+    """Clasifica por IP: .5 RouterBoard; x5 gateway; x0 controladora; x1-x9 radio."""
+    try:
+        last_octet = int((ip or "").rsplit(".", 1)[1])
+        if last_octet == 5:
+            return "routerboard"
+        terminal = last_octet % 10
+        if terminal == 5:
+            return "gateway"
+        if terminal == 0:
+            return "controller"
+        if 1 <= terminal <= 9:
+            return "radio"
+    except (IndexError, ValueError):
+        pass
+    upper_name = (name or "").upper()
+    return "controller" if upper_name.startswith("CTL") else "other"
+
+
+def zabbix_voltage_item_matches(equipment_type: str, item_name: str) -> bool:
+    normalized = zabbix_normalize_name(item_name)
+    return (equipment_type == "controller" and normalized == "tensao bateria") or (
+        equipment_type == "gateway" and normalized == "tensao"
+    )
+
+
+@app.get("/api/zabbix/cliente/{cliente_id}/grupos")
+async def get_zabbix_client_groups(cliente_id: int, db: Session = Depends(get_db), _auth: bool = Depends(verify_api_key)):
+    """Propone grupos Zabbix por cliente, sin guardar ni asumir una asociacion."""
+    cliente = db.query(Cliente).filter(Cliente.id == cliente_id).first()
+    if not cliente:
+        raise HTTPException(status_code=404, detail="Cliente no encontrado")
+    if not Config.ZABBIX_ENABLED or not Config.ZABBIX_URL or not Config.ZABBIX_TOKEN:
+        return {"ok": False, "client": cliente.nombre, "groups": [], "message": "Zabbix no está configurado."}
+
+    try:
+        groups = zabbix_api_call("hostgroup.get", {
+            "output": ["groupid", "name"],
+            "search": {"name": cliente.nombre},
+            "sortfield": "name",
+        })
+        # Zabbix no siempre iguala acentos ("Irrigação" vs "Irrigacao").
+        # Si la coincidencia literal no devuelve grupos, buscamos por la primera
+        # palabra y filtramos estrictamente con el nombre normalizado abajo.
+        if not groups:
+            fallback_term = (cliente.nombre or "").split()[0] if cliente.nombre else ""
+            if fallback_term:
+                groups = zabbix_api_call("hostgroup.get", {
+                    "output": ["groupid", "name"],
+                    "search": {"name": fallback_term},
+                    "sortfield": "name",
+                })
+        client_key = zabbix_normalize_name(cliente.nombre)
+        candidates = []
+        for group in groups if isinstance(groups, list) else []:
+            group_name = str(group.get("name") or "")
+            group_client = group_name.split("/", 1)[0]
+            group_client_key = zabbix_normalize_name(group_client)
+            exact_client = group_client_key == client_key
+            related = exact_client or (client_key and client_key in zabbix_normalize_name(group_name))
+            if not related:
+                continue
+            host_count = zabbix_api_call("host.get", {
+                "groupids": [group["groupid"]],
+                "countOutput": True,
+            })
+            candidates.append({
+                "id": group["groupid"],
+                "name": group_name,
+                "host_count": int(host_count or 0),
+                "match": "exact" if exact_client else "partial",
+            })
+        return {"ok": True, "client": cliente.nombre, "groups": candidates}
+    except RuntimeError as exc:
+        return {"ok": False, "client": cliente.nombre, "groups": [], "message": str(exc)}
+
+
+@app.get("/api/zabbix/grupo/{group_id}/resumen")
+async def get_zabbix_group_summary(group_id: str, _auth: bool = Depends(verify_api_key)):
+    """Resumen de solo lectura de una unidad Zabbix, clasificado por IP terminal."""
+    if not Config.ZABBIX_ENABLED or not Config.ZABBIX_URL or not Config.ZABBIX_TOKEN:
+        return {"ok": False, "message": "Zabbix no está configurado."}
+    try:
+        hosts = zabbix_api_call("host.get", {
+            "groupids": [group_id],
+            "output": ["hostid", "name", "status"],
+            "selectInterfaces": ["ip", "available"],
+            "sortfield": "name",
+        })
+        host_ids = [host["hostid"] for host in hosts if host.get("hostid")] if isinstance(hosts, list) else []
+        problems = zabbix_api_call("problem.get", {
+            "hostids": host_ids,
+            "output": ["eventid", "name", "severity"],
+            "selectHosts": ["hostid"],
+        }) if host_ids else []
+        problem_hosts = {item["hosts"][0]["hostid"] for item in problems if item.get("hosts")} if isinstance(problems, list) else set()
+        rows = []
+        counts = {"routerboard": 0, "gateway": 0, "controller": 0, "radio": 0, "other": 0, "unavailable": 0, "problems": len(problems) if isinstance(problems, list) else 0}
+        for host in hosts if isinstance(hosts, list) else []:
+            interface = (host.get("interfaces") or [{}])[0]
+            ip = interface.get("ip") or ""
+            equipment_type = zabbix_equipment_type(ip, host.get("name") or "")
+            available = host.get("status") == "0" and interface.get("available") == "1"
+            counts[equipment_type] += 1
+            if not available:
+                counts["unavailable"] += 1
+            rows.append({"id": host["hostid"], "name": host.get("name") or "", "ip": ip, "type": equipment_type,
+                         "available": available, "problem": host["hostid"] in problem_hosts})
+        return {"ok": True, "counts": counts, "hosts": rows}
+    except RuntimeError as exc:
+        return {"ok": False, "message": str(exc)}
+
+
+@app.get("/api/zabbix/grupo/{group_id}/problemas-criticos")
+async def get_zabbix_critical_problems(group_id: str, _auth: bool = Depends(verify_api_key)):
+    """Detecta patrones de bateria usando 15 dias de historial de Zabbix."""
+    try:
+        hosts = zabbix_api_call("host.get", {
+            "groupids": [group_id], "output": ["hostid", "name"],
+            "selectInterfaces": ["ip"],
+        })
+        host_by_id = {}
+        for host in hosts if isinstance(hosts, list) else []:
+            ip = ((host.get("interfaces") or [{}])[0]).get("ip") or ""
+            equipment_type = zabbix_equipment_type(ip, host.get("name") or "")
+            if equipment_type in {"gateway", "controller"}:
+                host_by_id[host["hostid"]] = {"name": host.get("name") or "", "ip": ip, "type": equipment_type}
+        if not host_by_id:
+            return {"ok": True, "days": 15, "alerts": []}
+        items = zabbix_api_call("item.get", {
+            "hostids": list(host_by_id), "output": ["itemid", "hostid", "name", "units"],
+            "filter": {"status": "0"},
+        })
+        voltage_items = [item for item in items if item.get("hostid") in host_by_id and zabbix_voltage_item_matches(host_by_id[item["hostid"]]["type"], item.get("name") or "")]
+        if not voltage_items:
+            return {"ok": True, "days": 15, "alerts": []}
+        since = int(time.time()) - 15 * 24 * 60 * 60
+        history = zabbix_api_call("trend.get", {
+            "itemids": [item["itemid"] for item in voltage_items],
+            "time_from": since, "output": ["itemid", "clock", "value_min"],
+            "sortfield": "clock", "sortorder": "ASC", "limit": 50000,
+        })
+        samples_by_item = {item["itemid"]: [] for item in voltage_items}
+        for sample in history if isinstance(history, list) else []:
+            try:
+                samples_by_item[sample["itemid"]].append((int(sample["clock"]), float(sample["value_min"])))
+            except (KeyError, TypeError, ValueError):
+                continue
+        alerts = []
+        for item in voltage_items:
+            samples = samples_by_item[item["itemid"]]
+            if not samples:
+                continue
+            night_lows = {}
+            long_night_gap = False
+            for clock, value in samples:
+                local = datetime.fromtimestamp(clock, APP_TIMEZONE)
+                if local.hour >= 18 or local.hour < 8:
+                    night_key = (local - timedelta(days=1) if local.hour < 8 else local).date().isoformat()
+                    night_lows[night_key] = min(night_lows.get(night_key, value), value)
+            for (before, _), (after, _) in zip(samples, samples[1:]):
+                gap_hours = (after - before) / 3600
+                before_hour = datetime.fromtimestamp(before, APP_TIMEZONE).hour
+                after_hour = datetime.fromtimestamp(after, APP_TIMEZONE).hour
+                if gap_hours >= 3 and (before_hour >= 18 or before_hour < 8) and 6 <= after_hour <= 12:
+                    long_night_gap = True
+            low_nights = sum(value <= 10.5 for value in night_lows.values())
+            minimum = min(value for _, value in samples)
+            if low_nights >= 2 or (low_nights >= 1 and long_night_gap) or minimum <= 10.5:
+                severity = "critical" if low_nights >= 2 or (low_nights and long_night_gap) else "warning"
+                host = host_by_id[item["hostid"]]
+                alerts.append({**host, "minimum": round(minimum, 2), "low_nights": low_nights,
+                               "night_gap": long_night_gap, "severity": severity, "item": item.get("name")})
+        alerts.sort(key=lambda alert: (alert["severity"] != "critical", alert["minimum"]))
+        return {"ok": True, "days": 15, "alerts": alerts}
+    except RuntimeError as exc:
+        return {"ok": False, "message": str(exc)}
+
+
+@app.get("/api/zabbix/status")
+async def get_zabbix_status(_auth: bool = Depends(verify_api_key)):
+    """Verifica URL, token y permisos de lectura sin exponer credenciales."""
+    configured = bool(Config.ZABBIX_URL and Config.ZABBIX_TOKEN)
+    if not Config.ZABBIX_ENABLED or not configured:
+        return {
+            "enabled": Config.ZABBIX_ENABLED,
+            "configured": configured,
+            "ok": False,
+            "message": "La integración con Zabbix no está configurada o está desactivada.",
+        }
+
+    try:
+        version = zabbix_api_call("apiinfo.version", include_auth=False)
+        group_count = zabbix_api_call("hostgroup.get", {"countOutput": True})
+        host_count = zabbix_api_call("host.get", {"countOutput": True})
+    except RuntimeError as exc:
+        return {
+            "enabled": True,
+            "configured": True,
+            "ok": False,
+            "message": str(exc),
+        }
+
+    return {
+        "enabled": True,
+        "configured": True,
+        "ok": True,
+        "version": version,
+        "visible_host_groups": int(group_count),
+        "visible_hosts": int(host_count),
+    }
 
 def validate_ipv4(ip: str) -> str:
     """Normaliza y valida IPs antes de lanzar operaciones de red."""
@@ -976,10 +1257,7 @@ async def get_dashboard_data(db: Session = Depends(get_db), _auth: bool = Depend
 
         mono_incidents = get_mono_incidents(db)
         active_mono_ips = {item["ip"] for item in mono_incidents if not item["resolved"]}
-        frozen_event_ips = {ip for (ip,) in db.query(GatewayDiagnosticEvent.gateway_ip)\
-            .filter(GatewayDiagnosticEvent.event_type == "FROZEN_CARD")\
-            .distinct()\
-            .all() if ip}
+        frozen_event_ips = get_active_frozen_event_ips(db)
         current_frozen_ips = {ip for (ip,) in db.query(Gateway.ip).filter(Gateway.status == "FROZEN_CARD").all()}
         frozen_ips = frozen_event_ips | current_frozen_ips
         diagnostic_counts = {
@@ -1298,19 +1576,17 @@ async def get_diagnostic_affected(event_type: str, db: Session = Depends(get_db)
         incidents = [item for item in get_mono_incidents(db) if not item["resolved"]]
         latest_by_ip = {item["ip"]: item for item in incidents}
     else:
+        active_frozen_ips = get_active_frozen_event_ips(db)
         events = db.query(GatewayDiagnosticEvent)\
             .filter(GatewayDiagnosticEvent.event_type == event_type)\
             .order_by(GatewayDiagnosticEvent.timestamp.desc())\
             .all()
         latest_by_ip = {}
         for event in events:
-            if event.gateway_ip not in latest_by_ip:
+            if event.gateway_ip in active_frozen_ips and event.gateway_ip not in latest_by_ip:
                 latest_by_ip[event.gateway_ip] = event
 
-    frozen_event_ips = {ip for (ip,) in db.query(GatewayDiagnosticEvent.gateway_ip)\
-        .filter(GatewayDiagnosticEvent.event_type == "FROZEN_CARD")\
-        .distinct()\
-        .all() if ip}
+    frozen_event_ips = get_active_frozen_event_ips(db)
     current_frozen_ips = {ip for (ip,) in db.query(Gateway.ip).filter(Gateway.status == "FROZEN_CARD").all()}
     frozen_ips = frozen_event_ips | current_frozen_ips
 

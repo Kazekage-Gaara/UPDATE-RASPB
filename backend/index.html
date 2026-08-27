@@ -4579,6 +4579,10 @@ async function openClienteDetalle(id){
                     <div id="cMapa" style="height:170px;border-radius:10px;overflow:hidden"></div>
                 </div>
             </div>
+            <div id="zabbixClientePanel" class="dossier-soft p-4 mb-6">
+                <p class="text-[11px] font-bold uppercase tracking-widest text-slate-400">Zabbix</p>
+                <p class="text-sm text-slate-400 mt-2">${_L('Buscando grupos monitorizados relacionados…','Buscando grupos monitorados relacionados…')}</p>
+            </div>
             <!-- Tabla de unidades -->
             <div class="dossier-soft overflow-hidden mb-6" data-cliente-unidades>
                 <div class="overflow-auto custom-scroll" style="max-height:280px">
@@ -4659,6 +4663,7 @@ async function openClienteDetalle(id){
             data:{labels:soK,datasets:[{data:soV,backgroundColor:['#10b981','#f59e0b','#ef4444','#3b82f6','#94a3b8'],borderColor:bdc,borderWidth:2}]},options:dOpt}));
 
         const cMapExpandBtn = document.getElementById('cMapExpandBtn');
+        loadClienteZabbixGroups(d.id);
         if (cMapExpandBtn) {
             cMapExpandBtn.addEventListener('click', () => openExpandedDossierMap(
                 `${_L('Fazendas de','Fazendas de')} ${d.nombre}`,
@@ -4687,6 +4692,52 @@ async function openClienteDetalle(id){
         console.error(e);
         m.querySelector('.dossier-card').innerHTML=`<div class="p-10 text-center text-red-500">${_L('Error cargando el dossier.','Erro ao carregar o dossier.')}</div>`;
     }
+}
+async function loadClienteZabbixGroups(clienteId){
+    const panel = document.getElementById('zabbixClientePanel');
+    if (!panel) return;
+    try {
+        const response = await fetch(`/api/zabbix/cliente/${clienteId}/grupos`);
+        const data = await response.json();
+        if (!panel.isConnected) return;
+        if (!data.ok) {
+            panel.innerHTML = `<p class="text-[11px] font-bold uppercase tracking-widest text-slate-400">Zabbix</p><p class="text-sm text-slate-400 mt-2">${esc(data.message || _L('Sin conexión con Zabbix.','Sem conexão com o Zabbix.'))}</p>`;
+            return;
+        }
+        if (!data.groups.length) {
+            panel.innerHTML = `<p class="text-[11px] font-bold uppercase tracking-widest text-slate-400">Zabbix</p><p class="text-sm text-slate-400 mt-2">${_L('No se encontraron grupos candidatos para este cliente.','Nenhum grupo candidato foi encontrado para este cliente.')}</p>`;
+            return;
+        }
+        const title = _L('Grupos Zabbix candidatos','Grupos Zabbix candidatos');
+        const note = _L('Solo lectura. Confirmaremos la asociación antes de consolidar datos de equipos.','Somente leitura. Confirmaremos a associação antes de consolidar dados dos equipamentos.');
+        panel.innerHTML = `<div class="flex items-start justify-between gap-3"><div><p class="text-[11px] font-bold uppercase tracking-widest text-slate-400">Zabbix · ${esc(title)}</p><p class="text-xs text-slate-400 mt-1">${esc(note)}</p></div><span class="badge badge-info">${data.groups.length}</span></div><div class="mt-3 grid grid-cols-1 md:grid-cols-2 gap-2">${data.groups.map(group => `<button type="button" data-zabbix-group="${esc(group.id)}" class="rounded-lg border border-slate-200/80 dark:border-white/10 px-3 py-2 flex items-center justify-between gap-3 text-left hover:border-brand-400"><div class="min-w-0"><p class="font-medium text-sm truncate">${esc(group.name)}</p><p class="text-xs text-slate-400">${group.match === 'exact' ? _L('Coincidencia de cliente','Correspondência de cliente') : _L('Coincidencia parcial','Correspondência parcial')}</p></div><span class="font-mono text-xs text-brand-600 dark:text-brand-400 whitespace-nowrap">${Number(group.host_count)||0} ${_L('hosts','hosts')}</span></button>`).join('')}</div><div id="zabbixGroupDetail" class="mt-3"></div>`;
+        panel.querySelectorAll('[data-zabbix-group]').forEach(button => button.addEventListener('click', () => loadZabbixGroupSummary(button.dataset.zabbixGroup)));
+    } catch (error) {
+        if (panel.isConnected) panel.innerHTML = `<p class="text-[11px] font-bold uppercase tracking-widest text-slate-400">Zabbix</p><p class="text-sm text-slate-400 mt-2">${_L('No se pudo consultar Zabbix.','Não foi possível consultar o Zabbix.')}</p>`;
+    }
+}
+async function loadZabbixGroupSummary(groupId){
+    const target = document.getElementById('zabbixGroupDetail'); if (!target) return;
+    target.innerHTML = `<p class="text-sm text-slate-400">${_L('Cargando equipos…','Carregando equipamentos…')}</p>`;
+    try {
+        const response = await fetch(`/api/zabbix/grupo/${encodeURIComponent(groupId)}/resumen`);
+        const data = await response.json();
+        if (!data.ok) throw new Error(data.message);
+        const c = data.counts, labels = {routerboard:'RouterBoards',gateway:_L('Gateways / concentradores','Gateways / concentradores'),controller:_L('Controladoras','Controladoras'),radio:_L('Radios','Rádios')};
+        target.innerHTML = `<div class="border-t border-slate-200/80 dark:border-white/10 pt-3"><div class="grid grid-cols-2 md:grid-cols-5 gap-2 text-center">${['routerboard','gateway','controller','radio'].map(type => `<div class="rounded-lg bg-slate-100/70 dark:bg-white/5 p-2"><b class="text-lg">${c[type]}</b><p class="text-[10px] text-slate-400">${labels[type]}</p></div>`).join('')}<div class="rounded-lg bg-red-50 dark:bg-red-900/20 p-2"><b class="text-lg text-red-600">${c.unavailable}</b><p class="text-[10px] text-slate-400">${_L('Sin respuesta','Sem resposta')}</p></div></div><div id="zabbixCriticalPanel" class="mt-3"></div><div class="mt-3 max-h-48 overflow-auto custom-scroll text-xs">${data.hosts.map(host => { const url = host.type === 'gateway' ? `http://${host.ip}:8085` : `http://${host.ip}`; return `<div class="flex justify-between gap-3 py-1 border-b border-slate-100 dark:border-white/5"><span class="truncate">${esc(host.name)}</span><a href="${esc(url)}" target="_blank" rel="noopener noreferrer" class="font-mono whitespace-nowrap hover:underline ${host.available?'text-emerald-600':'text-red-500'}">${esc(host.ip||'-')}</a></div>`; }).join('')}</div></div>`;
+        loadZabbixCriticalProblems(groupId);
+    } catch (error) { target.innerHTML = `<p class="text-sm text-red-500">${_L('No se pudo cargar el resumen de Zabbix.','Não foi possível carregar o resumo do Zabbix.')}</p>`; }
+}
+async function loadZabbixCriticalProblems(groupId){
+    const panel = document.getElementById('zabbixCriticalPanel'); if (!panel) return;
+    panel.innerHTML = `<p class="text-sm text-slate-400">${_L('Analizando problemas críticos…','Analisando problemas críticos…')}</p>`;
+    try {
+        const response = await fetch(`/api/zabbix/grupo/${encodeURIComponent(groupId)}/problemas-criticos`);
+        const data = await response.json(); if (!data.ok) throw new Error(data.message);
+        const title = _L('Problemas Críticos','Problemas Críticos');
+        if (!data.alerts.length) { panel.innerHTML = `<div class="rounded-lg bg-emerald-50 dark:bg-emerald-900/20 p-3 text-sm text-emerald-700 dark:text-emerald-300"><b>${title}</b> · ${_L('Sin patrón crítico de tensión en los últimos 15 días.','Sem padrão crítico de tensão nos últimos 15 dias.')}</div>`; return; }
+        panel.innerHTML = `<div class="rounded-lg border border-red-200 dark:border-red-900/60 p-3"><p class="font-bold text-sm text-red-600 dark:text-red-400">⚠ ${title}</p><div class="mt-2 space-y-2">${data.alerts.map(alert => `<div class="text-xs flex justify-between gap-3"><span class="truncate">${esc(alert.name)} · ${esc(alert.ip)}</span><span class="whitespace-nowrap text-red-600 dark:text-red-400">${alert.minimum} V · ${alert.low_nights} ${_L('noches bajas','noites baixas')}${alert.night_gap ? ' · '+_L('corte nocturno','corte noturno') : ''}</span></div>`).join('')}</div></div>`;
+    } catch (error) { panel.innerHTML = `<p class="text-sm text-slate-400">${_L('No se pudo analizar el historial de tensión.','Não foi possível analisar o histórico de tensão.')}</p>`; }
 }
 function focusClienteUnidades(){
     const modal = document.getElementById('clienteModal');

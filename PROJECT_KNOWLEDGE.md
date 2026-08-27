@@ -85,6 +85,14 @@ guardar contrasenas, tokens, llaves ni datos sensibles.
 - La verificacion de tarjeta congelada requiere escribir un marcador,
   reiniciar realmente el gateway y comprobar que el marcador persiste. Un
   simple reinicio de servicio no valida persistencia.
+- La salida SSH puede contener banners o avisos ajenos al comando. Las pruebas
+  de persistencia deben emitir y extraer un marcador propio (por ejemplo,
+  `PERSISTENCE_PROBE:<valor>`); no comparar toda la salida con el token. Si
+  SSH falla, no devuelve el marcador o entrega uno inesperado, el resultado es
+  no concluyente, no `FROZEN_CARD`. Solo una respuesta SSH valida que indique
+  el marcador como ausente confirma una tarjeta congelada.
+- Un `PERSISTENCE_OK` posterior resuelve el diagnostico de congelado anterior
+  para reportes y alertas activas, sin borrar el historial tecnico del evento.
 - Los gateways con estado `FROZEN_CARD` se excluyen de escaneos automaticos,
   reintentos y revisiones de recuperacion. Solo una accion manual puede volver
   a evaluarlos y cambiar su estado operativo.
@@ -115,6 +123,10 @@ guardar contrasenas, tokens, llaves ni datos sensibles.
 - No usar conteos o texto libre de `grep` para detectar Relay: los banners SSH
   pueden contaminar la salida. Usar marcadores explicitos como
   `RELAY_PRESENT` y `RELAY_ABSENT`.
+- Los chequeos LPWAN deben distinguir `LPWAN_ABSENT` de una falla SSH. Ante un
+  error de comunicacion, reintentar y registrar Relay como pendiente; nunca
+  presentarlo como si el gateway no tuviera antenas. Tras insertar Relay,
+  verificar con un marcador explicito antes de declarar la configuracion lista.
 - Si una consulta no puede confirmar Relay, conservar el ultimo valor conocido
   en vez de sobrescribirlo con un falso negativo.
 - Las coordenadas se leen primero desde `SolinfNet.conf`. Si GPS esta activo y
@@ -148,6 +160,51 @@ guardar contrasenas, tokens, llaves ni datos sensibles.
   texto localizado y exclusion de la impresion.
 
 ## Verificacion Reutilizable
+
+## Integracion Zabbix
+
+- La integracion con Zabbix debe ser opcional y exclusivamente de lectura. No
+  debe participar en actualizaciones, configuracion de Relay ni escaneos de
+  gateways existentes.
+- Guardar URL y token solo en `.env`; la plantilla `.env.example` contiene
+  nombres de variables y ejemplos sin credenciales. Nunca devolver el token
+  desde endpoints, registros ni interfaz.
+- Antes de desarrollar paneles de datos, validar con una consulta ligera:
+  `apiinfo.version`, `hostgroup.get` y `host.get` con `countOutput`. Asi se
+  separan los problemas de ruta, conectividad y permisos.
+- En esta instalacion, la API se publica directamente en
+  `api_jsonrpc.php`, no bajo el prefijo web `/zabbix`. Mantener la URL exacta
+  configurable por entorno, pues otras instalaciones pueden usar una ruta
+  distinta.
+- La geolocalizacion de unidades y gateways debe seguir procediendo de la
+  aplicacion, SolinfNet y GPS. Los datos de GPS de Zabbix no se consideran una
+  fuente confiable para sustituirla.
+- Los grupos Zabbix siguen habitualmente el patron `Cliente/Unidad`, pero se
+  deben tratar como candidatos hasta que el operador confirme la asociacion:
+  existen variantes y duplicados de nombres. El descubrimiento puede buscar por
+  cliente y mostrar grupo, coincidencia y cantidad de hosts sin persistir nada.
+- La busqueda de Zabbix puede no igualar acentos. Si la coincidencia literal
+  no devuelve grupos, buscar por la primera palabra del cliente y filtrar por
+  el nombre normalizado evita perder casos como `Irrigação`/`Irrigacao` sin
+  aceptar grupos no relacionados.
+- En los nombres actuales, los hosts que comienzan con `CTL_` son
+  controladoras de carga; los gateways exponen items de SolinfNet/GPS y los
+  radios usan otros nombres. La clasificacion final debe usar nombres, items y
+  etiquetas, nunca ubicacion GPS de Zabbix.
+- Regla operativa confirmada para clasificar hosts por IPv4: la IP exacta `.5`
+  es RouterBoard; los demas terminales `x5` son gateway o concentrador
+  (Raspberry), terminal `0` es controladora y terminal `1-9` es radio. El nombre Zabbix del radio sirve como descripcion del enlace
+  (por ejemplo, `TORRE1-TORRE2`), no como fuente primaria de tipo.
+- En el detalle Zabbix, gateways/concentradores abren `http://IP:8085` por
+  SolinfNet. Radios, controladoras y RouterBoards abren `http://IP` por HTTP
+  estándar; no forzarles el puerto 8085.
+- El analisis de `Problemas Críticos` revisa 15 dias mediante `trend.get` de
+  Zabbix, no muestras crudas: conserva minimos horarios y huecos de medicion
+  sin sobrecargar la API. Para controladoras usa el item `Tensão Bateria`; si
+  no hay controladora gestionable, usa `Tensao` del gateway. Un minimo nocturno
+  de 10.5 V o menos, especialmente repetido o unido a un hueco nocturno que
+  recupera entre las 06:00 y 12:00, indica riesgo de bateria. Equipos sin item
+  de tension (como concentradores) no deben generar una alerta energetica.
 
 - Antes de editar: revisar `git status`, rama y remoto; no sobrescribir cambios
   existentes.
