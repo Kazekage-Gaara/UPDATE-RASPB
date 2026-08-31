@@ -91,6 +91,7 @@
         .stat-card-updated::before { background: #10b981; }
         .stat-card-pending::before { background: #f59e0b; }
         .stat-card-offline::before { background: #ef4444; }
+        .stat-card-frozen::before { background: #e11d48; }
 
         .stat-icon { width: 44px; height: 44px; border-radius: 12px; display: flex; align-items: center; justify-content: center; flex-shrink: 0; }
 
@@ -144,6 +145,7 @@
         .compact-stat-updated { border-left-color: #10b981; }
         .compact-stat-pending { border-left-color: #f59e0b; }
         .compact-stat-offline { border-left-color: #ef4444; }
+        .compact-stat-frozen { border-left-color: #e11d48; }
         @media (max-width: 640px) {
             .tab-btn { flex: 0 0 auto; padding: 0.7rem 0.9rem; }
             .tab-navigation-sticky .max-w-\[1400px\] { padding-left: 1rem; padding-right: 1rem; }
@@ -493,7 +495,7 @@ body::after{
         <div id="tab-operaciones">
 
             <!-- Stat Cards -->
-            <div id="statsOverview" class="grid grid-cols-2 lg:grid-cols-4 gap-4 mb-6">
+            <div id="statsOverview" class="grid grid-cols-2 lg:grid-cols-5 gap-4 mb-6">
                 <!-- Total -->
                 <div class="card card-interactive stat-card stat-card-total p-5">
                     <div class="flex items-center justify-between mb-3">
@@ -538,14 +540,26 @@ body::after{
                     <div class="text-3xl font-extrabold text-red-600 dark:text-red-400 count-up" id="statOffline">0</div>
                     <div class="text-xs text-slate-400 dark:text-slate-500 mt-1 font-medium" data-i18n="stat_offline">Offline/Errores</div>
                 </div>
+                <!-- Frozen SD card -->
+                <div class="card card-interactive stat-card stat-card-frozen p-5">
+                    <div class="flex items-center justify-between mb-3">
+                        <span class="text-xs font-semibold text-slate-400 dark:text-slate-500 uppercase tracking-wider" data-i18n="stat_frozen">Congelados</span>
+                        <div class="stat-icon bg-rose-50 dark:bg-rose-900/20">
+                            <svg class="w-5 h-5 text-rose-600 dark:text-rose-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 3v18M19 3v18M3 5h18M3 19h18M8 8h8v8H8z"/></svg>
+                        </div>
+                    </div>
+                    <div class="text-3xl font-extrabold text-rose-600 dark:text-rose-400 count-up" id="statFrozen">0</div>
+                    <div class="text-xs text-slate-400 dark:text-slate-500 mt-1 font-medium" data-i18n="stat_frozen_help">Necesario sustituir</div>
+                </div>
             </div>
 
             <div id="compactStatsBar" aria-live="polite">
-                <div class="grid grid-cols-4 gap-1.5 rounded-xl border border-slate-200 dark:border-slate-700 bg-white/95 dark:bg-slate-800/95 backdrop-blur px-2 py-1.5 shadow-xl shadow-slate-900/10 dark:shadow-black/30">
+                <div class="grid grid-cols-5 gap-1.5 rounded-xl border border-slate-200 dark:border-slate-700 bg-white/95 dark:bg-slate-800/95 backdrop-blur px-2 py-1.5 shadow-xl shadow-slate-900/10 dark:shadow-black/30">
                     <div class="compact-stat compact-stat-total px-2 py-1"><div class="text-[10px] uppercase tracking-wide text-slate-400 truncate" data-i18n="stat_total">Total</div><div id="compactStatTotal" class="text-base font-extrabold text-slate-900 dark:text-white">0</div></div>
                     <div class="compact-stat compact-stat-updated px-2 py-1"><div class="text-[10px] uppercase tracking-wide text-slate-400 truncate" data-i18n="stat_updated">Actualizados</div><div id="compactStatUpdated" class="text-base font-extrabold text-emerald-600 dark:text-emerald-400">0</div></div>
                     <div class="compact-stat compact-stat-pending px-2 py-1"><div class="text-[10px] uppercase tracking-wide text-slate-400 truncate" data-i18n="stat_pending">Pendientes</div><div id="compactStatPending" class="text-base font-extrabold text-amber-600 dark:text-amber-400">0</div></div>
                     <div class="compact-stat compact-stat-offline px-2 py-1"><div class="text-[10px] uppercase tracking-wide text-slate-400 truncate" data-i18n="stat_offline">Offline/Errores</div><div id="compactStatOffline" class="text-base font-extrabold text-red-600 dark:text-red-400">0</div></div>
+                    <div class="compact-stat compact-stat-frozen px-2 py-1"><div class="text-[10px] uppercase tracking-wide text-slate-400 truncate" data-i18n="stat_frozen">Congelados</div><div id="compactStatFrozen" class="text-base font-extrabold text-rose-600 dark:text-rose-400">0</div></div>
                 </div>
             </div>
 
@@ -981,6 +995,9 @@ body::after{
                 stat_updated: "Actualizados",
                 stat_pending: "Pendientes",
                 stat_offline: "Offline/Errores",
+                stat_frozen: "Congelados",
+                stat_frozen_help: "Necesario sustituir",
+                last_frozen: "Último congelamiento",
                 back_to_top: "Subir al inicio",
                 ldc_title: "LDC · Acceso temporal por RB",
                 ldc_special_access: "Accesos especiales",
@@ -1109,6 +1126,7 @@ body::after{
                 toast_light_mode: "Modo claro activado", toast_dark_mode: "Modo oscuro activado",
                 toast_ip_required: "Ingresa una IP válida",
                 toast_scanning: "Escaneando {count} dispositivos...",
+                scan_multiple_completed: "✅ Escaneo terminado: {count} dispositivos revisados.",
                 toast_scan_error: "Error de red al escanear",
                 toast_already_updated: "{ip}: OK - sin acción necesaria",
                 toast_update_success: "✅ {ip} actualizado correctamente",
@@ -1248,6 +1266,9 @@ body::after{
                 stat_updated: "Atualizados",
                 stat_pending: "Pendentes",
                 stat_offline: "Offline/Erros",
+                stat_frozen: "Congelados",
+                stat_frozen_help: "Necessário substituir",
+                last_frozen: "Último congelamento",
                 back_to_top: "Voltar ao início",
                 ldc_title: "LDC · Acesso temporário por RB",
                 ldc_special_access: "Acessos especiais",
@@ -1376,6 +1397,7 @@ body::after{
                 toast_light_mode: "Modo claro ativado", toast_dark_mode: "Modo escuro ativado",
                 toast_ip_required: "Insira um IP válido",
                 toast_scanning: "Escaneando {count} dispositivos...",
+                scan_multiple_completed: "✅ Varredura concluída: {count} dispositivos verificados.",
                 toast_scan_error: "Erro de rede ao escanear",
                 toast_already_updated: "{ip}: OK - sem ação necessária",
                 toast_update_success: "✅ {ip} atualizado corretamente",
@@ -2645,21 +2667,35 @@ body::after{
 
             setMultipleButtonsDisabled(true);
             const resultsDiv = document.getElementById('multipleScanResults');
-            resultsDiv.innerHTML = `<p class="text-indigo-600 dark:text-indigo-400 font-medium text-sm flex items-center gap-2"><svg class="w-4 h-4 animate-spin" fill="none" viewBox="0 0 24 24"><circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle><path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z"></path></svg>${esc(t('toast_scanning', { count: ips.length }))}</p>`;
+            resultsDiv.innerHTML = `<p id="multipleScanProgress" class="text-indigo-600 dark:text-indigo-400 font-medium text-sm flex items-center gap-2"><svg class="w-4 h-4 animate-spin" fill="none" viewBox="0 0 24 24"><circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle><path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z"></path></svg>${esc(t('toast_scanning', { count: ips.length }))}</p>`
+                + ips.map(ip => {
+                    const tempId = 'scan-' + ip.replace(/\./g, '_');
+                    return `<div id="${esc(tempId)}" class="card border-l-4 border-amber-400 p-3 flex justify-between items-center"><span class="font-mono font-semibold text-sm">${esc(ip)}</span><span class="text-amber-600 dark:text-amber-400 text-sm animate-pulse">${esc(t('scan_scanning'))}</span></div>`;
+                }).join('');
             showToast(t('toast_scanning', { count: ips.length }), 'info');
 
-            for (let ip of ips) {
+            try {
+                await Promise.all(ips.map(async ip => {
                 const tempId = 'scan-' + ip.replace(/\./g, '_');
-                resultsDiv.innerHTML += `<div id="${esc(tempId)}" class="card border-l-4 border-amber-400 p-3 flex justify-between items-center"><span class="font-mono font-semibold text-sm">${esc(ip)}</span><span class="text-amber-600 dark:text-amber-400 text-sm animate-pulse">${esc(t('scan_scanning'))}</span></div>`;
                 try {
                     const res = await fetch(`/api/scan/${ip}`, { method: 'POST' });
+                    if (!res.ok) throw new Error(`HTTP ${res.status}`);
                     const data = await res.json();
-                    checkStatus(data.task_id, tempId, ip, true);
+                    await checkStatus(data.task_id, tempId, ip, true);
                 } catch (err) {
-                    document.getElementById(tempId).innerHTML = `<span class="font-mono font-semibold text-sm">${esc(ip)}</span><span class="text-red-600 dark:text-red-400 text-sm">${esc(t('scan_error'))}</span>`;
+                    const card = document.getElementById(tempId);
+                    if (card) card.innerHTML = `<span class="font-mono font-semibold text-sm">${esc(ip)}</span><span class="text-red-600 dark:text-red-400 text-sm">${esc(t('scan_error'))}</span>`;
                 }
+                }));
+                const progress = document.getElementById('multipleScanProgress');
+                if (progress) {
+                    progress.className = 'text-emerald-700 dark:text-emerald-400 font-medium text-sm';
+                    progress.textContent = t('scan_multiple_completed', { count: ips.length });
+                }
+                await loadGateways();
+            } finally {
+                setMultipleButtonsDisabled(false);
             }
-            setMultipleButtonsDisabled(false);
         }
 
         function renderMultipleBatchProgress(stateByIp) {
@@ -2887,31 +2923,46 @@ body::after{
             }
         }
 
-        async function checkStatus(taskId, domId, ip, isMultiple = false) {
-            const interval = setInterval(async () => {
-                const res = await fetch(`/api/status/${taskId}`);
-                const data = await res.json();
-                if (data.state === 'SUCCESS') {
-                    clearInterval(interval);
-                    const r = data.result;
-                    let borderClass = 'border-emerald-400', textClass = 'text-emerald-700 dark:text-emerald-400', icon = '✅';
-                    if (r.status === 'OFFLINE' || r.status === 'ERROR' || r.status === 'FROZEN_CARD' || r.diagnostic === 'FROZEN_CARD') { borderClass = 'border-red-400'; textClass = 'text-red-700 dark:text-red-400'; icon = '❌'; }
-                    if (r.status === 'PENDING') { borderClass = 'border-amber-400'; textClass = 'text-amber-700 dark:text-amber-400'; icon = '🔄'; }
-                    document.getElementById(domId).className = `card border-l-4 ${borderClass} p-3 flex justify-between items-center`;
-                    document.getElementById(domId).innerHTML = `<span class="font-mono font-semibold text-sm">${esc(ip)}</span><span class="${textClass} font-medium text-sm">${icon} ${esc(r.msg)}</span>`;
-                    setTimeout(() => {
-                        loadGateways();
-                        if (!isMultiple) {
-                            clearOperationInputLater();
-                            setTimeout(() => { const elem = document.getElementById(domId); if (elem) elem.remove(); }, 8000);
+        function checkStatus(taskId, domId, ip, isMultiple = false) {
+            return new Promise(resolve => {
+                const interval = setInterval(async () => {
+                    try {
+                        const res = await fetch(`/api/status/${taskId}`);
+                        if (!res.ok) throw new Error(`HTTP ${res.status}`);
+                        const data = await res.json();
+                        const card = document.getElementById(domId);
+                        if (data.state === 'SUCCESS') {
+                            clearInterval(interval);
+                            const r = data.result || {};
+                            let borderClass = 'border-emerald-400', textClass = 'text-emerald-700 dark:text-emerald-400', icon = '✅';
+                            if (r.status === 'OFFLINE' || r.status === 'ERROR' || r.status === 'FROZEN_CARD' || r.diagnostic === 'FROZEN_CARD') { borderClass = 'border-red-400'; textClass = 'text-red-700 dark:text-red-400'; icon = '❌'; }
+                            if (r.status === 'PENDING') { borderClass = 'border-amber-400'; textClass = 'text-amber-700 dark:text-amber-400'; icon = '🔄'; }
+                            if (card) {
+                                card.className = `card border-l-4 ${borderClass} p-3 flex justify-between items-center`;
+                                card.innerHTML = `<span class="font-mono font-semibold text-sm">${esc(ip)}</span><span class="${textClass} font-medium text-sm">${icon} ${esc(r.msg || 'OK')}</span>`;
+                            }
+                            setTimeout(() => {
+                                if (!isMultiple) {
+                                    loadGateways();
+                                    clearOperationInputLater();
+                                    setTimeout(() => { const elem = document.getElementById(domId); if (elem) elem.remove(); }, 8000);
+                                }
+                            }, 1000);
+                            resolve(data);
+                        } else if (data.state === 'FAILURE') {
+                            clearInterval(interval);
+                            if (card) card.innerHTML = `<span class="font-mono font-semibold text-sm">${esc(ip)}</span><span class="text-red-600 dark:text-red-400 text-sm">${esc(t('scan_error'))}</span>`;
+                            if (!isMultiple) clearOperationInputLater();
+                            resolve(data);
                         }
-                    }, 1000);
-                } else if (data.state === 'FAILURE') {
-                    clearInterval(interval);
-                    document.getElementById(domId).innerHTML = `<span class="font-mono font-semibold text-sm">${esc(ip)}</span><span class="text-red-600 dark:text-red-400 text-sm">${esc(t('scan_error'))}</span>`;
-                    if (!isMultiple) clearOperationInputLater();
-                }
-            }, 1000);
+                    } catch (error) {
+                        clearInterval(interval);
+                        const card = document.getElementById(domId);
+                        if (card) card.innerHTML = `<span class="font-mono font-semibold text-sm">${esc(ip)}</span><span class="text-red-600 dark:text-red-400 text-sm">${esc(t('scan_error'))}</span>`;
+                        resolve({ state: 'FAILURE', error: error.message });
+                    }
+                }, 1000);
+            });
         }
 
         // ============ INVENTORY ============
@@ -3023,6 +3074,9 @@ body::after{
                 if (isInventoryUpdateSelectable(g.status)) canUpdate = true;
                 const autoUpdateCandidate = isInventoryBulkUpdateCandidate(g);
                 statusBadge = renderInventoryStatusBadge(g.status);
+                const frozenHistory = g.last_frozen_at
+                    ? `<div class="mt-1 text-[10px] leading-tight text-rose-600 dark:text-rose-300 font-semibold" title="${esc(t('last_frozen'))}: ${esc(formatAppDateTime(g.last_frozen_at))}">🧊 ${esc(t('last_frozen'))}: ${esc(formatAppDateTime(g.last_frozen_at))}</div>`
+                    : '';
                 const maintenanceBadge = g.maintenance_enabled
                     ? `<div class="mt-1 text-[10px] font-semibold text-amber-700 dark:text-amber-300" title="${esc(g.maintenance_reason || '')}">⚑ ${esc(t('maintenance_active'))}</div>`
                     : '';
@@ -3049,7 +3103,7 @@ body::after{
 <td class="text-center">${relayBadge}</td>
 <td class="font-semibold">${g.version ? esc(g.version) : '-'}</td>
 <td class="text-center">${osBadge}</td>
-<td class="text-center">${statusBadge}${maintenanceBadge}</td>
+<td class="text-center">${statusBadge}${frozenHistory}${maintenanceBadge}</td>
 <td class="text-xs text-slate-400">${lastScan}</td>
 <td>
 <div class="flex gap-1">
@@ -3165,15 +3219,18 @@ ${(g.os_codename === 'jessie' || g.os_codename === 'stretch') ? `<button onclick
                     updated: gateways.filter(g => g.status === 'UPDATED').length,
                     pending: gateways.filter(g => g.status === 'PENDING').length,
                     offline: gateways.filter(g => g.status === 'OFFLINE' || g.status === 'ERROR').length,
+                    frozen: gateways.filter(g => g.status === 'FROZEN_CARD').length,
                 };
                 animateCounter('statTotal', stats.total);
                 animateCounter('statUpdated', stats.updated);
                 animateCounter('statPending', stats.pending);
                 animateCounter('statOffline', stats.offline);
+                animateCounter('statFrozen', stats.frozen);
                 document.getElementById('compactStatTotal').textContent = stats.total;
                 document.getElementById('compactStatUpdated').textContent = stats.updated;
                 document.getElementById('compactStatPending').textContent = stats.pending;
                 document.getElementById('compactStatOffline').textContent = stats.offline;
+                document.getElementById('compactStatFrozen').textContent = stats.frozen;
 
                 document.getElementById('totalCount').textContent = gateways.length;
 

@@ -1045,7 +1045,7 @@ async def set_gateway_maintenance(ip: str, request: Request, db: Session = Depen
         "maintenance_reason": gateway.maintenance_reason,
     }
 
-def serialize_gateway_record(g: Gateway, c: Cliente | None, u: Unidad | None) -> dict:
+def serialize_gateway_record(g: Gateway, c: Cliente | None, u: Unidad | None, last_frozen_at: datetime | None = None) -> dict:
     return {
         "id": g.id,
         "ip": g.ip,
@@ -1073,7 +1073,22 @@ def serialize_gateway_record(g: Gateway, c: Cliente | None, u: Unidad | None) ->
         "access_mode": g.access_mode,
         "ldc_unit": g.ldc_unit,
         "ldc_rb_ip": g.ldc_rb_ip,
+        "last_frozen_at": serialize_datetime(last_frozen_at),
     }
+
+
+def get_last_frozen_dates(db: Session, gateway_ips: list[str]) -> dict[str, datetime]:
+    """Fecha del ultimo congelamiento detectado para cada gateway del inventario."""
+    if not gateway_ips:
+        return {}
+    rows = db.query(
+        GatewayDiagnosticEvent.gateway_ip,
+        func.max(GatewayDiagnosticEvent.timestamp).label("last_frozen_at"),
+    ).filter(
+        GatewayDiagnosticEvent.event_type == "FROZEN_CARD",
+        GatewayDiagnosticEvent.gateway_ip.in_(gateway_ips),
+    ).group_by(GatewayDiagnosticEvent.gateway_ip).all()
+    return {ip: last_frozen_at for ip, last_frozen_at in rows}
 
 
 def gateway_inventory_query(db: Session, ldc_only: bool = False):
@@ -1091,12 +1106,16 @@ def gateway_inventory_query(db: Session, ldc_only: bool = False):
 
 @app.get("/api/gateways")
 async def get_gateways(db: Session = Depends(get_db), _auth: bool = Depends(verify_api_key)):
-    return [serialize_gateway_record(g, c, u) for g, c, u in gateway_inventory_query(db)]
+    rows = gateway_inventory_query(db)
+    frozen_dates = get_last_frozen_dates(db, [g.ip for g, _, _ in rows])
+    return [serialize_gateway_record(g, c, u, frozen_dates.get(g.ip)) for g, c, u in rows]
 
 
 @app.get("/api/ldc/gateways")
 async def get_ldc_gateways(db: Session = Depends(get_db), _auth: bool = Depends(verify_api_key)):
-    return [serialize_gateway_record(g, c, u) for g, c, u in gateway_inventory_query(db, ldc_only=True)]
+    rows = gateway_inventory_query(db, ldc_only=True)
+    frozen_dates = get_last_frozen_dates(db, [g.ip for g, _, _ in rows])
+    return [serialize_gateway_record(g, c, u, frozen_dates.get(g.ip)) for g, c, u in rows]
 
 @app.get("/api/gateway/{ip}/history")
 async def get_gateway_history(ip: str, db: Session = Depends(get_db), _auth: bool = Depends(verify_api_key)):

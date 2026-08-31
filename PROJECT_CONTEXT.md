@@ -438,3 +438,15 @@ Prioriza siempre:
   matinal. La prueba real identifico correctamente el patron de bateria baja
   previamente observado en los graficos de Zabbix. No se consultan ni alertan
   concentradores sin telemetria de tension.
+- 2026-08-31: Se agrego la tarjeta `Congelados` al resumen de Operaciones y a
+  su barra compacta fija. Muestra separadamente los gateways `FROZEN_CARD` que
+  requieren sustitucion de SD, de modo que Total coincide visualmente con la
+  suma de Actualizados, Pendientes, Offline/Errores y Congelados.
+- 2026-08-31: Inventario conserva y muestra el antecedente de congelamiento
+  bajo el estado del gateway (`Ultimo congelamiento: fecha`). Se obtiene del
+  historial diagnostico sin alterar el estado actual: permite reconocer una SD
+  reincidente aun si el gateway fue recuperado o figura actualizado.
+- 2026-08-31: El escaneo manual de multiples IPs espera ahora la finalizacion
+  de todas las tareas antes de habilitar controles y reemplaza su encabezado
+  animado por un resumen final. Evita que `Escaneando N dispositivos` quede
+  girando cuando todos los resultados ya indicaron que no hay accion necesaria.
