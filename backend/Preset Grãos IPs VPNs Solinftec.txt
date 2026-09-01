@@ -479,6 +479,7 @@ Rotas IPs VPNs Solinftec
 			 .105 	Torre Sede - 11000														user : solinfnet.valedoverde.fz_modelo.f_11000
 			 .115	Torre Viúva - 11001 													user : solinfnet.valedoverde.fz_modelo.f_11001
 			 .125	Torre Modelo - 11002 													user : solinfnet.valedoverde.fz_modelo.f_11002
+            7.5     Faz. Vale do Verde 220 Algodoeira                              			user : solinfnet.valedoverde.fz_algodoeira
 
 	220.80.0.0/24	Rodrigo Zuanazzi
 			1.5		Faz. Brasão							user : solinfnet.zuanazzi.fz_brasao
@@ -1121,7 +1122,7 @@ Rotas IPs VPNs Solinftec
             4.5		Faz. Santa Clara				    user : solinfnet.fava_sementes.faz_santa_clara
             5.5		Faz. Santa Úrsula				    user : solinfnet.fava_sementes.faz_santa_ursula
             6.5		Faz. Savana 					    user : solinfnet.fava_sementes.faz_savana
-            7.5		Faz. Fronteira 					    user : solinfnet.fava_sementes.faz_fronteira
+            7.5		Faz. Fronteira(Fortaleza)		    user : solinfnet.fava_sementes.faz_fronteira
             8.5		Faz. Esperança 					    user : solinfnet.fava_sementes.faz_esperanca
             9.5		Faz. Beirute					    user : solinfnet.fava_sementes.faz_beirute
            10.5		Faz. Recanto					    user : solinfnet.fava_sementes.faz_recanto
@@ -1136,7 +1137,14 @@ Rotas IPs VPNs Solinftec
             1.5	    Faz. Jau						    user : solinfnet.juparana.faz_jau
 
 	220.213.0.0/24  Grupo Webler			
-			1.15	Concentrador Móvel f9000		   user : solinfnet.webler_movel.f_9000		
+			1.15	Concentrador Móvel f9000		   user : solinfnet.webler_movel.f_9000
+			1.25	Concentrador Móvel f9001		   user : solinfnet.webler_movel.f_9001	
+			1.35	Concentrador Móvel f9002		   user : solinfnet.webler_movel.f_9002	
+			1.45    Concentrador Mòvel f9003		   user : solinfnet.webler_movel.f_9003	
+
+    220.214.0.0/24  Grupo Jaime Basso
+            1.5 	Faz. Jaime Basso    				user : solinfnet.jaime_basso.fz_jaime_basso
+
 
 	220.220.0.0/24  Jequitiba
 			1.5 	Faz. Panteão 						user : solinfnet.jequitiba.fz_panteao

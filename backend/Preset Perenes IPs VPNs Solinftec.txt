@@ -560,6 +560,7 @@ PROVISORIO	11.105	Faz. Cristo							user : solinfnet.jcgrossi.fz_belavista.f_100
             3.5     Faz. Boa Esperança 		 			user : solinfnet.jf_citrus.fz_boa_esperanca
             4.5     Faz. Santa Angela 		 			user : solinfnet.jf_citrus.fz_santa_angela
             5.5     Faz. São Jerônimo 		 			user : solinfnet.jf_citrus.fz_sao_jeronimo
+			6.5		Fazenda Santa Ana					user : solinfnet.jf_citrus.fz_fazenda_santa_ana
 
 	215.253.0.0/24 LDC BACURI
 			1.105  POSTE X01 GPRS						user : solinfnet.ldc.fz_bacuri_f48000

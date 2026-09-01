@@ -101,6 +101,14 @@ Rotas IPs VPNs Solinftec
 			1.5 	 São Manoel
 			 .105	  São Manoel Móvel							user : solinfnet.s_manoel.usi_s_manoel.f_989
              .115	  São Manoel Móvel Starlink					user : solinfnet.s_manoel.usi_s_manoel.f_996
+             .125	  São Manoel Móvel Starlink	01				user : solinfnet.s_manoel.usi_s_manoel.f_1100
+             .135	  São Manoel Móvel Starlink	02				user : solinfnet.s_manoel.usi_s_manoel.f_1101
+             .145	  São Manoel Móvel Starlink	03				user : solinfnet.s_manoel.usi_s_manoel.f_1102
+             .155	  São Manoel Móvel Starlink	04				user : solinfnet.s_manoel.usi_s_manoel.f_1103
+             .165	  São Manoel Móvel Starlink	05				user : solinfnet.s_manoel.usi_s_manoel.f_1104
+             .175	  São Manoel Móvel Starlink	06				user : solinfnet.s_manoel.usi_s_manoel.f_1105
+             .185	  São Manoel Vivência 01					user : solinfnet.s_manoel.usi_s_manoel.f_1106
+             .195	  São Manoel Vivência 02					user : solinfnet.s_manoel.usi_s_manoel.f_1107
 
 	210.6.0.0/24	Bandeirantes
 			1.5 	 Agropecúária 3I (Maravilha do Araguaia)	user : solinfnet.bandeirantes.agropecuaria_3i
@@ -290,7 +298,7 @@ Rotas IPs VPNs Solinftec
 			3.215	 Movel Passatempo 421 					    user : solinfnet.cocal.fz_passatempo.f_421
 			3.225	 Movel Passatempo 422 					    user : solinfnet.cocal.fz_passatempo.f_422
             4.       Rio Brilhante
-            4.15	 Torre Faz. Proteção F 4011               	user : solinfnet.cocal.fz_rio_brilhante.Torre_Protecao 
+            4.15	 Torre Faz. Proteção F 4011/4111           	user : solinfnet.cocal.fz_rio_brilhante.Torre_Protecao 
             4.25	 Torre Assentamento São Judas-Escola F 4012 user : solinfnet.cocal.fz_rio_brilhante.saojudas_escola 
             4.35	 Torre Assentamento Triangulo  F4013  		user : solinfnet.cocal.fz_rio_brilhante.f_4013 
             4.45	 Torre Faz. Tita F 4014               		user : solinfnet.cocal.fz_rio_brilhante.faz.tita.F4014
@@ -492,7 +500,7 @@ Rotas IPs VPNs Solinftec
 			1.185 	 HUB 108 Móvel 					user : solinfnet.ussugar.f_108
 			1.195 	 HUB 109 Móvel 					user : solinfnet.ussugar.f_109
 
-	210.32.0.0/24 	Goa 
+	210.32.0.0/24 	Goa (GIASA)
            1.105 	Gateway Balança F9000			user : solinfnet.goa.f_9000
            1.115 	Gateway Movel F9002			    user : solinfnet.goa.f_9002
            1.125 	Gateway Movel F9003 		    user : solinfnet.goa.f_9003 	
@@ -845,6 +853,8 @@ Rotas IPs VPNs Solinftec
 			1.235    Concentrador 30636 			user : solinfnet.cofco.usi_matriz.f_30636
 			1.225    Concentrador 10006				user : solinfnet.cofco.usi_matriz.f_10006
 			1.215    Concentrador 1003  			user : solinfnet.cofco.usi_matriz.f_1003
+			1.205    Concentrador 2000  			user : solinfnet.cofco.usi_matriz.f_2000
+			1.195    Concentrador 2001  			user : solinfnet.cofco.usi_matriz.f_2001
 
 	210.56.0.0/24 Itamarati (UISA)
 			1.165 	 Concentrador Bandeirantes II 	user : solinfnet.itamarati.f_106
