@@ -136,6 +136,14 @@ guardar contrasenas, tokens, llaves ni datos sensibles.
 - No usar conteos o texto libre de `grep` para detectar Relay: los banners SSH
   pueden contaminar la salida. Usar marcadores explicitos como
   `RELAY_PRESENT` y `RELAY_ABSENT`.
+- En la web de SolinfNet los indices de servicios se muestran empezando en 1.
+  En `SolinfNet.conf` el bloque Relay puede quedar como `Index = 1` y aun asi
+  verse como `2` en pantalla; por eso las antenas muestran `Index of the LPWAN
+  Relay = 2` mientras el archivo guarda `RelayIndex = 1`.
+- Despues de insertar Relay, revalidar varias veces leyendo
+  `SolinfNet.conf`. Si el bloque `Hardware = Relay` aparece, no registrar
+  `RELAY_CONFIGURATION_FAILED` aunque una verificacion previa haya sido
+  ambigua.
 - Los chequeos LPWAN deben distinguir `LPWAN_ABSENT` de una falla SSH. Ante un
   error de comunicacion, reintentar y registrar Relay como pendiente; nunca
   presentarlo como si el gateway no tuviera antenas. Tras insertar Relay,

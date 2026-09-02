@@ -527,6 +527,21 @@ def extract_conf_data(ip: str):
         print(f"Error extrayendo conf de {ip}: {e}")
         return {}
 
+def relay_present_in_conf(ip: str, attempts: int = 3, wait: float = 2.0) -> bool | None:
+    """Confirma presencia de Relay con marcadores estables; None indica lectura ambigua."""
+    cmd_relay = "grep -q 'Hardware = Relay' /home/solinfnet/SolinfNet.conf && echo RELAY_PRESENT || echo RELAY_ABSENT"
+    for attempt in range(attempts):
+        res_relay = run_ssh_command(ip, cmd_relay, timeout=15)
+        if res_relay.get("success"):
+            relay_output = res_relay.get("output", "")
+            if "RELAY_PRESENT" in relay_output:
+                return True
+            if "RELAY_ABSENT" in relay_output:
+                return False
+        if attempt < attempts - 1:
+            time.sleep(wait)
+    return None
+
 def extract_os_version(ip: str):
     """Extrae la versión del sistema operativo"""
     try:
@@ -659,20 +674,12 @@ def configurar_relay_lpwan(ip: str) -> dict:
         print(f"[{ip}] ✅ Tiene antenas LPWAN (RadioLocal)")
         
         # 2. Verificar si ya tiene Relay configurado sin confundirse con banners SSH.
-        cmd_relay = "grep -q 'Hardware = Relay' /home/solinfnet/SolinfNet.conf && echo RELAY_PRESENT || echo RELAY_ABSENT"
-        relay_output = ""
-        for attempt in range(3):
-            res_relay = run_ssh_command(ip, cmd_relay, timeout=10)
-            relay_output = res_relay.get("output", "") if res_relay.get("success") else ""
-            if res_relay.get("success") and ("RELAY_PRESENT" in relay_output or "RELAY_ABSENT" in relay_output):
-                break
-            if attempt < 2:
-                time.sleep(3)
-        else:
+        relay_state = relay_present_in_conf(ip, attempts=3, wait=3)
+        if relay_state is None:
             return {"configurado": False, "error": "No se pudo verificar Relay existente por SSH"}
-        print(f"[{ip}] Verificando Relay existente: '{relay_output}'")
+        print(f"[{ip}] Verificando Relay existente: {relay_state}")
         
-        if "RELAY_PRESENT" in relay_output:
+        if relay_state:
             return {"configurado": False, "mensaje": "Relay ya configurado"}
         
         print(f"[{ip}] ✅ No tiene Relay - procediendo a configurarlo")
@@ -832,14 +839,12 @@ End=
         res_insert = run_ssh_command(ip, cmd_insert, timeout=15)
         
         if res_insert["success"] and "INSERTADO" in res_insert["output"]:
-            # Verificar que realmente se insertó
-            verify_cmd = "grep -q 'Hardware = Relay' /home/solinfnet/SolinfNet.conf && echo RELAY_VERIFIED || echo RELAY_VERIFY_FAILED"
-            verify_res = run_ssh_command(ip, verify_cmd, timeout=10)
-            if verify_res["success"]:
-                verify_output = verify_res.get("output", "")
-                print(f"[{ip}] Verificacion Relay: {verify_output.strip()}")
-                if "RELAY_VERIFIED" in verify_output:
-                    return {"configurado": True, "mensaje": f"RELAY LPWAN configurado (Host={host}, Grupo={group})"}
+            # Verificar que realmente se insertó. Algunos gateways tardan unos
+            # segundos en devolver una lectura limpia despues del sed.
+            relay_state = relay_present_in_conf(ip, attempts=5, wait=2)
+            print(f"[{ip}] Verificacion Relay tras insercion: {relay_state}")
+            if relay_state is True:
+                return {"configurado": True, "mensaje": f"RELAY LPWAN configurado (Host={host}, Grupo={group})"}
             
             return {"configurado": False, "error": "El bloque no se insertó correctamente"}
         else:
@@ -893,6 +898,12 @@ def configure_gateway(self, ip: str):
     # 4. Configurar RELAY LPWAN si es necesario
     update_progress(4, "Verificando configuración LPWAN...", 60)
     resultado_lpwan = configurar_relay_lpwan(ip)
+    if resultado_lpwan.get("error") and relay_present_in_conf(ip, attempts=3, wait=2) is True:
+        resultado_lpwan = {
+            "configurado": True,
+            "mensaje": "Relay confirmado tras revalidación",
+            "revalidated": True,
+        }
     
     # 5. Determinar si hubo cambios
     changes = []
@@ -1204,6 +1215,15 @@ CRON
     update_progress(9, "Verificando configuración LPWAN...", 80)
     resultado_lpwan = configurar_relay_lpwan(ip)
     lpwan_error = resultado_lpwan.get("error")
+    relay_revalidated = False
+    if lpwan_error and relay_present_in_conf(ip, attempts=3, wait=2) is True:
+        relay_revalidated = True
+        lpwan_error = None
+        resultado_lpwan = {
+            "configurado": True,
+            "mensaje": "Relay confirmado tras revalidación",
+            "revalidated": True,
+        }
     
     # Si configuramos relay, reiniciar nuevamente
     if resultado_lpwan.get("configurado"):
@@ -1237,7 +1257,7 @@ CRON
         duration = int(time.time() - start_time)
         save_gateway_status(ip, post_reboot_version, "FROZEN_CARD", post_conf_data, os_data)
         history_message = "Cartao congelado"
-        if lpwan_error:
+        if lpwan_error and not post_conf_data.get("has_relay"):
             history_message += "; Relay LPWAN pendiente"
             save_diagnostic_event(ip, "RELAY_CONFIGURATION_FAILED", lpwan_error)
         save_update_history(ip, old_version, TARGET_VERSION, "FAILED", duration, history_message)
@@ -1283,11 +1303,13 @@ CRON
         automatizaciones = []
         if resultado_carpetas.get("corregido"):
             automatizaciones.append(f"Carpetas: {resultado_carpetas.get('carpeta')}")
-        if resultado_lpwan.get("configurado"):
+        if resultado_lpwan.get("configurado") or relay_revalidated:
             automatizaciones.append("Relay LPWAN")
         lpwan_warning = lpwan_error
-        if lpwan_warning:
+        if lpwan_warning and not conf_data.get("has_relay"):
             save_diagnostic_event(ip, "RELAY_CONFIGURATION_FAILED", lpwan_warning)
+        else:
+            lpwan_warning = None
         
         msg_extra = f" | 🔧 {', '.join(automatizaciones)}" if automatizaciones else ""
         msg_warning = f" | ⚠️ Relay LPWAN no configurado: {lpwan_warning}" if lpwan_warning else ""

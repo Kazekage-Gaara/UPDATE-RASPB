@@ -461,3 +461,9 @@ Prioriza siempre:
   del servidor y consulta Inventario/LDC cada 30 segundos cuando la pestana
   esta visible. Solo vuelve a renderizar si detecta cambios reales y preserva
   filtro de cliente, busqueda, pagina y gateways seleccionados.
+- 2026-09-02: Se reviso `220.126.2.105` por alerta de Relay tras actualizar.
+  SolinfNet muestra el Relay como indice visual `2`, pero en
+  `SolinfNet.conf` corresponde a `Index = 1` y las antenas apuntan a
+  `RelayIndex = 1`. Se reforzo la validacion para reintentar la lectura del
+  bloque Relay y evitar registrar `RELAY_CONFIGURATION_FAILED` cuando el bloque
+  quedo insertado pero la primera verificacion SSH fue ambigua.
