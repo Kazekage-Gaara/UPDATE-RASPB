@@ -450,3 +450,14 @@ Prioriza siempre:
   de todas las tareas antes de habilitar controles y reemplaza su encabezado
   animado por un resumen final. Evita que `Escaneando N dispositivos` quede
   girando cuando todos los resultados ya indicaron que no hay accion necesaria.
+- 2026-09-02: El escaneo automatico excluye los gateways `LDC_RB`, ya que sus
+  IP internas solo se alcanzan mediante NAT temporal y no deben figurar como
+  offline. Los fallos de las pasadas `DAILY` y `RETRY` se conservan como
+  incidencias nocturnas sin sobrescribir el estado operativo del Inventario;
+  la revision de recuperacion de las 13:30 confirma los que continuan offline.
+  El panel muestra sin respuesta de madrugada, recuperados y pendientes, y su
+  detalle abre por defecto la lista completa del escaneo nocturno.
+- 2026-09-02: La interfaz mantiene un reloj vivo sincronizado contra la hora
+  del servidor y consulta Inventario/LDC cada 30 segundos cuando la pestana
+  esta visible. Solo vuelve a renderizar si detecta cambios reales y preserva
+  filtro de cliente, busqueda, pagina y gateways seleccionados.

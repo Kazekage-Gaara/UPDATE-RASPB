@@ -22,6 +22,11 @@ guardar contrasenas, tokens, llaves ni datos sensibles.
 - La referencia horaria comun es `America/Sao_Paulo`. Las fechas del backend
   deben incluir offset y la interfaz debe usar el formateador centralizado, no
   el reloj local de cada PC.
+- La interfaz sincroniza el desfase con `/api/time`, actualiza el reloj en
+  pantalla cada segundo y vuelve a sincronizarlo periodicamente. El inventario
+  se consulta cada 30 segundos solo mientras la pestana es visible; debe
+  preservar filtros, pagina y seleccion, y evitar re-renderizar si la foto de
+  datos no cambio.
 
 ## Inventario y Datos de Clientes
 
@@ -53,6 +58,11 @@ guardar contrasenas, tokens, llaves ni datos sensibles.
 - Al finalizar el escaneo nocturno, los resultados `OFFLINE`, `ERROR` y
   `TIMEOUT` se intentan una vez mas despues de una pausa configurable. Ese
   reintento se conserva como ejecucion separada y enlazada al escaneo original.
+- Los fallos de conectividad de las pasadas `DAILY` y `RETRY` representan una
+  fotografia de la madrugada y se guardan en el historial, pero no deben
+  cambiar por si solos el estado operativo del Inventario. La revision de las
+  13:30 confirma los que siguen inaccesibles; los que responden quedan como
+  recuperados y son evidencia util para diagnosticar energia/baterias.
 - A las 13:30 se ejecuta una revision de recuperacion: consulta solo los fallos
   que persistieron tras la ronda nocturna, sin actualizar ni reiniciar. El
   horario se configura con `SCHEDULED_RECHECK_HOUR` y
@@ -110,6 +120,9 @@ guardar contrasenas, tokens, llaves ni datos sensibles.
 - Los gateways gestionados por este modo deben llevar `access_mode=LDC_RB` y
   consultarse desde su tabla dedicada. No deben mezclarse con el inventario
   general ni sus filtros, para evitar acciones masivas con accesos temporales.
+- Los gateways `LDC_RB` tambien se excluyen de escaneos automaticos, reintentos
+  y revisiones de recuperacion: no existe un NAT fijo y un ping directo a su IP
+  interna produciria falsos offline.
 - El catalogo LDC de unidades y RouterBoards se mantiene localmente en
   `data/ldc_routerboards.json`, ignorado por Git. La IP interna del gateway se
   conoce al crear el NAT temporal y queda asociada a la unidad/RB despues de

@@ -1034,6 +1034,8 @@ body::after{
                 scheduled_scan_failed: "Error",
                 scheduled_scan_summary: "{completed}/{total} revisados · {updated} OK · {pending} pendientes · {offline} offline · {errors} errores",
                 scheduled_scan_changes: "{new_issues} problemas nuevos · {recovered} recuperados · {version_changes} cambios de versión · {relay_changes} cambios de Relay · {maintenance} en mantenimiento",
+                scheduled_scan_morning_pending: "Madrugada: {nightly_failures} sin respuesta · {recovered} recuperados · {remaining} pendientes de confirmación a las 13:30",
+                scheduled_scan_morning_rechecked: "Madrugada: {nightly_failures} sin respuesta · {recovered} recuperados · {remaining} continúan sin respuesta tras la revisión de las 13:30",
                 scheduled_scan_alerts: "{count} con fallos repetidos",
                 scheduled_scan_started: "Escaneo automático iniciado",
                 scheduled_scan_already_running: "Ya hay un escaneo automático en curso",
@@ -1305,6 +1307,8 @@ body::after{
                 scheduled_scan_failed: "Erro",
                 scheduled_scan_summary: "{completed}/{total} verificados · {updated} OK · {pending} pendentes · {offline} offline · {errors} erros",
                 scheduled_scan_changes: "{new_issues} problemas novos · {recovered} recuperados · {version_changes} mudanças de versão · {relay_changes} mudanças de Relay · {maintenance} em manutenção",
+                scheduled_scan_morning_pending: "Madrugada: {nightly_failures} sem resposta · {recovered} recuperados · {remaining} pendentes de confirmação às 13:30",
+                scheduled_scan_morning_rechecked: "Madrugada: {nightly_failures} sem resposta · {recovered} recuperados · {remaining} continuam sem resposta após a revisão das 13:30",
                 scheduled_scan_alerts: "{count} com falhas repetidas",
                 scheduled_scan_started: "Escaneamento automático iniciado",
                 scheduled_scan_already_running: "Já existe um escaneamento automático em andamento",
@@ -1791,8 +1795,11 @@ body::after{
         let itemsPerPage = 50;
         let filteredGatewaysList = [];
         let scheduledScanRecentRuns = [];
+        let scheduledScanMorningSummary = null;
         const APP_TIMEZONE = 'America/Sao_Paulo';
         let serverClockOffsetMs = 0;
+        let inventoryRefreshInFlight = false;
+        let inventorySnapshotSignature = '';
 
         function appLocale() {
             return currentLang === 'pt' ? 'pt-BR' : 'es-ES';
@@ -1838,9 +1845,28 @@ body::after{
             loadLdcGateways();
             loadScheduledScanStatus();
             setInterval(loadScheduledScanStatus, 30000);
+            startLiveRefresh();
             showToast(t('toast_welcome'), 'success');
             updateSyncTime();
         };
+
+        function startLiveRefresh() {
+            // El reloj usa siempre la referencia del servidor, no la hora local del navegador.
+            setInterval(updateSyncTime, 1000);
+            setInterval(syncServerClock, 5 * 60 * 1000);
+            setInterval(() => {
+                if (document.hidden || isUpdating) return;
+                loadGateways({ silent: true });
+                loadLdcGateways();
+            }, 30000);
+            document.addEventListener('visibilitychange', () => {
+                if (document.hidden || isUpdating) return;
+                syncServerClock();
+                loadGateways({ silent: true });
+                loadLdcGateways();
+                loadScheduledScanStatus();
+            });
+        }
 
         function clearMultipleOperationState(clearResults = true) {
             const multipleInput = document.getElementById('multipleIpsInput');
@@ -1943,6 +1969,7 @@ body::after{
                 if (!response.ok) return;
                 const data = await response.json();
                 scheduledScanRecentRuns = data.recent_runs || [];
+                scheduledScanMorningSummary = data.morning_summary || null;
                 const next = document.getElementById('scheduledScanNext');
                 const last = document.getElementById('scheduledScanLast');
                 const result = document.getElementById('scheduledScanResult');
@@ -1969,8 +1996,15 @@ body::after{
                     if (run.details) result.title = run.details;
                 }
                 if (changes) {
-                    const summary = t('scheduled_scan_changes', run);
-                    changes.textContent = run.alerts ? `${summary} · ${t('scheduled_scan_alerts', { count: run.alerts })}` : summary;
+                    if (scheduledScanMorningSummary) {
+                        const key = scheduledScanMorningSummary.rechecked
+                            ? 'scheduled_scan_morning_rechecked'
+                            : 'scheduled_scan_morning_pending';
+                        changes.textContent = t(key, scheduledScanMorningSummary);
+                    } else {
+                        const summary = t('scheduled_scan_changes', run);
+                        changes.textContent = run.alerts ? `${summary} · ${t('scheduled_scan_alerts', { count: run.alerts })}` : summary;
+                    }
                 }
                 if (detailsButton) detailsButton.disabled = !run.id;
             } catch (error) {
@@ -2009,8 +2043,9 @@ body::after{
                     const statusResponse = await fetch('/api/scheduled-scan/status');
                     const statusData = await statusResponse.json();
                     scheduledScanRecentRuns = statusData.recent_runs || [];
+                    scheduledScanMorningSummary = statusData.morning_summary || null;
                 }
-                const selectedRunId = runId || scheduledScanRecentRuns[0]?.id;
+                const selectedRunId = runId || scheduledScanMorningSummary?.daily_run_id || scheduledScanRecentRuns[0]?.id;
                 if (!selectedRunId) return;
                 const response = await fetch(`/api/scheduled-scan/${selectedRunId}/details`);
                 if (!response.ok) throw new Error('No se pudo cargar el detalle del escaneo');
@@ -3191,26 +3226,38 @@ ${(g.os_codename === 'jessie' || g.os_codename === 'stretch') ? `<button onclick
 
         function populateClientFilter(gateways) {
             const select = document.getElementById('filterCliente');
+            const selectedValue = select.value;
             const clientes = [...new Set(gateways.map(g => g.cliente).filter(c => c))].sort();
             select.innerHTML = `<option value="">${esc(t('opt_all_clients'))}</option>`;
             clientes.forEach(c => {
                 select.innerHTML += `<option value="${esc(c)}">${esc(c)}</option>`;
             });
+            select.value = clientes.includes(selectedValue) ? selectedValue : '';
         }
 
-        async function loadGateways() {
+        function gatewaySnapshotSignature(gateways) {
+            return gateways.map(gateway => JSON.stringify(gateway)).sort().join('||');
+        }
+
+        async function loadGateways({ silent = false } = {}) {
+            if (inventoryRefreshInFlight) return;
+            inventoryRefreshInFlight = true;
             const btnRefresh = document.getElementById('btnRefresh');
             const refreshIcon = document.getElementById('refreshIcon');
             const refreshSpinner = document.getElementById('refreshSpinner');
             const refreshText = document.getElementById('refreshText');
 
-            if (btnRefresh) { btnRefresh.disabled = true; refreshIcon.classList.add('hidden'); refreshSpinner.classList.remove('hidden'); refreshText.textContent = t('btn_refresh') + '...'; }
+            if (!silent && btnRefresh) { btnRefresh.disabled = true; refreshIcon.classList.add('hidden'); refreshSpinner.classList.remove('hidden'); refreshText.textContent = t('btn_refresh') + '...'; }
 
             try {
                 const res = await fetch('/api/gateways?t=' + Date.now());
                 const gateways = await res.json();
+                const nextSnapshotSignature = gatewaySnapshotSignature(gateways);
+                const inventoryChanged = nextSnapshotSignature !== inventorySnapshotSignature;
+                if (silent && !inventoryChanged) return;
 
                 allGateways = gateways;
+                inventorySnapshotSignature = nextSnapshotSignature;
                 pruneSelectedGateways();
 
                 // Full and compact stats always use the same inventory snapshot.
@@ -3241,9 +3288,10 @@ ${(g.os_codename === 'jessie' || g.os_codename === 'stretch') ? `<button onclick
 
             } catch (err) {
                 console.error(err);
-                showToast(t('toast_load_error'), 'error');
+                if (!silent) showToast(t('toast_load_error'), 'error');
             } finally {
-                if (btnRefresh) { btnRefresh.disabled = false; refreshIcon.classList.remove('hidden'); refreshSpinner.classList.add('hidden'); refreshText.textContent = t('btn_refresh'); }
+                inventoryRefreshInFlight = false;
+                if (!silent && btnRefresh) { btnRefresh.disabled = false; refreshIcon.classList.remove('hidden'); refreshSpinner.classList.add('hidden'); refreshText.textContent = t('btn_refresh'); }
             }
         }
 

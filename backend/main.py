@@ -522,6 +522,68 @@ def is_scheduled_scan_failure(status: str | None) -> bool:
     return status in {"OFFLINE", "ERROR", "TIMEOUT"}
 
 
+def get_scheduled_morning_summary(db: Session) -> dict | None:
+    """Resume las incidencias de la madrugada sin confundirlas con el estado actual."""
+    today = app_now().replace(hour=0, minute=0, second=0, microsecond=0)
+    daily = db.query(ScheduledScanRun).filter(
+        ScheduledScanRun.mode == "DAILY",
+        ScheduledScanRun.started_at >= today,
+    ).order_by(ScheduledScanRun.started_at.desc()).first()
+    if not daily:
+        return None
+
+    retry = db.query(ScheduledScanRun).filter(
+        ScheduledScanRun.mode == "RETRY",
+        ScheduledScanRun.source_run_id == daily.id,
+    ).order_by(ScheduledScanRun.started_at.desc()).first()
+    source = retry or daily
+    recheck = db.query(ScheduledScanRun).filter(
+        ScheduledScanRun.mode == "RECHECK",
+        ScheduledScanRun.source_run_id == source.id,
+    ).order_by(ScheduledScanRun.started_at.desc()).first()
+
+    def result_statuses(run_id: int | None) -> dict[str, str]:
+        if not run_id:
+            return {}
+        rows = db.query(
+            ScheduledScanGatewayResult.gateway_ip,
+            ScheduledScanGatewayResult.status,
+            Gateway.access_mode,
+        ).outerjoin(
+            Gateway, Gateway.ip == ScheduledScanGatewayResult.gateway_ip,
+        ).filter(ScheduledScanGatewayResult.run_id == run_id).all()
+        return {
+            ip: status for ip, status, access_mode in rows
+            if ip and access_mode != "LDC_RB"
+        }
+
+    daily_statuses = result_statuses(daily.id)
+    retry_statuses = result_statuses(retry.id if retry else None)
+    recheck_statuses = result_statuses(recheck.id if recheck else None)
+    nightly_failures = {
+        ip for ip, status in daily_statuses.items()
+        if is_scheduled_scan_failure(status)
+    }
+    recovered = 0
+    remaining = 0
+    for ip in nightly_failures:
+        latest_status = recheck_statuses.get(ip, retry_statuses.get(ip, daily_statuses[ip]))
+        if is_scheduled_scan_failure(latest_status):
+            remaining += 1
+        else:
+            recovered += 1
+
+    return {
+        "daily_run_id": daily.id,
+        "retry_run_id": retry.id if retry else None,
+        "recheck_run_id": recheck.id if recheck else None,
+        "nightly_failures": len(nightly_failures),
+        "recovered": recovered,
+        "remaining": remaining,
+        "rechecked": bool(recheck),
+    }
+
+
 def update_scheduled_scan_run(run_id: int, **values):
     db = SessionLocal()
     try:
@@ -655,14 +717,16 @@ def run_scheduled_inventory_scan(mode: str = "DAILY", target_ips: list[str] | No
     db = SessionLocal()
     try:
         gateway_rows = db.query(
-            Gateway.ip, Gateway.maintenance_enabled, Gateway.maintenance_reason, Gateway.status
+            Gateway.ip, Gateway.maintenance_enabled, Gateway.maintenance_reason,
+            Gateway.status, Gateway.access_mode,
         ).order_by(Gateway.ip).all()
-        available_ips = {ip for ip, _, _, _ in gateway_rows if ip}
-        ips = [ip for ip, _, _, _ in gateway_rows if ip] if target_ips is None else [ip for ip in target_ips if ip in available_ips]
+        eligible_rows = [row for row in gateway_rows if row[4] != "LDC_RB"]
+        available_ips = {ip for ip, _, _, _, _ in eligible_rows if ip}
+        ips = [ip for ip, _, _, _, _ in eligible_rows if ip] if target_ips is None else [ip for ip in target_ips if ip in available_ips]
         maintenance_by_ip = {
-            ip: reason for ip, enabled, reason, _ in gateway_rows if enabled and ip
+            ip: reason for ip, enabled, reason, _, _ in eligible_rows if enabled and ip
         }
-        frozen_ips = {ip for ip, _, _, status in gateway_rows if status == "FROZEN_CARD" and ip}
+        frozen_ips = {ip for ip, _, _, status, _ in eligible_rows if status == "FROZEN_CARD" and ip}
         run = ScheduledScanRun(mode=mode, status="RUNNING", total=len(ips), started_at=app_now(), source_run_id=source_run_id)
         db.add(run)
         db.commit()
@@ -715,7 +779,10 @@ def run_scheduled_inventory_scan(mode: str = "DAILY", target_ips: list[str] | No
                 update_scheduled_scan_run(run_id, **counters)
                 continue
 
-            tasks = {scan_and_check_version.delay(ip): ip for ip in batch}
+            # Durante la madrugada el resultado queda en el historial. Solo la
+            # revision de recuperacion confirma OFFLINE/ERROR para Inventario.
+            persist_failures = mode not in {"DAILY", "RETRY"}
+            tasks = {scan_and_check_version.delay(ip, persist_failures): ip for ip in batch}
             task_started_at = {task: time.monotonic() for task in tasks}
             waiting = set(tasks)
             deadline = time.monotonic() + timeout_seconds
@@ -965,6 +1032,7 @@ async def get_scheduled_scan_status(db: Session = Depends(get_db), _auth: bool =
         "next_recheck": serialize_datetime(next_scheduled_recheck_at()),
         "last_run": serialize_scheduled_scan_run(last_run) if last_run else None,
         "recent_runs": [serialize_scheduled_scan_run(run) for run in recent_runs],
+        "morning_summary": get_scheduled_morning_summary(db),
     }
 
 
