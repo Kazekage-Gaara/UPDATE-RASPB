@@ -77,6 +77,27 @@
 
         /* Header gradient */
         .gradient-header { background: linear-gradient(135deg, var(--header-from) 0%, var(--header-to) 100%); }
+        .header-actions { display: flex; align-items: center; gap: 0.75rem; flex-wrap: wrap; justify-content: flex-end; }
+        .header-clock {
+            display: flex;
+            align-items: center;
+            gap: 0.65rem;
+            min-width: 12rem;
+            padding: 0.45rem 0.75rem;
+            border: 1px solid rgba(255, 255, 255, 0.18);
+            border-radius: 0.75rem;
+            background: rgba(3, 36, 30, 0.26);
+            box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.08);
+        }
+        .header-clock-icon { color: #86efac; flex: 0 0 auto; }
+        .header-clock-time { color: #ffffff; font-size: 1.05rem; font-weight: 750; line-height: 1.1; letter-spacing: 0.035em; font-variant-numeric: tabular-nums; }
+        .header-clock-date { margin-top: 0.12rem; color: rgba(255, 255, 255, 0.68); font-size: 0.67rem; font-weight: 600; line-height: 1.2; white-space: nowrap; }
+        .header-clock-zone { color: #a7f3d0; font-size: 0.58rem; font-weight: 800; letter-spacing: 0.12em; }
+        @media (max-width: 640px) {
+            .header-actions { width: 100%; justify-content: space-between; gap: 0.5rem; }
+            .header-clock { order: -1; min-width: 0; padding: 0.4rem 0.6rem; }
+            .header-clock-date { display: none; }
+        }
 
         /* Card system */
         .card { background: white; border-radius: 0.75rem; border: 1px solid #e2e8f0; box-shadow: var(--shadow-card); transition: transform var(--transition-base), box-shadow var(--transition-base); }
@@ -423,18 +444,12 @@ body::after{
                     </div>
                 </div>
 
-                <div class="flex items-center gap-3 flex-wrap">
+                <div class="header-actions">
                     <!-- Version indicator -->
                     <div class="hidden md:flex items-center gap-2 bg-white/10 px-3.5 py-1.5 rounded-lg glass text-sm">
                         <span class="w-2 h-2 bg-emerald-400 rounded-full pulse-dot"></span>
                         <span class="font-medium text-white/80"><span data-i18n="target_version">Versión objetivo</span>:
                             <strong id="targetVersion" class="text-white">6.5</strong></span>
-                    </div>
-
-                    <!-- Last sync -->
-                    <div class="hidden lg:flex items-center gap-1.5 text-xs text-white/50">
-                        <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
-                        <span id="lastSyncTime">--:--</span>
                     </div>
 
                     <!-- Language Toggle -->
@@ -462,6 +477,15 @@ body::after{
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20.354 15.354A9 9 0 018.646 3.646 9.003 9.003 0 0012 21a9.003 9.003 0 008.354-5.646z" />
                         </svg>
                     </button>
+
+                    <!-- Hora oficial del servidor -->
+                    <div class="header-clock" title="Hora de Brasil (America/Sao_Paulo)">
+                        <svg class="header-clock-icon w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
+                        <div>
+                            <div class="flex items-baseline gap-1.5"><span id="lastSyncTime" class="header-clock-time">--:--</span><span class="header-clock-zone">BRT</span></div>
+                            <div id="headerDate" class="header-clock-date">--</div>
+                        </div>
+                    </div>
                 </div>
             </div>
         </div>
@@ -624,7 +648,7 @@ body::after{
                     <input type="text" id="ipInput" data-i18n-placeholder="ip_placeholder"
                         placeholder="Ej: 220.30.22.105 (Ctrl+Enter para actualizar)"
                         class="flex-1 min-w-[200px] bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-600 rounded-lg px-4 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-brand-500 focus:border-brand-500 font-mono transition"
-                        onkeypress="handleKeyPress(event)">
+                        onkeydown="handleUpdateShortcut(event)">
                     <button onclick="scanIP()" id="btnScan"
                         class="bg-blue-600 hover:bg-blue-700 text-white px-5 py-2.5 rounded-lg font-medium text-sm transition flex items-center gap-2 disabled:opacity-50 disabled:cursor-not-allowed shadow-sm">
                         <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/></svg>
@@ -1910,6 +1934,10 @@ body::after{
             if (el) {
                 el.textContent = formatAppDateTime(appNow(), { hour: '2-digit', minute: '2-digit' });
             }
+            const dateEl = document.getElementById('headerDate');
+            if (dateEl) {
+                dateEl.textContent = formatAppDateTime(appNow(), { weekday: 'short', day: '2-digit', month: 'short', year: 'numeric' });
+            }
         }
 
         function scheduledScanStatusLabel(status, running) {
@@ -2085,8 +2113,8 @@ body::after{
         window.closeScheduledScanDetails = closeScheduledScanDetails;
 
         // ============ KEYBOARD SHORTCUTS ============
-        function handleKeyPress(event) {
-            if (event.ctrlKey && event.key === 'Enter') {
+        function handleUpdateShortcut(event) {
+            if (event.ctrlKey && event.key === 'Enter' && !event.repeat) {
                 event.preventDefault();
                 scanAndUpdateIP();
             }

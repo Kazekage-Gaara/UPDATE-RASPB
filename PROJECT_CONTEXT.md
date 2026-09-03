@@ -467,3 +467,11 @@ Prioriza siempre:
   `RelayIndex = 1`. Se reforzo la validacion para reintentar la lectura del
   bloque Relay y evitar registrar `RELAY_CONFIGURATION_FAILED` cuando el bloque
   quedo insertado pero la primera verificacion SSH fue ambigua.
+- 2026-09-03: Se renovó el reloj del encabezado: ahora se muestra en una
+  tarjeta propia alineada a la derecha, con hora, fecha localizada y referencia
+  BRT. Sigue sincronizado con el servidor en `America/Sao_Paulo`, se adapta a
+  movil y queda separado de los controles de idioma, presentación y tema.
+- 2026-09-03: Se corrigió el atajo de actualización individual `Ctrl+Enter`.
+  El campo de IP usaba el evento obsoleto `keypress`, que algunos navegadores
+  no emiten al pulsar una combinación con Control. Ahora usa `keydown`, evita
+  repeticiones si la tecla queda presionada y conserva la confirmación previa.
