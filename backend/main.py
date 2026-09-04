@@ -1612,6 +1612,60 @@ async def get_configure_status(task_id: str, _auth: bool = Depends(verify_api_ke
     else:
         return {"state": task.state}
 
+
+@app.post("/api/lpwan-firmware/{ip}")
+async def start_lpwan_firmware_update(request: Request, ip: str, _auth: bool = Depends(verify_api_key)):
+    """Actualiza manualmente firmware de radios LPWAN sin tocar SolinfNet.conf."""
+    ip = validate_ipv4(ip)
+    try:
+        body = await request.json()
+    except Exception:
+        body = {}
+    selected_ports = body.get("ports")
+    if selected_ports is not None:
+        if not isinstance(selected_ports, list):
+            raise HTTPException(400, "Los puertos LPWAN deben ser una lista")
+        selected_ports = [str(port).upper().replace("/DEV/TTYHUB_", "") for port in selected_ports]
+        if not selected_ports or any(port not in {"A", "B", "C", "D"} for port in selected_ports):
+            raise HTTPException(400, "Puerto LPWAN invalido")
+    from tasks import update_lpwan_firmware
+    task = update_lpwan_firmware.delay(ip, selected_ports)
+    return {"task_id": task.id, "ip": ip, "ports": selected_ports}
+
+
+@app.post("/api/lpwan-firmware/{ip}/confirm/{port}")
+async def confirm_lpwan_firmware_port(ip: str, port: str, _auth: bool = Depends(verify_api_key)):
+    """Registra la confirmacion manual de una antena escrita sin verificacion."""
+    ip = validate_ipv4(ip)
+    port = port.upper()
+    if port not in {"A", "B", "C", "D"}:
+        raise HTTPException(400, "Puerto LPWAN invalido")
+    from tasks import save_operation_history
+    save_operation_history(ip, "LPWAN FIRMWARE", f"Antena {port} confirmada manualmente con firmware 2.2", "SUCCESS")
+    return {"ip": ip, "port": port, "status": "SUCCESS"}
+
+
+@app.get("/api/lpwan-firmware/status/{task_id}")
+async def get_lpwan_firmware_status(task_id: str, _auth: bool = Depends(verify_api_key)):
+    """Estado de la actualizacion individual de firmware LPWAN."""
+    from tasks import update_lpwan_firmware
+    task = update_lpwan_firmware.AsyncResult(task_id)
+    if task.state == 'PENDING':
+        return {"state": task.state, "step": 0, "message": "En cola...", "percent": 0}
+    if task.state == 'PROGRESS':
+        return {
+            "state": task.state,
+            "step": task.info.get('step', 0),
+            "message": task.info.get('message', ''),
+            "percent": task.info.get('percent', 0),
+        }
+    if task.state == 'SUCCESS':
+        return {"state": task.state, "result": task.result, "step": 7, "percent": 100}
+    if task.state == 'FAILURE':
+        return {"state": task.state, "error": str(task.info), "step": 0, "percent": 0}
+    return {"state": task.state}
+
+
 @app.post("/api/install_mono/{ip}")
 async def start_install_mono(ip: str, _auth: bool = Depends(verify_api_key)):
     """Instalar Mono 6.x en gateway con Debian 8/9"""

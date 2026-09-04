@@ -475,3 +475,22 @@ Prioriza siempre:
   El campo de IP usaba el evento obsoleto `keypress`, que algunos navegadores
   no emiten al pulsar una combinación con Control. Ahora usa `keydown`, evita
   repeticiones si la tecla queda presionada y conserva la confirmación previa.
+- 2026-09-04: Se agrego la actualizacion manual de firmware LPWAN 2.2 desde
+  las acciones del Inventario. Detecta los puertos `ttyHUB_A` a `ttyHUB_D`
+  activos con `Hardware = RadioLocal`, consulta las versiones recientes
+  anunciadas en `LogSerial`, copia el `firmware.hex` local y ejecuta `avrdude`
+  por antena. Detiene SolinfNet sin editar `SolinfNet.conf`, registra el
+  resultado individual en el historial y lo restaura al final. Un failsafe
+  remoto inicia el servicio tras ocho minutos si el worker se interrumpe.
+  El firmware vive en `updates/firmware.hex`, montado solo de lectura en los
+  contenedores e ignorado por Git.
+- 2026-09-04: La primera prueba del firmware LPWAN detecto que los puertos
+  `ttyHUB` pertenecen a root: `avrdude` ejecutado como `solinfnet` devuelve
+  permiso denegado antes de escribir cualquier antena. La operacion ahora
+  valida `sudo` antes de detener el servicio y ejecuta exclusivamente
+  `avrdude` con privilegios, conservando el resto del flujo y el failsafe.
+- 2026-09-04: El firmware LPWAN diferencia ahora una escritura completada sin
+  verificacion (`WRITTEN_UNVERIFIED`) de un fallo real. La tarjeta muestra un
+  aviso con acciones por antena: el operador puede confirmar manualmente la
+  version 2.2, dejando trazabilidad en Historial, o reintentar solo esa letra
+  sin reflashear las demas antenas.

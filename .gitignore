@@ -68,3 +68,6 @@ data/updates/*.tmp
 data/cache/
 data/backups/
 data/ldc_routerboards.json
+
+# Firmware LPWAN entregado por el fabricante (se monta localmente, no se publica)
+updates/*.hex

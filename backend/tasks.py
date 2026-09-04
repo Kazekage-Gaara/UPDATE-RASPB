@@ -84,6 +84,77 @@ def read_solinfnet_version(ip: str, attempts: int = 3, wait: float = 2.0) -> str
         time.sleep(wait)
     return ""
 
+
+def read_lpwan_radio_versions(ip: str) -> list[str]:
+    """Lee las versiones anunciadas por los radios en los logs recientes.
+
+    Los logs son historicos, por lo que el resultado sirve como referencia de
+    inventario y no como validacion del flasheo. El codigo de salida de
+    avrdude es la comprobacion definitiva durante una actualizacion.
+    """
+    cmd = (
+        "for LOG_DIR in /home/solinfnet/Meteorologia/LogSerial "
+        "/home/solinfnet/Pluviometros/LogSerial /home/solinfnet/LogSerial; do "
+        "[ -d \"$LOG_DIR\" ] || continue; "
+        "find \"$LOG_DIR\" -type f -mtime -30 -printf '%T@:%p\\n' 2>/dev/null "
+        "| sort -rn | head -n 30 | cut -d: -f2-; "
+        "done | while IFS= read -r LOG_FILE; do "
+        "grep -hE '#Radio Rx [0-9]+(\\.[0-9]+)+' \"$LOG_FILE\" 2>/dev/null || true; "
+        "done | sed -n 's/.*#Radio Rx \\([0-9][0-9.]*\\).*/LPWAN_RADIO_VERSION:\\1/p' | sort -u"
+    )
+    res = run_ssh_command(ip, cmd, timeout=25)
+    if not res.get("success"):
+        return []
+    versions = []
+    for line in res.get("output", "").splitlines():
+        match = re.search(r"LPWAN_RADIO_VERSION:([0-9]+(?:\.[0-9]+)+)", line)
+        if match and match.group(1) not in versions:
+            versions.append(match.group(1))
+    return versions
+
+
+def get_active_lpwan_ports(ip: str) -> list[str]:
+    """Obtiene los ttyHUB activos declarados como RadioLocal en el conf."""
+    cmd = (
+        "awk '/^Index = / { hardware=\"\"; port=\"\"; active=\"\" } "
+        "/^Hardware = / { hardware=$3 } /^PortName = / { port=$3 } "
+        "/^Active = / { active=$3 } /^End=/ { "
+        "if (hardware == \"RadioLocal\" && active == \"1\" && "
+        "port ~ /^\\/dev\\/ttyHUB_[A-D]$/) print \"LPWAN_PORT:\" port }' "
+        "/home/solinfnet/SolinfNet.conf 2>/dev/null | sort -u"
+    )
+    res = run_ssh_command(ip, cmd, timeout=15)
+    if not res.get("success"):
+        return []
+    ports = []
+    for line in res.get("output", "").splitlines():
+        match = re.fullmatch(r"LPWAN_PORT:(/dev/ttyHUB_[A-D])", line.strip())
+        if match:
+            ports.append(match.group(1))
+    return ports
+
+
+def upload_lpwan_firmware(ip: str, local_path: str, remote_path: str) -> tuple[bool, str]:
+    """Copia el firmware al gateway sin reutilizar archivos de SolinfNet."""
+    access = get_active_gateway_access()
+    destination_ip = access["rb_ip"] if access else ip
+    scp_cmd = [
+        "sshpass", "-p", Config.RASP_PASSWORD, "scp",
+        "-C",
+        "-o", "ConnectTimeout=15",
+        "-o", "StrictHostKeyChecking=no",
+    ]
+    if access:
+        scp_cmd.extend(["-P", str(access["ssh_port"])])
+    scp_cmd.extend([local_path, f"{Config.SSH_USER}@{destination_ip}:{remote_path}"])
+    try:
+        result = subprocess.run(scp_cmd, capture_output=True, text=True, timeout=120)
+    except subprocess.TimeoutExpired:
+        return False, "Timeout enviando firmware"
+    if result.returncode != 0:
+        return False, (result.stderr or result.stdout or "Error SCP").strip()[-200:]
+    return True, ""
+
 def wait_for_ping(ip: str, timeout: int = 180, interval: int = 5) -> bool:
     """Espera un reboot real: primero debe caer el ping y luego volver."""
     start = time.time()
@@ -855,6 +926,229 @@ End=
         import traceback
         traceback.print_exc()
         return {"configurado": False, "error": str(e)}
+
+
+@app.task(bind=True, time_limit=900, soft_time_limit=840)
+def update_lpwan_firmware(self, ip: str, selected_ports: list[str] | None = None):
+    """Actualiza manualmente los radios LPWAN configurados en un gateway.
+
+    SolinfNet se detiene para liberar los ttyHUB, pero no se modifica su
+    configuracion. Un failsafe remoto vuelve a iniciar el servicio si el
+    worker se interrumpe antes de poder ejecutar la recuperacion normal.
+    """
+    start_time = time.time()
+    firmware_version = Config.LPWAN_FIRMWARE_VERSION or "2.2"
+    firmware_path = os.path.join(Config.UPDATES_DIR, Config.LPWAN_FIRMWARE_FILENAME)
+    firmware_tag = re.sub(r"[^0-9A-Za-z._-]", "_", firmware_version)
+    firmware_remote = f"/tmp/solinfnet_lpwan_{firmware_tag}.hex"
+    service_stopped = False
+    restart_service_cmd = ""
+    final_status = "FAILED"
+    final_message = "Operacion no iniciada"
+
+    def update_progress(step, message, percent):
+        self.update_state(state='PROGRESS', meta={
+            'step': step, 'message': message, 'percent': percent, 'ip': ip
+        })
+        print(f"[{ip}][LPWAN] {step}: {message} ({percent}%)")
+
+    def finish(status, message, port_results=None):
+        duration = int(time.time() - start_time)
+        save_operation_history(ip, "LPWAN FIRMWARE", message, status, duration)
+        return {
+            "ip": ip,
+            "status": status,
+            "msg": message,
+            "duration": duration,
+            "port_results": port_results or {},
+        }
+
+    update_progress(1, "Verificando conectividad...", 5)
+    if not ping_host(ip):
+        return finish("FAILED", "Gateway offline")
+
+    if not os.path.isfile(firmware_path):
+        return finish("FAILED", "Archivo firmware.hex no disponible en updates")
+
+    update_progress(2, "Leyendo radios LPWAN configurados...", 15)
+    ports = get_active_lpwan_ports(ip)
+    requested_letters = {
+        str(port).upper().replace("/DEV/TTYHUB_", "")
+        for port in (selected_ports or [])
+        if str(port).upper().replace("/DEV/TTYHUB_", "") in {"A", "B", "C", "D"}
+    }
+    if selected_ports is not None:
+        ports = [port for port in ports if port.rsplit("_", 1)[-1] in requested_letters]
+    if not ports:
+        return finish("SKIPPED", "No hay radios LPWAN activos configurados para esta operacion")
+
+    detected_versions = read_lpwan_radio_versions(ip)
+    versions_label = ", ".join(detected_versions) if detected_versions else "sin dato reciente"
+
+    preflight = run_ssh_command(
+        ip,
+        f"echo '{Config.RASP_PASSWORD}' | sudo -S -v && "
+        "test -x /usr/share/arduino/hardware/tools/avrdude && "
+        "test -r /usr/share/arduino/hardware/tools/avrdude.conf && "
+        "echo AVRDUDE_READY || echo AVRDUDE_MISSING",
+        timeout=15,
+    )
+    if not preflight.get("success") or "AVRDUDE_READY" not in preflight.get("output", ""):
+        return finish("FAILED", "avrdude no esta disponible en el gateway")
+
+    update_progress(3, f"Enviando firmware LPWAN {firmware_version}...", 30)
+    copied, copy_error = upload_lpwan_firmware(ip, firmware_path, firmware_remote)
+    if not copied:
+        return finish("FAILED", f"No se pudo enviar firmware: {copy_error}")
+
+    control_check = run_ssh_command(
+        ip,
+        "if systemctl list-unit-files 2>/dev/null | grep -q '^solinfnet.service'; then "
+        "echo SERVICE_SYSTEMD; "
+        "elif [ -x /etc/init.d/solinfnet ]; then echo SERVICE_INIT; "
+        "else echo SERVICE_UNSUPPORTED; fi",
+        timeout=15,
+    )
+    control_output = control_check.get("output", "") if control_check.get("success") else ""
+    if "SERVICE_SYSTEMD" in control_output:
+        stop_service_cmd = "systemctl stop solinfnet"
+        restart_service_cmd = "systemctl start solinfnet"
+    elif "SERVICE_INIT" in control_output:
+        stop_service_cmd = "/etc/init.d/solinfnet stop"
+        restart_service_cmd = "/etc/init.d/solinfnet start"
+    else:
+        run_ssh_command(ip, f"rm -f {firmware_remote}", timeout=10)
+        return finish("SKIPPED", "No se encontro un servicio seguro para liberar los puertos LPWAN")
+
+    # El failsafe es independiente de Celery: si el worker cae, el gateway no
+    # queda con SolinfNet detenido permanentemente.
+    update_progress(4, "Deteniendo SolinfNet y liberando puertos serie...", 42)
+    failsafe_cmd = f"""
+echo '{Config.RASP_PASSWORD}' | sudo -S sh -c '
+rm -f /tmp/lpwan_firmware_failsafe.pid
+nohup sh -c "sleep 480; {restart_service_cmd} >/dev/null 2>&1" </dev/null >/tmp/lpwan_firmware_failsafe.log 2>&1 &
+echo $! > /tmp/lpwan_firmware_failsafe.pid
+' && echo LPWAN_FAILSAFE_ARMED
+"""
+    failsafe = run_ssh_command(ip, failsafe_cmd, timeout=20)
+    if not failsafe.get("success") or "LPWAN_FAILSAFE_ARMED" not in failsafe.get("output", ""):
+        run_ssh_command(ip, f"rm -f {firmware_remote}", timeout=10)
+        return finish("FAILED", "No se pudo preparar la recuperacion segura del servicio")
+
+    stop_result = run_ssh_command(
+        ip,
+        f"echo '{Config.RASP_PASSWORD}' | sudo -S {stop_service_cmd} && echo LPWAN_SERVICE_STOPPED",
+        timeout=30,
+    )
+    if not stop_result.get("success") or "LPWAN_SERVICE_STOPPED" not in stop_result.get("output", ""):
+        run_ssh_command(
+            ip,
+            f"echo '{Config.RASP_PASSWORD}' | sudo -S sh -c '"
+            "[ -f /tmp/lpwan_firmware_failsafe.pid ] && "
+            "kill \"$(cat /tmp/lpwan_firmware_failsafe.pid)\" 2>/dev/null || true; "
+            f"rm -f /tmp/lpwan_firmware_failsafe.pid {firmware_remote}'",
+            timeout=20,
+        )
+        return finish("FAILED", "No se pudo detener SolinfNet para liberar los puertos")
+    service_stopped = True
+
+    try:
+        update_progress(5, "Actualizando radios LPWAN...", 55)
+        ports_shell = " ".join(ports)
+        flash_cmd = f"""
+AVRDUDE=/usr/share/arduino/hardware/tools/avrdude
+AVRCONF=/usr/share/arduino/hardware/tools/avrdude.conf
+FIRMWARE={firmware_remote}
+for PORT in {ports_shell}; do
+    if [ ! -e "$PORT" ]; then
+        echo "LPWAN_FLASH:$PORT:MISSING"
+        continue
+    fi
+    echo '{Config.RASP_PASSWORD}' | sudo -S timeout 75 "$AVRDUDE" -C"$AVRCONF" -patmega328p -carduino -P"$PORT" -b57600 -D -Uflash:w:"$FIRMWARE":i >/tmp/lpwan_flash_$(basename "$PORT").log 2>&1
+    RESULT=$?
+    if [ "$RESULT" -eq 0 ]; then
+        echo "LPWAN_FLASH:$PORT:OK"
+    elif grep -q 'bytes of flash written' /tmp/lpwan_flash_$(basename "$PORT").log 2>/dev/null; then
+        # La escritura termino, pero el radio dejo de responder durante la
+        # verificacion. Requiere confirmacion del operador, no es un fallo de escritura.
+        echo "LPWAN_FLASH:$PORT:WRITTEN_UNVERIFIED"
+    elif [ "$RESULT" -eq 124 ]; then
+        echo "LPWAN_FLASH:$PORT:TIMEOUT"
+    else
+        echo "LPWAN_FLASH:$PORT:FAILED"
+    fi
+done
+rm -f "$FIRMWARE"
+"""
+        flash_result = run_ssh_command(ip, flash_cmd, timeout=360)
+        flash_output = flash_result.get("output", "") if flash_result.get("success") else ""
+        flash_results = {}
+        for line in flash_output.splitlines():
+            match = re.fullmatch(
+                r"LPWAN_FLASH:(/dev/ttyHUB_[A-D]):(OK|WRITTEN_UNVERIFIED|MISSING|TIMEOUT|FAILED)",
+                line.strip(),
+            )
+            if match:
+                flash_results[match.group(1)] = match.group(2)
+
+        labels = []
+        failed_ports = []
+        unverified_ports = []
+        port_results = {}
+        for port in ports:
+            state = flash_results.get(port, "FAILED")
+            letter = port.rsplit("_", 1)[-1]
+            port_results[letter] = state
+            labels.append(f"{letter} {state}")
+            if state == "WRITTEN_UNVERIFIED":
+                unverified_ports.append(letter)
+            elif state != "OK":
+                failed_ports.append(port)
+        details = ", ".join(labels)
+
+        if not flash_result.get("success"):
+            final_status = "FAILED"
+            final_message = "Error de comunicacion durante el flasheo LPWAN"
+        elif failed_ports and len(failed_ports) == len(ports) and not unverified_ports:
+            final_status = "FAILED"
+            final_message = f"No se pudo actualizar ningun radio: {details}"
+        elif failed_ports or unverified_ports:
+            final_status = "PARTIAL"
+            if unverified_ports:
+                final_message = (
+                    f"Firmware LPWAN {firmware_version} aplicado parcialmente: {details}. "
+                    f"Confirmar manualmente: {', '.join(unverified_ports)}"
+                )
+            else:
+                final_message = f"Firmware LPWAN {firmware_version} aplicado parcialmente: {details}"
+        else:
+            final_status = "SUCCESS"
+            final_message = f"Firmware LPWAN {firmware_version} aplicado: {details}"
+    finally:
+        if service_stopped:
+            update_progress(6, "Restaurando servicio SolinfNet...", 88)
+            recovery_cmd = f"""
+echo '{Config.RASP_PASSWORD}' | sudo -S sh -c '
+if [ -f /tmp/lpwan_firmware_failsafe.pid ]; then
+    kill "$(cat /tmp/lpwan_firmware_failsafe.pid)" 2>/dev/null || true
+fi
+rm -f /tmp/lpwan_firmware_failsafe.pid {firmware_remote}
+{restart_service_cmd}
+' && echo LPWAN_SERVICE_RESTORED
+"""
+            recovery = run_ssh_command(ip, recovery_cmd, timeout=45)
+            if not recovery.get("success") or "LPWAN_SERVICE_RESTORED" not in recovery.get("output", ""):
+                final_status = "FAILED"
+                final_message = "Firmware procesado, pero no se pudo restaurar SolinfNet automaticamente"
+
+    update_progress(7, "Registrando resultado LPWAN...", 96)
+    time.sleep(5)
+    versions_after = read_lpwan_radio_versions(ip)
+    if versions_after:
+        final_message += f" | Logs: {', '.join(versions_after)}"
+    elif detected_versions:
+        final_message += f" | Logs previos: {versions_label}"
+    return finish(final_status, final_message, port_results if 'port_results' in locals() else {})
 
 
 @app.task(bind=True)

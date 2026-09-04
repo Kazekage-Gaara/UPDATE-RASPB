@@ -27,6 +27,12 @@ class Config:
     ]
 
     UPDATES_DIR = "/app/updates"
+    # Firmware de radios LPWAN. El archivo se conserva localmente en updates/
+    # y esta ignorado por Git porque es un binario del fabricante.
+    LPWAN_FIRMWARE_VERSION = os.getenv("LPWAN_FIRMWARE_VERSION", "2.2").strip()
+    LPWAN_FIRMWARE_FILENAME = os.path.basename(
+        os.getenv("LPWAN_FIRMWARE_FILENAME", "firmware.hex").strip()
+    )
     MAX_CONCURRENT_UPDATES = 5
     MAX_CONCURRENT_SCANS = 10
     SSH_TIMEOUT = 20
