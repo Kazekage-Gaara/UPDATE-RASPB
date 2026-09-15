@@ -1135,12 +1135,18 @@ Rotas IPs VPNs Solinftec
 
     220.212.0.0/24  Juparanã
             1.5	    Faz. Jau						    user : solinfnet.juparana.faz_jau
+            2.5	    Faz. Morro Alto	F2001			    user : solinfnet.juparana.faz_morro_alto
+            3.5	    Faz. Morro Alto	F2002			    user : solinfnet.juparana.faz_morro_alto_f2002
+            4.5     Faz. Morro Alto	F2004				user : solinfnet.juparana.faz_morro_alto_f2004
+			5.5		Faz. Morro Alto F2005				user : solinfnet.juparana.faz_morro_alto_f2005
+			6.5		Faz. Morro Alto F2006				user : solinfnet.juparana.faz_morro_alto_f2006
 
 	220.213.0.0/24  Grupo Webler			
 			1.15	Concentrador Móvel f9000		   user : solinfnet.webler_movel.f_9000
 			1.25	Concentrador Móvel f9001		   user : solinfnet.webler_movel.f_9001	
 			1.35	Concentrador Móvel f9002		   user : solinfnet.webler_movel.f_9002	
-			1.45    Concentrador Mòvel f9003		   user : solinfnet.webler_movel.f_9003	
+			1.45    Concentrador Mòvel f9003		   user : solinfnet.webler_movel.f_9003
+			1.55    Concentrador Mòvel f9003		   user : solinfnet.webler_movel.f_9004	
 
     220.214.0.0/24  Grupo Jaime Basso
             1.5 	Faz. Jaime Basso    				user : solinfnet.jaime_basso.fz_jaime_basso

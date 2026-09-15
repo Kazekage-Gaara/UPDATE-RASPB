@@ -273,6 +273,34 @@ Prioriza siempre:
 
 ## Registro de continuidad
 
+- 2026-09-15: Se corrigio la asociacion de clientes que enumeran varias
+  unidades/gateways dentro del mismo tercer octeto sin una RB `N.5`. El
+  importador conserva cada IP exacta (`N.105`, `N.115`, etc.) como unidad
+  independiente, elimina la unidad sintetica antigua y reasocia el inventario.
+  Si el TXT contiene una unidad base `N.5`, se mantiene la agrupacion tradicional
+  de todos sus gateways. El escaneo prioriza coincidencia exacta y usa la RB `.5`
+  como fallback. Validado en la BD activa: el gateway investigado quedo asociado
+  a `Vivencia 2`; seis pruebas automatizadas correctas y contenedores saludables.
+
+- 2026-09-10: Se ampliaron los scripts distribuidos al gateway `renomear.sh`
+  y `removekijonull.sh`: conservan el procesamiento de `TempDB` y ahora tambien
+  recorren `Meteorologia` de forma recursiva. Toleran carpetas ausentes y
+  nombres de archivo con espacios; los cambios se entregan en la proxima
+  actualizacion/reinstalacion de cada gateway.
+
+- 2026-09-10: Se corrigio el bloqueo inmediato por diagnostico pasivo de SD:
+  un marcador ausente tras reinicio natural ahora registra sospecha como
+  `PERSISTENCE_UNVERIFIED`, sin marcar `FROZEN_CARD`. Se diferencian errores
+  de lectura de ausencia real, se verifica la escritura y se conserva el token
+  existente para evitar invalidarlo en cada scan. La prueba controlada durante
+  actualizaciones no cambia. Los flujos individuales de actualizar/reinstalar
+  detienen todos sus indicadores animados al terminar, incluso por retorno
+  anticipado. Pruebas: `python3 -m unittest discover -s backend -p test_passive_persistence.py`.
+  Cuatro pruebas y compilacion Python correctas; app/worker reconstruidos y
+  saludables, HTML servido verificado. Se respaldo la BD y se reclasifico solo
+  el caso investigado como no confirmado, conservando su evento. El scan real
+  termino PENDING con version anterior y Relay presente, sin reinicio ni update.
+
 - 2026-08-08: Se agrego accion individual `Reinstalar` en `backend/index.html` para repetir el proceso aunque el gateway ya este en version objetivo. El boton llama `/api/update` con `force: true` sin hacer escaneo previo, para casos donde la version dice 6.5 pero archivos/crontab/Relay quedaron incompletos por falta de espacio. `backend/main.py` acepta y pasa `force` a `update_gateway`; `backend/tasks.py` acepta el argumento y registra `REINSTALACION FORZADA` en logs. Se reconstruyeron `app` y `worker`; se verifico HTML servido, firma del worker y servicios saludables. No se ejecuto la reinstalacion real de `220.119.1.105` desde Codex.
 - 2026-08-08: Se diagnostico `220.119.1.105`: tenia 4 bloques `Hardware = RadioLocal` y 0 `Hardware = Relay`; la configuracion Relay habia fallado porque `/` estaba al 100% por miles de archivos `/mono_crash*` generados por Mono (~14029 archivos, ~5758 MB). `limpar_logs.sh` ya borraba esos archivos, pero durante update solo se copiaba/programaba para reboot y no se ejecutaba antes de manipular `SolinfNet.conf`. Se agrego `cleanup_runtime_artifacts()` en `backend/tasks.py` para borrar `/mono_crash*` y temporales conocidos antes de copiar/configurar, abortar Relay si sigue sin espacio, y mostrar advertencia si Relay falla en vez de ocultarlo. Se reconstruyo `worker` y se verifico saludable.
 - 2026-08-08: Se reforzo la limpieza del flujo RB /24 despues de actualizar desde inventario. La condicion anterior dependia de `lastDiscoveredGatewayStatus` y podia no activarse aunque la lista siguiera visible. Ahora `updateSelected()` usa `hasMultipleOperationState()` para detectar si hay RB, lista o resultados visibles y, al completar el monitoreo, limpia esos campos con `clearMultipleOperationState()`. Se reconstruyo `app` y se verifico HTML servido, servicios saludables y simulacion de la nueva condicion.

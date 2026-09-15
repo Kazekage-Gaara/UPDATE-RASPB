@@ -1,24 +1,24 @@
 #!/bin/bash
+# Remove bytes no imprimibles de archivos de datos sin recorrer rutas inexistentes.
+set -u
 
-function percorrer_diretorio() {
+BASE_DIR="${SOLINFNET_HOME:-/home/solinfnet}"
+
+percorrer_diretorio() {
     local diretorio="$1"
-    for arquivo in "$diretorio"/*; do
-        if [ -d "$arquivo" ]; then
-            percorrer_diretorio "$arquivo"
-        elif [ -r "$arquivo" ]; then
-            if ! grep -q '[[:print:]]' "$arquivo"; then
-                rm "$arquivo"
-                echo "Arquivo $arquivo excluído por conter apenas caracteres não imprimíveis."
-            else
-                sed -i 's/[^[:print:]]//g' "$arquivo"
-                echo "Arquivo $arquivo editado com sucesso."
-            fi
+    [ -d "$diretorio" ] || return 0
+
+    while IFS= read -r -d '' arquivo; do
+        if ! grep -q '[[:print:]]' "$arquivo"; then
+            rm -- "$arquivo"
+            echo "Arquivo $arquivo excluido por conter apenas caracteres nao imprimiveis."
+        elif sed -i 's/[^[:print:]]//g' "$arquivo"; then
+            echo "Arquivo $arquivo editado com sucesso."
         else
-            echo "Não é possível ler o arquivo $arquivo."
+            echo "Nao foi possivel editar o arquivo $arquivo." >&2
         fi
-    done
+    done < <(find "$diretorio" -type f -readable -print0)
 }
 
-diretorio="/home/solinfnet/TempDB"
-
-percorrer_diretorio "$diretorio"
+percorrer_diretorio "$BASE_DIR/TempDB"
+percorrer_diretorio "$BASE_DIR/Meteorologia"

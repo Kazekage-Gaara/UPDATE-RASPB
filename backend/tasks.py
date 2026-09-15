@@ -290,14 +290,21 @@ def read_passive_persistence_probe(ip: str) -> dict:
     """Lee el boot actual y el marcador sin alterar el gateway."""
     cmd = f"""
     BOOT_ID=$(cat /proc/sys/kernel/random/boot_id 2>/dev/null || true)
-    MARKER=$(cat {PASSIVE_PERSISTENCE_PROBE_PATH} 2>/dev/null || true)
+    if [ -f {PASSIVE_PERSISTENCE_PROBE_PATH} ]; then
+        MARKER=$(cat {PASSIVE_PERSISTENCE_PROBE_PATH} 2>/dev/null) || exit 1
+        [ -n "$MARKER" ] || exit 1
+    elif [ -d /home/solinfnet ] && [ -x /home/solinfnet ]; then
+        MARKER=MISSING
+    else
+        exit 1
+    fi
     printf 'PASSIVE_BOOT_ID:%s\\nPASSIVE_MARKER:%s\\n' "$BOOT_ID" "$MARKER"
     """
     res = run_ssh_command(ip, cmd, timeout=15)
     output = res.get("output") or ""
     boot_match = re.search(r"PASSIVE_BOOT_ID:([0-9a-f-]+)", output, re.IGNORECASE)
     marker_match = re.search(r"PASSIVE_MARKER:([^\r\n]*)", output)
-    if not res.get("success") or not boot_match:
+    if not res.get("success") or not boot_match or not marker_match:
         return {}
     return {
         "boot_id": boot_match.group(1).strip(),
@@ -309,7 +316,10 @@ def write_passive_persistence_probe(ip: str) -> str:
     token = f"scan-{uuid.uuid4().hex}"
     cmd = f"printf '%s\\n' '{token}' > {PASSIVE_PERSISTENCE_PROBE_PATH} && sync"
     res = run_ssh_command(ip, cmd, timeout=15)
-    return token if res.get("success") else ""
+    if not res.get("success"):
+        return ""
+    current = read_passive_persistence_probe(ip)
+    return token if current.get("marker") == token else ""
 
 def save_passive_persistence_state(ip: str, token: str = "", boot_id: str = "", verified: bool = False):
     if not token or not boot_id:
@@ -355,15 +365,17 @@ def run_passive_persistence_probe(ip: str) -> dict:
     previous = get_passive_persistence_state(ip)
     verified = False
     if previous.get("token") and previous.get("boot_id") and current["boot_id"] != previous["boot_id"]:
-        if current.get("marker") != previous["token"]:
+        if current.get("marker") == "MISSING":
             save_diagnostic_event(
                 ip,
-                "FROZEN_CARD",
-                "Marcador pasivo desaparecio despues de un reinicio detectado; posible cartao congelado",
+                "PERSISTENCE_UNVERIFIED",
+                "Marcador pasivo ausente tras reinicio; sospecha pendiente de prueba controlada",
             )
-            mark_frozen_from_passive_probe(ip)
-            return {"frozen": True}
-        verified = True
+        verified = current.get("marker") == previous["token"]
+
+    # Conservar el marcador evita invalidar pruebas por escaneos simultaneos.
+    if current.get("marker") == previous.get("token"):
+        return {"token": previous["token"], "boot_id": current["boot_id"], "verified": verified}
 
     token = write_passive_persistence_probe(ip)
     return {"token": token, "boot_id": current["boot_id"], "verified": verified}
@@ -386,13 +398,19 @@ def asociar_gateway_a_cliente(ip, db):
     return None
 
 def asociar_gateway_a_unidad(ip, cliente_id, db):
-    """Regla: misma subred del cliente + mismo TERCER octeto que la unidad (.5)."""
+    """Prioriza unidad por IP exacta y usa la RB .5 como compatibilidad."""
     if not cliente_id: return None
+    exacta = db.query(Unidad).filter(
+        Unidad.cliente_id == cliente_id,
+        Unidad.ip == ip,
+    ).first()
+    if exacta:
+        return exacta.id
     to = _oct3(ip)
     if not to: return None
     for u in db.query(Unidad).filter(Unidad.cliente_id == cliente_id).all():
         up = u.ip.split('.')
-        if len(up) >= 3 and up[2] == to:
+        if len(up) == 4 and up[2] == to and up[3] == '5':
             return u.id
     return None
 

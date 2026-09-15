@@ -2529,7 +2529,10 @@ body::after{
                 document.getElementById(tempId).innerHTML = `<div class="text-red-600 dark:text-red-400 text-sm">❌ ${esc(err.message)}</div>`;
                 showToast(t('toast_scan_error'), 'error');
                 clearOperationInputLater();
-            } finally { btnScan.disabled = false; btnUpdate.disabled = false; btnForce.disabled = false; isUpdating = false; }
+            } finally {
+                document.getElementById(tempId)?.querySelectorAll('.animate-spin').forEach(icon => icon.classList.remove('animate-spin'));
+                btnScan.disabled = false; btnUpdate.disabled = false; btnForce.disabled = false; isUpdating = false;
+            }
         }
 
         async function forceUpdateIP() {
@@ -2600,7 +2603,10 @@ body::after{
                 document.getElementById(tempId).innerHTML = `<div class="text-red-600 dark:text-red-400 text-sm">❌ ${esc(err.message)}</div>`;
                 showToast(t('toast_update_error'), 'error');
                 clearOperationInputLater();
-            } finally { btnScan.disabled = false; btnUpdate.disabled = false; btnForce.disabled = false; isUpdating = false; }
+            } finally {
+                document.getElementById(tempId)?.querySelectorAll('.animate-spin').forEach(icon => icon.classList.remove('animate-spin'));
+                btnScan.disabled = false; btnUpdate.disabled = false; btnForce.disabled = false; isUpdating = false;
+            }
         }
 
         function updateStep(containerId, stepId, message, color) {

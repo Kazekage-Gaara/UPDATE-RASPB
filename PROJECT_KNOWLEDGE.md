@@ -110,9 +110,13 @@ guardar contrasenas, tokens, llaves ni datos sensibles.
   puede responder por red y aparentar estar sana. Solo una reinstalacion forzada
   debe volver a comprobar la persistencia tras reemplazar la tarjeta.
 - La deteccion pasiva usa un marcador unico y `/proc/sys/kernel/random/boot_id`:
-  cada scan prepara la prueba para el siguiente reinicio natural. Solo si cambia
-  el boot id y desaparece el marcador anterior se confirma `FROZEN_CARD`; no se
-  deben reiniciar gateways durante un scan solo para esta comprobacion.
+  conserva el marcador mientras coincide y verifica su lectura al escribirlo.
+  Desde 2026-09-10, si cambia el boot id y falta el marcador registra
+  `PERSISTENCE_UNVERIFIED`, sin bloquear actualizaciones: la ausencia pasiva
+  no permite distinguir una SD congelada de un archivo eliminado externamente.
+  Lecturas incompletas o tokens distintos tampoco confirman congelamiento.
+  La actualizacion mantiene su prueba con reinicio controlado; no se reinician
+  gateways durante un scan solo para esta comprobacion.
 - Los accesos temporales por RouterBoard deben ser individuales y efimeros: la
   IP logica del gateway se conserva para inventario/historial, mientras SSH y
   SCP usan `IP_RB:puerto_NAT` solo dentro de la tarea. No guardar esos puertos
