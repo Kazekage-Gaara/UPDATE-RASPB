@@ -232,6 +232,15 @@ def get_frozen_gateway(ip: str):
     finally:
         db.close()
 
+def get_gateway_previous_status(ip: str) -> str | None:
+    """Conserva el ultimo estado conocido para explicar una falla de conexion."""
+    db = SessionLocal()
+    try:
+        gateway = db.query(Gateway).filter(Gateway.ip == ip).first()
+        return gateway.status if gateway else None
+    finally:
+        db.close()
+
 def prepare_persistence_probe(ip: str) -> str:
     token = f"{int(time.time())}_{os.getpid()}"
     cmd = f"printf '%s\n' '{token}' > /home/solinfnet/.update_persistence_probe && sync"
@@ -433,6 +442,7 @@ def scan_and_check_version(self, ip: str, persist_failures: bool = True):
             "diagnostic": "FROZEN_CARD",
         }
 
+    previous_status = get_gateway_previous_status(ip)
     if not ping_host(ip):
         unreachable_message = (
             "No responde al acceso SSH temporal de la RB"
@@ -441,7 +451,12 @@ def scan_and_check_version(self, ip: str, persist_failures: bool = True):
         )
         if persist_failures:
             save_gateway_status(ip, None, "OFFLINE")
-        return {"ip": ip, "status": "OFFLINE", "msg": unreachable_message}
+        return {
+            "ip": ip,
+            "status": "OFFLINE",
+            "msg": unreachable_message,
+            "previous_status": previous_status,
+        }
 
     # La sonda pasiva solo detecta un reboot que ya ocurrio; nunca reinicia ni
     # modifica la verificacion definitiva usada durante una actualizacion.
@@ -1337,6 +1352,7 @@ def update_gateway(self, ip: str, force: bool = False):
     
     # 1. Verificar conectividad
     update_progress(1, "Verificando conectividad...", 5)
+    previous_status = get_gateway_previous_status(ip)
     if not ping_host(ip):
         unreachable_message = (
             "No responde al acceso SSH temporal de la RB"
@@ -1345,7 +1361,12 @@ def update_gateway(self, ip: str, force: bool = False):
         )
         save_gateway_status(ip, None, "OFFLINE")
         save_update_history(ip, None, TARGET_VERSION, "FAILED", 0, unreachable_message)
-        return {"ip": ip, "status": "FAILED", "msg": unreachable_message}
+        return {
+            "ip": ip,
+            "status": "FAILED",
+            "msg": unreachable_message,
+            "previous_status": previous_status,
+        }
 
     # 2. Limpiar antes de leer la versión. Con la raiz llena, SolinfNet puede
     # no arrancar y la consulta de about.htm devolveria "Desconocida".

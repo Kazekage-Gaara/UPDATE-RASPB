@@ -273,6 +273,25 @@ Prioriza siempre:
 
 ## Registro de continuidad
 
+- 2026-09-16: Se diagnostico una actualizacion que finalizo con version
+  incorrecta: la transferencia de los archivos, reboot y configuracion Relay
+  terminaron correctamente, pero el ejecutable instalado y activo tiene la
+  misma huella que `updates/SolinfNet.exe` y `about.htm` informa la version
+  anterior. Para actualizar ese tipo de gateway se requiere reemplazar el
+  paquete local por el ejecutable correcto de la version objetivo. Tambien se
+  completo la traduccion PT-BR de la espera de reboot y de `Version incorrecta`.
+
+- 2026-09-15: Se mejoro el mensaje al intentar actualizar un gateway que en la
+  ultima revision estaba actualizado pero ya no responde. El scan y la tarea de
+  update conservan el estado previo; la interfaz explica que el inventario lo
+  tenia actualizado, que no hay conectividad actual y que la actualizacion no
+  se inicio. Ya no muestra "Sin accion necesaria" en rojo para ese caso.
+
+- 2026-09-15: Se corrigio la traduccion PT-BR del progreso de metadatos. Las
+  reglas anteriores reemplazaban solo el inicio y dejaban el sufijo original en
+  espanol; ahora traducen los mensajes completos de actualizacion y configuracion
+  del inventario, sin duplicar "gateway".
+
 - 2026-09-15: Se corrigio la asociacion de clientes que enumeran varias
   unidades/gateways dentro del mismo tercer octeto sin una RB `N.5`. El
   importador conserva cada IP exacta (`N.105`, `N.115`, etc.) como unidad

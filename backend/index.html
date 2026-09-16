@@ -1155,6 +1155,9 @@ body::after{
                 scan_multiple_completed: "✅ Escaneo terminado: {count} dispositivos revisados.",
                 toast_scan_error: "Error de red al escanear",
                 toast_already_updated: "{ip}: OK - sin acción necesaria",
+                update_offline_previously_updated: "El inventario lo registró actualizado en la última revisión, pero ahora no responde.",
+                step_connection_unavailable: "No fue posible contactar el gateway",
+                step_update_not_started: "Actualización no iniciada",
                 toast_update_success: "✅ {ip} actualizado correctamente",
                 toast_force_update_started: "Reinstalando {ip}...",
                 toast_update_error: "Error en la actualización",
@@ -1439,6 +1442,9 @@ body::after{
                 scan_multiple_completed: "✅ Varredura concluída: {count} dispositivos verificados.",
                 toast_scan_error: "Erro de rede ao escanear",
                 toast_already_updated: "{ip}: OK - sem ação necessária",
+                update_offline_previously_updated: "O inventário o registrou como atualizado na última verificação, mas ele não responde agora.",
+                step_connection_unavailable: "Não foi possível contatar o gateway",
+                step_update_not_started: "Atualização não iniciada",
                 toast_update_success: "✅ {ip} atualizado corretamente",
                 toast_force_update_started: "Reinstalando {ip}...",
                 toast_update_error: "Erro na atualização",
@@ -2474,10 +2480,11 @@ body::after{
                     return;
                 }
                 if (scanResult.result.status === 'OFFLINE') {
+                    const wasPreviouslyUpdated = scanResult.result.previous_status === 'UPDATED';
                     updateStep(tempId, 'step1', `❌ ${scanResult.result.msg}`, 'red');
-                    updateStep(tempId, 'step2', t('step_no_action'), 'red');
-                    updateStep(tempId, 'step3', t('step_no_action'), 'red');
-                    showToast(scanResult.result.msg || t('status_offline'), 'error');
+                    updateStep(tempId, 'step2', `ℹ️ ${wasPreviouslyUpdated ? t('update_offline_previously_updated') : t('step_connection_unavailable')}`, 'blue');
+                    updateStep(tempId, 'step3', `ℹ️ ${t('step_update_not_started')}`, 'blue');
+                    showToast(wasPreviouslyUpdated ? t('update_offline_previously_updated') : (scanResult.result.msg || t('status_offline')), 'warning');
                     await loadGateways();
                     setTimeout(() => { resultsDiv.innerHTML = ''; const input = document.getElementById('ipInput'); if (input) input.value = ''; }, 3000);
                     return;
@@ -3487,10 +3494,11 @@ ${(g.os_codename === 'jessie' || g.os_codename === 'stretch') ? `<button onclick
             const terminalResultStatuses = ['FAILED', 'BLOCKED', 'ERROR', 'OFFLINE', 'FROZEN_CARD'];
             const isTaskTerminal = (task) => task.state === 'SUCCESS' || task.state === 'FAILURE' || terminalResultStatuses.includes(task.result?.status) || task.result?.diagnostic === 'FROZEN_CARD';
             const isTaskFailed = (task) => task.state === 'FAILURE' || terminalResultStatuses.includes(task.result?.status) || task.result?.diagnostic === 'FROZEN_CARD';
-            const humanTaskMessage = (msg) => {
+            const humanTaskMessage = (msg, previousStatus) => {
                 if (!msg) return '';
                 if (/cartao congelado|cartão congelado|frozen_card/i.test(msg)) return currentLang === 'pt' ? 'Cartão congelado detectado' : 'Cartao congelado detectado';
-                return msg;
+                if (previousStatus === 'UPDATED' && /gateway offline|no responde a ping/i.test(msg)) return t('update_offline_previously_updated');
+                return tProgress(msg) || msg;
             };
 
             const renderTaskCard = (task, completed = false) => {
@@ -3499,7 +3507,7 @@ ${(g.os_codename === 'jessie' || g.os_codename === 'stretch') ? `<button onclick
                 const isSuccess = done && !isTaskFailed(task);
                 const icon = done ? (isSuccess ? '✅' : '❌') : '<svg class="w-4 h-4 animate-spin" fill="none" viewBox="0 0 24 24"><circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle><path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z"></path></svg>';
                 const rawMsg = done ? (task.result?.msg || task.error || 'OK') : (tProgress(task.message) || t('progress_waiting_start'));
-                const msg = humanTaskMessage(rawMsg);
+                const msg = humanTaskMessage(rawMsg, task.result?.previous_status);
                 return `<div class="bg-white/10 rounded-lg p-4">
                     <div class="flex justify-between items-center mb-2"><span class="font-mono font-bold text-sm">${esc(task.ip || '')}</span><span class="text-sm font-bold flex items-center gap-2">${icon}${percent}%</span></div>
                     <div class="w-full bg-white/20 rounded-full h-1.5"><div class="bg-white h-1.5 rounded-full progress-bar" style="width: ${percent}%"></div></div>
@@ -4685,8 +4693,10 @@ ${(g.os_codename === 'jessie' || g.os_codename === 'stretch') ? `<button onclick
             [/^Verificando configuración LPWAN/, "Verificando configuração LPWAN..."],
             [/^Reiniciando por cambios LPWAN/, "Reiniciando por alterações LPWAN..."],
             [/^Verificando estado del servicio/, "Verificando estado do serviço..."],
-            [/^Actualizando metadatos/, "Atualizando metadados do gateway..."],
+            [/^Actualizando metadatos del gateway(?:\.\.\.)?$/, "Atualizando dados do gateway..."],
+            [/^Actualizando metadatos en inventario(?:\.\.\.)?$/, "Atualizando dados no inventário..."],
             [/^Verificando nueva versión/, "Verificando nova versão..."],
+            [/^Versión incorrecta: (.+)$/, "Versão incorreta: $1"],
             [/^✅ Actualización completada/, "✅ Atualização concluída"],
             [/^Leyendo configuración actual/, "Lendo configuração atual..."],
             [/^Verificando carpetas Meteorologia/, "Verificando pastas Meteorologia/Pluviometros..."],
@@ -4704,7 +4714,8 @@ ${(g.os_codename === 'jessie' || g.os_codename === 'stretch') ? `<button onclick
             [/^⏱️ Timeout 3h\. La instalación puede seguir corriendo en el gateway\.$/, "⏱️ Tempo esgotado (3h). A instalação pode continuar em execução no gateway."],
             [/^✅ Mono (.+) instalado correctamente$/, "✅ Mono $1 instalado corretamente"],
             [/^(.+) no requiere Mono manual$/, "$1 não requer instalação manual do Mono"],
-            [/^Esperando a que el gateway vuelva/, "Aguardando o gateway retornar..."],
+            [/^Esperando a que el gateway vuelva \(puede tardar 1-3 min\)\.\.\.$/, "Aguardando o gateway retornar (pode levar de 1 a 3 min)..."],
+            [/^Esperando a que el gateway vuelva\.\.\.$/, "Aguardando o gateway retornar..."],
             [/^Verificando que SolinfNet responde/, "Verificando se o SolinfNet responde..."],
             [/^Verificando mecanismo de reinicio/, "Verificando mecanismo de reinício..."],
             [/^Sin servicio systemd/, "Sem serviço systemd → reiniciando (como v3)..."],
