@@ -541,3 +541,8 @@ Prioriza siempre:
   aviso con acciones por antena: el operador puede confirmar manualmente la
   version 2.2, dejando trazabilidad en Historial, o reintentar solo esa letra
   sin reflashear las demas antenas.
+- 2026-09-18: La actualizacion manual individual ya no queda bloqueada por un
+  estado historico `FROZEN_CARD` despues de sustituir la SD. El preescaneo
+  muestra el antecedente y continua; el reboot controlado de la actualizacion
+  vuelve a comprobar la persistencia y decide el estado final. El escaneo
+  simple y el automatico conservan su proteccion y no borran el diagnostico.

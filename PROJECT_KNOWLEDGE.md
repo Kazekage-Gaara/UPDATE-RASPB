@@ -107,8 +107,10 @@ guardar contrasenas, tokens, llaves ni datos sensibles.
   reintentos y revisiones de recuperacion. Solo una accion manual puede volver
   a evaluarlos y cambiar su estado operativo.
 - Los escaneos manuales normales tambien deben conservar `FROZEN_CARD`: la SD
-  puede responder por red y aparentar estar sana. Solo una reinstalacion forzada
-  debe volver a comprobar la persistencia tras reemplazar la tarjeta.
+  puede responder por red y aparentar estar sana. Sin embargo, una actualizacion
+  individual iniciada por el operador debe poder continuar tras ese preescaneo,
+  porque puede haberse sustituido la SD. La prueba con reboot controlado del
+  propio flujo confirma la persistencia y resuelve o mantiene el diagnostico.
 - La deteccion pasiva usa un marcador unico y `/proc/sys/kernel/random/boot_id`:
   conserva el marcador mientras coincide y verifica su lectura al escribirlo.
   Desde 2026-09-10, si cambia el boot id y falta el marcador registra

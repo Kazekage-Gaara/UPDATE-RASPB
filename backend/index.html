@@ -1155,6 +1155,7 @@ body::after{
                 scan_multiple_completed: "✅ Escaneo terminado: {count} dispositivos revisados.",
                 toast_scan_error: "Error de red al escanear",
                 toast_already_updated: "{ip}: OK - sin acción necesaria",
+                frozen_recheck_during_update: "Antecedente de tarjeta congelada; se comprobará la nueva SD durante la actualización.",
                 update_offline_previously_updated: "El inventario lo registró actualizado en la última revisión, pero ahora no responde.",
                 step_connection_unavailable: "No fue posible contactar el gateway",
                 step_update_not_started: "Actualización no iniciada",
@@ -1442,6 +1443,7 @@ body::after{
                 scan_multiple_completed: "✅ Varredura concluída: {count} dispositivos verificados.",
                 toast_scan_error: "Erro de rede ao escanear",
                 toast_already_updated: "{ip}: OK - sem ação necessária",
+                frozen_recheck_during_update: "Há registro anterior de cartão congelado; o novo SD será verificado durante a atualização.",
                 update_offline_previously_updated: "O inventário o registrou como atualizado na última verificação, mas ele não responde agora.",
                 step_connection_unavailable: "Não foi possível contatar o gateway",
                 step_update_not_started: "Atualização não iniciada",
@@ -2385,7 +2387,7 @@ body::after{
                     if (!scanResponse.ok) throw new Error(scanData.detail || t('toast_scan_error'));
                     const scanResult = await waitForTask(scanData.task_id);
                     const scanPayload = scanResult.result || {};
-                    if (scanResult.state !== 'SUCCESS' || ['UPDATED', 'OFFLINE', 'FROZEN_CARD'].includes(scanPayload.status) || scanPayload.diagnostic === 'FROZEN_CARD') {
+                    if (scanResult.state !== 'SUCCESS' || ['UPDATED', 'OFFLINE'].includes(scanPayload.status)) {
                         const ok = scanPayload.status === 'UPDATED';
                         updateLdcStep(taskId, 'step1', `${ok ? '✅' : '❌'} ${scanPayload.msg || t('step_error_scan')}`, ok ? 'green' : 'red');
                         updateLdcStep(taskId, 'step2', ok ? t('step_already_updated') : t('step_no_action'), ok ? 'green' : 'red');
@@ -2394,7 +2396,13 @@ body::after{
                         await loadLdcGateways();
                         return;
                     }
-                    updateLdcStep(taskId, 'step1', `✅ ${t('th_version')}: ${scanPayload.current_version || '?'}`, 'green');
+                    const frozenHistory = scanPayload.status === 'FROZEN_CARD' || scanPayload.diagnostic === 'FROZEN_CARD';
+                    updateLdcStep(
+                        taskId,
+                        'step1',
+                        frozenHistory ? `⚠️ ${t('frozen_recheck_during_update')}` : `✅ ${t('th_version')}: ${scanPayload.current_version || '?'}`,
+                        frozenHistory ? 'blue' : 'green'
+                    );
                 }
 
                 updateLdcStep(taskId, 'step2', t('step_updating'), 'blue');
@@ -2470,16 +2478,10 @@ body::after{
                     setTimeout(() => { resultsDiv.innerHTML = ''; const input = document.getElementById('ipInput'); if (input) input.value = ''; }, 3000);
                     return;
                 }
-                if (scanResult.result.status === 'FROZEN_CARD' || scanResult.result.diagnostic === 'FROZEN_CARD') {
-                    updateStep(tempId, 'step1', `❌ ${t('status_frozen')}`, 'red');
-                    updateStep(tempId, 'step2', t('step_no_action'), 'red');
-                    updateStep(tempId, 'step3', t('step_no_action'), 'red');
-                    showToast(t('status_frozen'), 'error');
-                    await loadGateways();
-                    clearOperationInputLater();
-                    return;
-                }
-                if (scanResult.result.status === 'OFFLINE') {
+                const frozenHistory = scanResult.result.status === 'FROZEN_CARD' || scanResult.result.diagnostic === 'FROZEN_CARD';
+                if (frozenHistory) {
+                    updateStep(tempId, 'step1', `⚠️ ${t('frozen_recheck_during_update')}`, 'blue');
+                } else if (scanResult.result.status === 'OFFLINE') {
                     const wasPreviouslyUpdated = scanResult.result.previous_status === 'UPDATED';
                     updateStep(tempId, 'step1', `❌ ${scanResult.result.msg}`, 'red');
                     updateStep(tempId, 'step2', `ℹ️ ${wasPreviouslyUpdated ? t('update_offline_previously_updated') : t('step_connection_unavailable')}`, 'blue');
@@ -2491,9 +2493,9 @@ body::after{
                 }
                 // Si el scan no pudo leer la versión (servicio reiniciándose / enlace lento), NO pintamos ✅ verde:
                 // avisamos en azul y seguimos, porque el update vuelve a leer la versión por su cuenta.
-                if (scanResult.result.status === 'ERROR') {
+                if (!frozenHistory && scanResult.result.status === 'ERROR') {
                     updateStep(tempId, 'step1', `⚠️ ${scanResult.result.msg} — se intentará actualizar de todos modos`, 'blue');
-                } else {
+                } else if (!frozenHistory) {
                     updateStep(tempId, 'step1', `✅ ${t('th_version')}: ${scanResult.result.current_version || '?'}`, 'green');
                 }
                 updateStep(tempId, 'step2', t('step_starting'), 'blue');
