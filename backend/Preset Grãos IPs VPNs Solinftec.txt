@@ -394,7 +394,7 @@ Rotas IPs VPNs Solinftec
 			2.165 	Roncador F 10006 					user : solinfnet.roncador.f_10006
 			2.175 	Roncador F 10008 					user : solinfnet.roncador.f_10008
 			2.185 	Roncador F 10009 					user : solinfnet.roncador.f_10009
-			2.245	Roncador F 10012					user : solinfnet.roncador.f10012
+			2.245	Roncador F 10012					user : solinfnet.roncador.f_10012
 
 	220.61.0.0/24	Santa Colomba
 			1.5		Cafés								user : solinfnet.stacolomba_fzcafes
@@ -417,6 +417,7 @@ Rotas IPs VPNs Solinftec
 			1.115		Frota 120						user: solinfnet.sementes_adriana.fz_atto_sementes.f_120
 			1.125		Frota 121						user: solinfnet.sementes_adriana.fz_atto_sementes.f_121
 			1.175		Frota 117						user: solinfnet.sementes_adriana.fz_atto_sementes.f_117
+			1.185		Frota 123						user: solinfnet.sementes_adriana.fz_atto_sementes.f_123
 
 	220.66.0.0/24	Sempre Sementes
 			1.5		Faz. Sempre Sementes
@@ -481,7 +482,7 @@ Rotas IPs VPNs Solinftec
 			 .125	Torre Modelo - 11002 													user : solinfnet.valedoverde.fz_modelo.f_11002
             7.5     Faz. Vale do Verde 220 Algodoeira                              			user : solinfnet.valedoverde.fz_algodoeira
 
-	220.80.0.0/24	Rodrigo Zuanazzi
+	220.80.0.0/24	Zuanazzi (Rodrigo Zuanazzi)
 			1.5		Faz. Brasão							user : solinfnet.zuanazzi.fz_brasao
 
 	220.81.0.0/24	Grupo Secco
@@ -703,7 +704,7 @@ Rotas IPs VPNs Solinftec
 			1.5		 Faz. Canel							user : solinfnet.lavoro.fz_canel
 
 	220.129.0.0/24	Talismã
-			1.5		Faz. talismã (tamarana)				user : solinfnet.talisma.fz_talisma
+			1.5		Faz. Talismã (Tamarana)				user : solinfnet.talisma.fz_talisma
 			2.5 	Faz. Rio Formoso	 				user : solinfnet.talisma.fz_rioformoso
 
 	220.130.0.0/24 	Fazenda Arauna
@@ -740,6 +741,14 @@ Rotas IPs VPNs Solinftec
 	220.136.0.0/24  Grupo Natter
 	        1.5      Faz. Vaca Branca		        	user : solinfnet.natter.fz_vacabranca
 	        2.5 	 Faz. Sta Terezinha					user : solinfnet.natter.fz_santa_terezinha
+	        			ANTIGO NOME 				NOVO NOME
+	                  11000 - SEDE 				| SEDE
+	                  11001 - TORRE 01 - 36m    | TORRE 01 - 36m
+	                  11002 - TORRE 04 - 26m    | TORRE 02 - 26m
+	                  11003 - TORRE X01 - 32m	| TORRE 03 - 32m
+	                  11004 - TORRE 02 			| TORRE 04
+	                  11005 - TORRE 03 			| TORRE 05
+	                  11006 - TORRE NOVA        | TORRE 06 NOVA
 	        3.5 	 Faz. Vó Maria 						user : solinfnet.natter.fz_vo_maria
 	        4.5 	 Faz. Boa Vista 					user : solinfnet.natter.fz_boa_vista
 			5.5 	 Faz. Colibri	 					user : solinfnet.natter.fz_colibri
@@ -800,6 +809,8 @@ Rotas IPs VPNs Solinftec
 
 	220.146.0.0/24 	Santa Matilde
 			1.5 	 Faz. Santa Matilde 				user : solinfnet.santa_matilde.fz_santa_matilde
+			2.5 	 Faz. OK 			 				user : solinfnet.santa_matilde.fz_ok
+            3.5 	 Faz. OK 			 				user : solinfnet.santa_matilde.fz_prisca
 
 	220.147.0.0/24 	Grupo CGS
 			1.5 	 Faz. Água Limpa 	 				user : solinfnet.grupo_cgs.fz_agua_limpa
@@ -1089,9 +1100,11 @@ Rotas IPs VPNs Solinftec
 					 .105 	Gateway 1001 (Barracão)		user : solinfnet.lucena_graos.f_1001
 					 .115 	Gateway 1000 				user : solinfnet.lucena_graos.f_1000
 					2.5 	Sede Lucena 				user : solinfnet.lucena_graos.Faz_sede_lucena
+					3.5 	Poste 4 					user : solinfnet.lucena_graos.faz_poste4
 
     220.203.0.0/24  Faz Ourives
             1.5		Faz. Barra do Corda				    user : solinfnet.ourives.faz_barra_do_corda
+            1.105	Faz. Barra do Corda				    user : solinfnet.ourives.faz_barra_do_corda_f1000 (temporal)
 
     220.204.0.0/24  Agrobrava
             1.5		Faz. Colorado - Silo Sede F10000    user : solinfnet.agrobrava.faz_colorado.f10000
@@ -1135,21 +1148,50 @@ Rotas IPs VPNs Solinftec
 
     220.212.0.0/24  Juparanã
             1.5	    Faz. Jau						    user : solinfnet.juparana.faz_jau
+            2.      Morro Alto
             2.5	    Faz. Morro Alto	F2001			    user : solinfnet.juparana.faz_morro_alto
             3.5	    Faz. Morro Alto	F2002			    user : solinfnet.juparana.faz_morro_alto_f2002
-            4.5     Faz. Morro Alto	F2004				user : solinfnet.juparana.faz_morro_alto_f2004
+            4.5     Faz. Morro Alto	F2004				user : solinfnet.juparana.faz_morro_alto_f2004 (Sem RB)
 			5.5		Faz. Morro Alto F2005				user : solinfnet.juparana.faz_morro_alto_f2005
-			6.5		Faz. Morro Alto F2006				user : solinfnet.juparana.faz_morro_alto_f2006
+			6.5		Faz. Morro Alto Esmagadora			user : solinfnet.juparana.faz_morro_alto_f2006
+            7.      Progresso
+            7.5     Faz. Progresso F3000			    user : solinfnet.juparana.faz_progresso_f3000
+            7.115   Faz. Progresso F3001				user : solinfnet.juparana.faz_progresso_f3001
+            7.110   Controladora
+            8.5     Faz. Progresso F3002				user : solinfnet.juparana.faz_progresso_f3002
+            9.105   Faz. Progresso F3003				user : solinfnet.juparana.faz_progresso_f3003
+            9.100   Controladora
+            10      Boa Sorte
+            10.5    Fazenda Boa Sorte F4000             user : solinfnet.juparana.faz_boa_sorte
+            10.205  Fazenda Boa Sorte F4004             user : solinfnet.juparana.faz_boa_sorte_f4004
+              .200  Controladora
+            10.215  Fazenda Boa Sorte F4005             user : solinfnet.juparana.faz_boa_sorte_f4005
+              .210  Controladora
+			11.5	Faz. Luiza 							user : solinfnet.juparana.faz_luiza
+            11.205   Fazenda Luiza F5001                user : solinfnet.juparana.faz_luiza_f5001
+              .200   Controladora
+            12.5    Fazenda Alvorada
+               105   POSTE X15 F6000                    user : solinfnet.juparana.faz_alvorada_f6000
+               100   Controladora
+               115   POSTE X14 F6001                    user : solinfnet.juparana.faz_alvorada_f6001
+              .110   Controladora
 
 	220.213.0.0/24  Grupo Webler			
-			1.15	Concentrador Móvel f9000		   user : solinfnet.webler_movel.f_9000
-			1.25	Concentrador Móvel f9001		   user : solinfnet.webler_movel.f_9001	
-			1.35	Concentrador Móvel f9002		   user : solinfnet.webler_movel.f_9002	
-			1.45    Concentrador Mòvel f9003		   user : solinfnet.webler_movel.f_9003
-			1.55    Concentrador Mòvel f9003		   user : solinfnet.webler_movel.f_9004	
+			1.15	Concentrador Móvel f9000		    user : solinfnet.webler_movel.f_9000
+			1.25	Concentrador Móvel f9001		    user : solinfnet.webler_movel.f_9001	
+			1.35	Concentrador Móvel f9002		    user : solinfnet.webler_movel.f_9002	
+			1.45    Concentrador Mòvel f9003		    user : solinfnet.webler_movel.f_9003
+			1.55    Concentrador Mòvel f9003		    user : solinfnet.webler_movel.f_9004	
 
     220.214.0.0/24  Grupo Jaime Basso
             1.5 	Faz. Jaime Basso    				user : solinfnet.jaime_basso.fz_jaime_basso
+
+    220.215.0.0/24  Serrana Agro
+            1.105 	Faz. Figueiropolis F 10000			user : solinfnet.serrana_agro.fz_figueiropolis_f10000
+
+
+
+
 
 
 	220.220.0.0/24  Jequitiba
@@ -1205,3 +1247,4 @@ Rotas IPs VPNs Solinftec
 		    1.5     CDA							
 			1.105   CDA Balanca 						user : solinfnet.agro_fava.fz_cda_bacanca
 			1.115	CDA Algodoeria						user : solinfnet.agro_fava.fz_cda_algodoeira
+			1.125	CDA Algodoeria 2					user : solinfnet.agro_fava.fz_cda_algodoeira.f_9002
