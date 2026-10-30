@@ -546,3 +546,15 @@ Prioriza siempre:
   muestra el antecedente y continua; el reboot controlado de la actualizacion
   vuelve a comprobar la persistencia y decide el estado final. El escaneo
   simple y el automatico conservan su proteccion y no borran el diagnostico.
+- 2026-10-30: Se recupero una interrupcion total de escaneos causada por Redis:
+  durante una falta temporal de espacio, no pudo escribir AOF y Celery perdio
+  el broker. Aunque el espacio se recupero, el contenedor worker antiguo no
+  podia recrear su configuracion de red y quedo detenido. Se recreo solo el
+  worker, sin borrar volumenes ni reiniciar app/Redis; Redis quedo persistiendo,
+  Celery respondio y proceso las 26 tareas pendientes. Vigilar espacio libre
+  del host y persistencia Redis si se repite.
+- 2026-10-30: El descubrimiento por RB /24 ya no declara un gateway offline
+  solo porque ICMP falle. Conserva ping como comprobacion rapida y, si no hay
+  respuesta, intenta un comando SSH corto antes de descartarlo. Se observo que
+  algunos gateways de la red `215.5.3.5/24` aceptaban SSH pese a no responder
+  ping, generando falsos negativos en la lista detectada.

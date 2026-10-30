@@ -38,6 +38,13 @@ def ping_host(ip: str) -> bool:
     return raw_ping_host(ip)
 
 
+def is_scan_reachable(ip: str) -> bool:
+    """Evita falsos offline cuando la red bloquea ICMP pero permite SSH."""
+    if ping_host(ip):
+        return True
+    return run_ssh_command(ip, "true", timeout=5).get("success", False)
+
+
 def with_gateway_access(func):
     """Aisla un acceso LDC temporal para que no afecte otras tareas Celery."""
     @wraps(func)
@@ -443,7 +450,7 @@ def scan_and_check_version(self, ip: str, persist_failures: bool = True):
         }
 
     previous_status = get_gateway_previous_status(ip)
-    if not ping_host(ip):
+    if not is_scan_reachable(ip):
         unreachable_message = (
             "No responde al acceso SSH temporal de la RB"
             if get_active_gateway_access()

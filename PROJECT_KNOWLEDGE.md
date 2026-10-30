@@ -69,6 +69,10 @@ guardar contrasenas, tokens, llaves ni datos sensibles.
   `SCHEDULED_RECHECK_MINUTE`.
 - Las metricas por lote se guardan en `scheduled_scan_batches`; permiten ajustar
   tamano de lote, pausas y horario usando duracion y errores reales.
+- En descubrimientos manuales por RB/subred, ICMP puede estar bloqueado aunque
+  SSH este disponible. El scan debe probar primero ping y, si falla, hacer una
+  comprobacion SSH corta antes de clasificar la IP como `OFFLINE`; asi no se
+  descartan gateways administrables por un falso negativo de ping.
 - Los gateways `OFFLINE` o `ERROR` pueden requerir una actualizacion manual,
   aunque su ultima version guardada sea la objetivo. Por eso sus checkboxes
   individuales se mantienen disponibles.
