@@ -355,7 +355,7 @@ Rotas IPs VPNs Solinftec
 			2.5		Faz. San José I 					user: solinfnet.bartira.fz_sanjose1
 			3.5		Faz. San José II					user: solinfnet.bartira.fz_sanjose2
 			4.5		Faz. San Antonio					user: solinfnet.bartira.fz_san_antonio
-            5.5		Faz. San Antonio F20001		 		user: solinfnet.bartira.fz_san_antonio.f20001 (é RB)
+            5.5		Faz. San Antonio F20001		 		user: solinfnet.bartira.fz_san_antonio.f_20001 (é RB)
 			
 	220.54.0.0/24	Bom Futuro	
 			1.5		Faz. Sta Terezinha
@@ -579,7 +579,7 @@ Rotas IPs VPNs Solinftec
 
 	220.103.0.0/24	Decio Gibbert
 			1.5 	Faz. Santa Luzia					user : solinfnet.decio_gibbert.fz_santa_luzia
-			2.5 	Faz. São Francisco					user : solinfnet.decio_gibbert.fz_sao_francisco (Desativada)
+			2.5 	Faz. São Francisco					user : solinfnet.decio_gibbert.fz_sao_francisco (Desativada, Atualmente está junto da Santa Luzia)
 			3.5 	Sítio Coqueiral						user : solinfnet.decio_gibbert.sitio_coqueiral
 
 	220.104.0.0/24	Maggioni *** ATENÇAO 
@@ -755,6 +755,8 @@ Rotas IPs VPNs Solinftec
 			6.5 	 Faz. Vô Zeca	 					user : solinfnet.natter.fz_vo_zeca
 			7.105    Concentrador móvel Vaca Branca		user : solinfnet.natter.fz_vacabranca.f_16000
 			8.5 	 Faz. Vô Zeca2	 					user : solinfnet.natter.fz_vo_zeca2
+			9.5 	 Faz. Colibri Sede 2 (Poste)		user : solinfnet.natter.fz_colibri2
+           10.5 	 Faz. Vô Zeca2 F16001	 			user : solinfnet.natter.fz_vo_zeca2.f_16001
 
 	220.137.0.0/24  Faz. São José
 			1.5 	 Faz. São José 						user: solinfnet.faz_saojose.fz_saojose
@@ -1189,7 +1191,10 @@ Rotas IPs VPNs Solinftec
     220.215.0.0/24  Serrana Agro
             1.105 	Faz. Figueiropolis F 10000			user : solinfnet.serrana_agro.fz_figueiropolis_f10000
 
-
+	220.216.0.0/24 Vereda Bela
+		   1.5    Faz. Santa Filomena					user : solinfnet.vereda_bela.fz_santa_filomena
+		    .115    Faz. Sta. Filomena - CX D'Água 8M 	user : solinfnet.vereda_bela.fz_santa_filomena.f_1001
+		    .125    Faz. Sta. Filomena - CX D'Água 12M	user : solinfnet.vereda_bela.fz_santa_filomena.F_1002
 
 
 
@@ -1214,7 +1219,11 @@ Rotas IPs VPNs Solinftec
 			2.105	   Faz. Cristina 					user : solinfnet.landirrigacao.fz_cristina.f_20000
 				
 	220.224.0.0/24  Ragagnin 
-			1.5		Santo Antônio					   	user : solinfnet.ragagnin.fz_ragagnin		
+			1.5		Santo Antônio					   	user : solinfnet.ragagnin.fz_ragagnin	
+			        	PPPOE do Provedor: 
+			        	   Usuário: sistematorre@ipv8.com.br
+			        	   Senha:   123123
+			        	   Porta: 5 da RB (porta 1 queimada)	
 			2.5 	Torre 5 (Unidade Meia Meia) 	    user : solinfnet.ragagnin.fz_torre5	
             3.5     Pouso Alegre 			    		user : solinfnet.ragagnin.fz_pouso_alegre
 			4.5		Jataí (Torres 13000)				user : solinfnet.ragagnin.fz_jatai
@@ -1239,6 +1248,7 @@ Rotas IPs VPNs Solinftec
               7.5 Faz. Belo Horizonte_X11 Poste PR   	user : solinfnet.agteixeira.fz_belo_horizonte_x11_poste.pr
               8.5 Faz. Belo Horizonte_X08 Poste PR   	user : solinfnet.agteixeira.fz_belo_horizonte_x08_poste.pr
               9.5 Faz. Belo Horizonte_X13 Poste PR   	user : solinfnet.agteixeira.fz_belo_horizonte_x13_poste.pr
+             10.105 Faz. Três Marias Silo MS            user : solinfnet.agteixeira.fz_tres_marias_silo_ms.f_19000
 
     220.228.0.0/24 	Royal Grape
     		  1.5 Faz. Royal Grape   			        user : solinfnet.royal_grape.fz_royal
@@ -1246,5 +1256,5 @@ Rotas IPs VPNs Solinftec
 	220.229.0.0/24  Agro Fava
 		    1.5     CDA							
 			1.105   CDA Balanca 						user : solinfnet.agro_fava.fz_cda_bacanca
-			1.115	CDA Algodoeria						user : solinfnet.agro_fava.fz_cda_algodoeira
+			1.115	CDA Algodoeria						user : solinfnet.agro_fava.fz_cda_algodoeira.f_9001
 			1.125	CDA Algodoeria 2					user : solinfnet.agro_fava.fz_cda_algodoeira.f_9002

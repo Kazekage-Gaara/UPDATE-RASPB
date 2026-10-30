@@ -188,7 +188,7 @@ PROVISORIO	11.105	Faz. Cristo							user : solinfnet.jcgrossi.fz_belavista.f_100
 			 235 	 Faz. Pantano - Faz. Santa Cruz		user : solinfnet.cerrado_mineiro.fz_pantano.f_4021
 			 245	 Faz. Pantano - Faz. Londrina		user : solinfnet.cerrado_mineiro.fz_pantano_londrina.f_4012
 			 255     Faz. Cogonhas						user : solinfnet.cerrado_mineiro.fz_congonhas.f_46000
-			2.5 	Cardoso	(Faz. Alegria)				user : solinfnet.cerrado_mineiro.fz_cardoso
+			2.5 	Faz. Alegria - CX 4014				user : solinfnet.cerrado_mineiro.fz_alegria
 			 .25 	 Fenato - Faz. Morro Alto 			user : solinfnet.cerrrado.fz_fenato_ma_f4040
 			 .35     Fenato - Faz. Boa Vista 			user : solinfnet.cerrado_mineiro.fz_fenato_boavista_4042
 			 .45     Fenato - Faz. Monte Verde			user : solinfnet.cerrado_mineiro.fz_monte_verde.f_4046	
@@ -531,13 +531,13 @@ PROVISORIO	11.105	Faz. Cristo							user : solinfnet.jcgrossi.fz_belavista.f_100
 		   2.5	   Brasópolis							user : solinfnet.grupo_fenix.fz_brasopolis
 		   	.115   Poste 2 - 13000						user : solinfnet.grupo_fenix.fz_brasopolis.f_13000		   
 		   3.5 	   Fenix VI 							user : solinfnet.grupo_fenix.fz_fenixvi
-		   4.5	   Fenix Santa Lúcia					user : solinfnet.grupo_fenix.fz_santalucia
+		   4.5	   Fenix Santa Lúcia					user : solinfnet.grupo_fenix.fz_santalucia (Fenix XIII)
 
     215.66.0.0/24  Agricola São Luiz do Pinhal	
-             1.105 Gateway São Luiz do Pinhal			user : solinfnet.agricola_sao_luiz_do_pinhal.f10000
-             1.115 Gateway Poste 02 					user : solinfnet.agricola_sao_luiz_do_pinhal.f10001
-             2.105 Gateway Boa Esperança			    user : solinfnet.agricola_sao_luiz_do_pinhal.boa_esperanca.f20000
-             3.105 Gateway São Luiz do Pinhal - 4G	    user : solinfnet.agricola_sao_luiz_do_pinhal.f_11000
+           1.105 Gateway São Luiz do Pinhal			user : solinfnet.agricola_sao_luiz_do_pinhal.f10000
+           1.115 Gateway Poste 02 					user : solinfnet.agricola_sao_luiz_do_pinhal.f10001
+           2.105 Gateway Boa Esperança			    user : solinfnet.agricola_sao_luiz_do_pinhal.boa_esperanca.f20000
+           3.105 Gateway São Luiz do Pinhal - 4G	    user : solinfnet.agricola_sao_luiz_do_pinhal.f_11000
            4.5     Santa Ana                            user : solinfnet.agricola_sao_luiz_do_pinhal.santa_ana
            5.5     Faz. Santa Maria                     user : solinfnet.agricola_sao_luiz_do_pinhal.santa_maria
         
@@ -548,7 +548,7 @@ PROVISORIO	11.105	Faz. Cristo							user : solinfnet.jcgrossi.fz_belavista.f_100
     215.68.0.0/24 Vivir Café
             1.5 	Boa Vista                			user : solinfnet.vivir_cafe.fz_boa_vista
             2.105 	Faz. Vivir Café 4G           		user : solinfnet.vivir_cafe.faz_vivir_cafe.F_20000
-            3.5 	Faz. Carmo (Cachoeira)				user : solinfnet.vivir_cafe.faz_vivir_cafe
+            3.5 	Cachoeira (Faz. Carmo)				user : solinfnet.vivir_cafe.fz_cachoeira
 			
 	215.69.0.0/24 Santo Aleixo
 		   1.5    Araxá/MG								user : solinfnet.santo_aleixo_araxa
@@ -570,15 +570,22 @@ PROVISORIO	11.105	Faz. Cristo							user : solinfnet.jcgrossi.fz_belavista.f_100
 			 .125   Caixa d água 100007					user : solinfnet.jf_citrus.fz_fazenda_santa_ana.f_100007
 			7.5		Fazenda São Sebastião				user : solinfnet.jf_citrus.fz_sao_sebastiao
 			 .105    Provisorio 100006 					user : solinfnet.jf_citrus.fz_sao_sebastiao.f_100006
-			8.5 	Fazenda Tamoios
-			 .105 	 Provisorio 100008 					user : solinfnet.jf_citrus.fz_tamoios.f_100008
-
+			8.5 	Fazenda Tamoios 					user : solinfnet.jf_citrus.fz_tamoios
+			 9.5
+			 .105    Provisorio 100010 					user : solinfnet.jf_citrus.fz_fazenda_santa_ana.f_100010
 
 	215.71.0.0/24 Grupo FMA
 		   1.5    Fazendas BD							user : solinfnet.grupo_fma.fz_bd
 
 	215.72.0.0/24 Grupo Saquarema
+           1.5     Faz Fazendinha                       user : solinfnet.grupo_saquarema.faz.saquarema
 	 	   1.105 	CX DAGUA FAZENDINHA - 12m  			user : solinfnet.grupo_saquarema.f_1000
+               
+
+
+
+
+		   
 
 	215.253.0.0/24 LDC BACURI
 			1.105  POSTE X01 GPRS						user : solinfnet.ldc.fz_bacuri_f48000

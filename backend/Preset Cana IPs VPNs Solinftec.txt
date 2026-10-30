@@ -34,7 +34,7 @@ Rotas IPs VPNs Solinftec
 			 .115 	 C. Móvel Frente 25							user : solinfnet.alto_alegre.usi_santo_inacio.f_60600
 			 .125 	 C. Móvel Frente 26							user : solinfnet.alto_alegre.usi_santo_inacio.f_60602
 			 .135 	 C. Móvel Frente 27							user : solinfnet.alto_alegre.usi_santo_inacio.f_60605
-			 .145 	 C. Móvel Frente 28							user : solinfnet.alto_alegre.usi_santo_inacio.f_60637
+			 .145 	 C. Móvel Frente 28	- F 60037				user : solinfnet.alto_alegre.usi_santo_inacio.f_60637
 			 .155 	 C. Móvel Frente 29							user : solinfnet.alto_alegre.usi_santo_inacio.f_60619
 			 .165 	 C. Móvel Frente 30							user : solinfnet.alto_alegre.usi_santo_inacio.f_60620
 			 .175 	 C. Móvel Frente 31							user : solinfnet.alto_alegre.usi_santo_inacio.f_60606
@@ -70,8 +70,8 @@ Rotas IPs VPNs Solinftec
 			1.5		 Descalvado									user : solinfnet.ipiranga.uni_descalvado
 			2.5 	 Iacanga
 			3.5 	 Mococa
-			 .105	 Mococa	Móvel							   user : solinfnet.ipiranga.mococa.f_8000_8001
-             .115    Torre Ipiranga F8002                      user : solinfnet.ipiranga.mococa.f_8002
+			 .105	 Mococa	Móvel							    user : solinfnet.ipiranga.mococa.f_8000_8001
+				     Torre F.8002 - Divide com a Pedra F.1014	user : solinfnet.grupo_pedra.usi_matriz.f_1014
 			4.5      Passos
 			 .105    Torre Rio Grande               			user : solinfnet.ipiranga.passos.f_6001	
 			 .115 	 Concentrador Balança						user : solinfnet.ipiranga.passos.f_6000
@@ -307,8 +307,9 @@ Rotas IPs VPNs Solinftec
             4.55	 Torre Distrito Prudencio Thomas F 4015 	user : solinfnet.cocal.fz_rio_brilhante.f_4015
             4.65	 Torre Faz Mimoso F4016             		user : solinfnet.cocal.fz_rio_brilhante.f_4016
             4.75     Torre Assentamento Fortuna F4031           user : solinfnet.cocal.fz_rio_brilhante.f_4031
+            4.85     Torre Fazanda Madrinha F4030               user : solinfnet.cocal.fz_rio_brilhante.f_4030
             4.105	 Balança Rio Brilhante P0-400 e P7-410		user : solinfnet.cocal.fz_rio_brilhante.f_400_410 
-			4.115	 Movel Rio Brilhante 411/811 					user : solinfnet.cocal.fz_rio_brilhante.f_411 
+			4.115	 Movel Rio Brilhante 411/811 				user : solinfnet.cocal.fz_rio_brilhante.f_411 
 			4.125	 Movel Rio Brilhante 412 					user : solinfnet.cocal.fz_rio_brilhante.f_412 
 			4.135	 Movel Rio Brilhante 413/813				user : solinfnet.cocal.fz_rio_brilhante.f_413 
 			4.145	 Movel Rio Brilhante 414 					user : solinfnet.cocal.fz_rio_brilhante.f_414
@@ -549,6 +550,7 @@ Rotas IPs VPNs Solinftec
 			1.115	 Concentrador 02				user : solinfnet.estivas.usi_estivas.f_1003
 			1.125	 Concentrador 03				user : solinfnet.estivas.usi_estivas.f_1000
 			1.135	 Concentrador 04				user : solinfnet.estivas.usi_estivas.f_1005
+            1.145	 Concentrador 05				user : solinfnet.estivas.usi_estivas.f_1007
 			2.105    Estivas 2000 (Nordeste)        user : solinfnet.estivas.usi_nordeste.f_2000
 			
 
@@ -716,6 +718,7 @@ Rotas IPs VPNs Solinftec
 			1.145 	 Gateway 2399 					user : solinfnet.usina_pinheiro.f_2399
 			1.155 	 Gateway 2377 					user : solinfnet.usina_pinheiro.f_2377
 			1.165	 Gateway 1004					user : solinfnet.usina_pinheiro.f_1004
+			1.175    Gateway 2340					user : solinfnet.usina_pinheiro.f_2340
 			2.5 	 Sede Usina Tabuão				user : solinfnet.pinheiro.usi_tabuao
 			3.5 	 Sede Usina Pedras				user : solinfnet.pinheiro.usi_pedras
 
@@ -738,6 +741,8 @@ Rotas IPs VPNs Solinftec
 			1.105   Usina Pontirendaba				user : solinfnet.cofco.usi_pontirendaba.f_26262
 			2.105 	CATANDUVA 500511				user : solinfnet.cofco.usi_catanduva.f_500511
 			2.115 	CATANDUVA 500500				user : solinfnet.cofco.usi_catanduva.f_500500
+			3.5
+			 .15    Sebastianopolis 26314 			user : solinfnet.cofco.usi_sebastianopolis.f_26314
 
 	210.48.0.0/24 	Agricola de Los Llanos
 			1.5
@@ -1025,6 +1030,7 @@ Rotas IPs VPNs Solinftec
 	       1.115    GATEWAY 10001 					user : solinfnet.pagrisa.f_10001
    	       1.125    GATEWAY 10002 					user : solinfnet.pagrisa.f_10002
 	       1.135    GATEWAY 10003 					user : solinfnet.pagrisa.f_10003
+		   1.145    GATEWAY 10004 					user : solinfnet.pagrisa.f_10004
 
 	210.78.0.0/24   AgroBig 
 	       1.105    GATEWAY 10000 					user : solinfnet.agrobig.f_10000
@@ -1120,6 +1126,7 @@ Rotas IPs VPNs Solinftec
            1.165     Concentrador 131               user : solinfnet.cerradinho.f_131
            1.175     Concentrador 132               user : solinfnet.cerradinho.f_132
 		   1.185	 Concentrador Plantio 133		user : solinfnet.cerradinho.f_133
+		   1.195	 Concentrador 136 				user : solinfnet.cerradinho.f_136
 
     210.87.0.0/24 	 Humus Agroterra
     	   1.105 	  Gateway Móvel 10000 			user : solinfnet.humusagroterra.f_10000
@@ -1292,6 +1299,7 @@ Rotas IPs VPNs Solinftec
 
     210.106.0.0/24	 Alcoeste
             1.105	 Gateway Movel 10000 GPRS   	user : solinfnet.alcoeste.f_10000
+            1.115	 Gateway Movel 10002 Starlink  	user : solinfnet.alcoeste.f_10002
 
     210.107.0.0/24	 Iaco
             1.105	 Gateway Movel 150 GPRS   		user : solinfnet.iaco.f_150
