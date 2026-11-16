@@ -50,11 +50,13 @@ def with_gateway_access(func):
     @wraps(func)
     def wrapped(self, ip: str, *args, **kwargs):
         access = kwargs.pop("access", None)
-        token = active_gateway_access.set(access)
+        if access is not None:
+            token = active_gateway_access.set(access)
         try:
             return func(self, ip, *args, **kwargs)
         finally:
-            active_gateway_access.reset(token)
+            if access is not None:
+                active_gateway_access.reset(token)
     return wrapped
 
 
